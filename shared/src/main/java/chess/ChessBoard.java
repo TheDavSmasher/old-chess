@@ -63,4 +63,16 @@ public class ChessBoard {
         board[7][6] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
         board[7][7] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
     }
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                builder.append('|');
+                builder.append(board[i][j]);
+            }
+            builder.append('\n');
+        }
+        return builder.toString();
+    }
 }
