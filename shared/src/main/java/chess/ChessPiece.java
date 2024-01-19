@@ -59,6 +59,16 @@ public class ChessPiece {
         switch (type) {
             case BISHOP:
                 return movesFromEndPositions(myPosition, getDiagonals(board, myPosition));
+            case ROOK:
+                return movesFromEndPositions(myPosition, getCross(board, myPosition));
+            case KNIGHT:
+                return movesFromEndPositions(myPosition, getKnight(board, myPosition));
+            case KING:
+                return movesFromEndPositions(myPosition, getKing(board, myPosition));
+            case QUEEN:
+                Collection<ChessPosition> fullList = getCross(board, myPosition);
+                fullList.addAll(getDiagonals(board, myPosition));
+                return  movesFromEndPositions(myPosition, fullList);
         }
         return null;
     }
@@ -90,6 +100,10 @@ public class ChessPiece {
         return Objects.hash(color, type);
     }
 
+    private boolean validEndPosition(ChessPiece atEnd) {
+        return atEnd == null || (atEnd.color != this.color && atEnd.type != PieceType.KING);
+    }
+
     private Collection<ChessMove> movesFromEndPositions(ChessPosition start, Collection<ChessPosition> ends) {
         Collection<ChessMove> allMoves = new ArrayList<>();
         for (ChessPosition end : ends) {
@@ -112,53 +126,187 @@ public class ChessPiece {
      */
     private Collection<ChessPosition> getDiagonals(ChessBoard board, ChessPosition start) {
         Collection<ChessPosition> endPositionList = new ArrayList<>();
+        ChessPosition temp = null;
+        ChessPiece atTemp = null;
         //Down Right
-        int boardLimit = Math.max(start.getRow(), start.getColumn());
-        for (int i = 1; i <= 8 - boardLimit; i++) {     // Starts at 1 so to not include start position inside the list
-            ChessPosition temp = new ChessPosition(start.getRow() + i, start.getColumn() + i);
-            ChessPiece atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != this.color && atTemp.type != PieceType.KING)) {
-                endPositionList.add(temp);
-            }
-            if (atTemp != null) {
-                break;
-            }
+        int moveCount = 8 - Math.max(start.getRow(), start.getColumn());
+        for (int i = 1; i <= moveCount; i++) {     // Starts at 1 so to not include start position inside the list
+            temp = new ChessPosition(start.getRow() + i, start.getColumn() + i);
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+            if (atTemp != null) { break; }
         }
         //Down Left
-        boardLimit = Math.max(start.getRow(), 9 - start.getColumn());
-        for (int i = 1; i <= 8 - boardLimit; i++) {
-            ChessPosition temp = new ChessPosition(start.getRow() + i, start.getColumn() - i);
-            ChessPiece atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != this.color && atTemp.type != PieceType.KING)) {
-                endPositionList.add(temp);
-            }
-            if (atTemp != null) {
-                break;
-            }
+        moveCount = 8 - Math.max(start.getRow(), 9 - start.getColumn());
+        for (int i = 1; i <= moveCount; i++) {
+            temp = new ChessPosition(start.getRow() + i, start.getColumn() - i);
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+            if (atTemp != null) { break; }
         }
         //Up Right
-        boardLimit = Math.max(9 - start.getRow(), start.getColumn());
-        for (int i = 1; i <= 8 - boardLimit; i++) {
-            ChessPosition temp = new ChessPosition(start.getRow() - i, start.getColumn() + i);
-            ChessPiece atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != this.color && atTemp.type != PieceType.KING)) {
-                endPositionList.add(temp);
-            }
-            if (atTemp != null) {
-                break;
-            }
+        moveCount = 8 - Math.max(9 - start.getRow(), start.getColumn());
+        for (int i = 1; i <= moveCount; i++) {
+            temp = new ChessPosition(start.getRow() - i, start.getColumn() + i);
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+            if (atTemp != null) { break; }
         }
         //Up Left
-        boardLimit = Math.max(9 - start.getRow(), 9 - start.getColumn());
-        for (int i = 1; i <= 8 - boardLimit; i++) {
-            ChessPosition temp = new ChessPosition(start.getRow() - i, start.getColumn() - i);
-            ChessPiece atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != this.color && atTemp.type != PieceType.KING)) {
-                endPositionList.add(temp);
-            }
-            if (atTemp != null) {
-                break;
-            }
+        moveCount = 8 - Math.max(9 - start.getRow(), 9 - start.getColumn());
+        for (int i = 1; i <= moveCount; i++) {
+            temp = new ChessPosition(start.getRow() - i, start.getColumn() - i);
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+            if (atTemp != null) { break; }
+        }
+        return endPositionList;
+    }
+
+    private Collection<ChessPosition> getCross(ChessBoard board, ChessPosition start) {
+        Collection<ChessPosition> endPositionList = new ArrayList<>();
+        ChessPosition temp = null;
+        ChessPiece atTemp = null;
+        //Right
+        int moveCount = 8 - start.getColumn();
+        for (int i = 1; i <= moveCount; i++) {
+            temp = new ChessPosition(start.getRow(), start.getColumn() + i);
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+            if (atTemp != null) { break; }
+        }
+        //Left
+        moveCount = start.getColumn() - 1;
+        for (int i = 1; i <= moveCount; i++) {
+            temp = new ChessPosition(start.getRow(), start.getColumn() - i);
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+            if (atTemp != null) { break; }
+        }
+        //Down
+        moveCount = 8 - start.getRow();
+        for (int i = 1; i <= moveCount; i++) {
+            temp = new ChessPosition(start.getRow() + i, start.getColumn());
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+            if (atTemp != null) { break; }
+        }
+        //Up
+        moveCount = start.getRow() - 1;
+        for (int i = 1; i <= moveCount; i++) {
+            temp = new ChessPosition(start.getRow() - i, start.getColumn());
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+            if (atTemp != null) { break; }
+        }
+        return endPositionList;
+    }
+
+    private Collection<ChessPosition> getKing(ChessBoard board, ChessPosition start) {
+        Collection<ChessPosition> endPositionList = new ArrayList<>();
+        ChessPiece atTemp = null;
+        //Bottom Right
+        ChessPosition temp = new ChessPosition(start.getRow() + 1, start.getColumn() + 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Right
+        temp = new ChessPosition(start.getRow(), start.getColumn() + 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Top Right
+        temp = new ChessPosition(start.getRow() - 1, start.getColumn() + 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Top
+        temp = new ChessPosition(start.getRow() - 1, start.getColumn());
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Top Left
+        temp = new ChessPosition(start.getRow() - 1, start.getColumn() - 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Left
+        temp = new ChessPosition(start.getRow(), start.getColumn() - 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Bottom Left
+        temp = new ChessPosition(start.getRow() + 1, start.getColumn() - 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Down
+        temp = new ChessPosition(start.getRow() + 1, start.getColumn());
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        return endPositionList;
+    }
+
+
+    private Collection<ChessPosition> getKnight(ChessBoard board, ChessPosition start) {
+        Collection<ChessPosition> endPositionList = new ArrayList<>();
+        ChessPiece atTemp = null;
+        //Bottom Right
+        ChessPosition temp = new ChessPosition(start.getRow() + 2, start.getColumn() + 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Bottom Middle Right
+        temp = new ChessPosition(start.getRow() + 1, start.getColumn() + 2);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Top Middle Right
+        temp = new ChessPosition(start.getRow() - 1, start.getColumn() + 2);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Top Right
+        temp = new ChessPosition(start.getRow() - 2, start.getColumn() + 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Bottom Left
+        temp = new ChessPosition(start.getRow() + 2, start.getColumn() - 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Bottom Middle Left
+        temp = new ChessPosition(start.getRow() + 1, start.getColumn() - 2);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Top Middle Left
+        temp = new ChessPosition(start.getRow() - 1, start.getColumn() - 2);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
+        }
+        //Top Left
+        temp = new ChessPosition(start.getRow() - 2, start.getColumn() - 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (validEndPosition(atTemp)) { endPositionList.add(temp); }
         }
         return endPositionList;
     }

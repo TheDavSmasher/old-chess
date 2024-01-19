@@ -41,6 +41,10 @@ public class ChessPosition {
         return row + "," + col;
     }
 
+    public boolean outOfBounds() {
+        return (row > 8 || row < 1) || (col > 8 || col < 1);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(row, col);
