@@ -65,6 +65,8 @@ public class ChessPiece {
                 return movesFromEndPositions(myPosition, getKnight(board, myPosition));
             case KING:
                 return movesFromEndPositions(myPosition, getKing(board, myPosition));
+            case PAWN:
+                return getPawnMoves(board, myPosition);
             case QUEEN:
                 Collection<ChessPosition> fullList = getCross(board, myPosition);
                 fullList.addAll(getDiagonals(board, myPosition));
@@ -110,6 +112,67 @@ public class ChessPiece {
             allMoves.add(new ChessMove(start, end, null));  //FIXME accurately represent promotionPiece
         }
         return allMoves;
+    }
+
+    private Collection<ChessMove> getAllPromotionMoves(ChessMove promotionMove) {
+        Collection<ChessMove> promotionMoves = new ArrayList<>();
+        promotionMoves.add(new ChessMove(promotionMove.getStartPosition(), promotionMove.getEndPosition(), PieceType.QUEEN));
+        promotionMoves.add(new ChessMove(promotionMove.getStartPosition(), promotionMove.getEndPosition(), PieceType.ROOK));
+        promotionMoves.add(new ChessMove(promotionMove.getStartPosition(), promotionMove.getEndPosition(), PieceType.BISHOP));
+        promotionMoves.add(new ChessMove(promotionMove.getStartPosition(), promotionMove.getEndPosition(), PieceType.KNIGHT));
+        return promotionMoves;
+    }
+
+    private Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition start) {
+        Collection<ChessMove> endMoves = new ArrayList<>();
+        int boardDirection = (color == ChessGame.TeamColor.BLACK) ? -1 : 1 ; //Down is positive, Up is negative
+        ChessPiece atTemp = null;
+        //Front
+        ChessPosition temp = new ChessPosition(start.getRow() + boardDirection, start.getColumn());
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (atTemp == null) {
+                if (((color == ChessGame.TeamColor.WHITE && temp.getRow() == 8) || temp.getRow() == 1)) {
+                    endMoves.addAll(getAllPromotionMoves(new ChessMove(start, temp, null)));
+                } else {
+                    endMoves.add(new ChessMove(start, temp, null));
+                }
+
+                //Special Case: front has to be clear up to 2 tiles front and be in initial position
+                temp = new ChessPosition(start.getRow() + 2 * boardDirection, start.getColumn());
+                if (!temp.outOfBounds()) {
+                    atTemp = board.getPiece(temp);
+                    if (atTemp == null && ((color == ChessGame.TeamColor.WHITE && start.getRow() == 2) || start.getRow() == 7)) {
+                        endMoves.add(new ChessMove(start, temp, null));
+                    }
+                }
+            }
+        }
+        //Eat Left
+        temp = new ChessPosition(start.getRow() + boardDirection, start.getColumn() - 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (atTemp != null && (atTemp.color != this.color && atTemp.type != PieceType.KING)) {
+                if (((color == ChessGame.TeamColor.WHITE && temp.getRow() == 8) || temp.getRow() == 1)) {
+                    endMoves.addAll(getAllPromotionMoves(new ChessMove(start, temp, null)));
+                } else {
+                    endMoves.add(new ChessMove(start, temp, null));
+                }
+            }
+        }
+        //Eat Left
+        temp = new ChessPosition(start.getRow() + boardDirection, start.getColumn() + 1);
+        if (!temp.outOfBounds()) {
+            atTemp = board.getPiece(temp);
+            if (atTemp != null && (atTemp.color != this.color && atTemp.type != PieceType.KING)) {
+                if (((color == ChessGame.TeamColor.WHITE && temp.getRow() == 8) || temp.getRow() == 1)) {
+                    endMoves.addAll(getAllPromotionMoves(new ChessMove(start, temp, null)));
+                } else {
+                    endMoves.add(new ChessMove(start, temp, null));
+                }
+            }
+        }
+        return endMoves;
     }
 
     /**
