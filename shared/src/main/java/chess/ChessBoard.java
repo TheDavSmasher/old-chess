@@ -8,11 +8,15 @@ import java.util.Arrays;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
-    private final ChessPiece[][] board;
+public class ChessBoard implements Cloneable {
+    private ChessPiece[][] board;
 
     public ChessBoard() {
-        this.board = new ChessPiece[8][8];
+         this(new ChessPiece[8][8]);
+    }
+
+    public ChessBoard(ChessPiece[][] board) {
+        this.board = board;
     }
 
     /**
@@ -95,5 +99,19 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(board);
+    }
+
+    @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard clone = (ChessBoard) super.clone();
+            clone.board = Arrays.copyOf(board, board.length);
+            for (int i = 0; i < 8; i++) {
+                clone.board[i] = Arrays.copyOf(board[i], board[i].length);
+            }
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
