@@ -92,7 +92,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        Collection<ChessMove> allOpposingMoves = allPossibleTeamMoves(getOtherTeam(teamColor));
+        Collection<ChessMove> allOpposingMoves = allPossibleOpposingMoves(teamColor);
         for (ChessMove move : allOpposingMoves) {
             ChessPiece temp = gameBoard.getPiece(move.getEndPosition());
             if (temp != null && temp.getTeamColor() == teamColor && temp.getPieceType() == ChessPiece.PieceType.KING) {
@@ -109,7 +109,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return isInCheck(teamColor) && allPossibleTeamMoves(teamColor).isEmpty();
+        return isInCheck(teamColor) && allPossibleValidMoves(teamColor).isEmpty();
     }
 
     /**
@@ -120,20 +120,26 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return !isInCheck(teamColor) && allPossibleTeamMoves(teamColor).isEmpty();
+        return !isInCheck(teamColor) && allPossibleValidMoves(teamColor).isEmpty();
     }
 
-    private Collection<ChessMove> allPossibleTeamMoves(TeamColor team) {
+    private Collection<ChessMove> allPossibleOpposingMoves(TeamColor team) {
         Collection<ChessMove> allMoves = new ArrayList<>();
+        TeamColor otherTeam = getOtherTeam(team);
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition temp = new ChessPosition(i,j);
                 ChessPiece atTemp = gameBoard.getPiece(temp);
-                if (atTemp != null && atTemp.getTeamColor() == team) {
+                if (atTemp != null && atTemp.getTeamColor() == otherTeam) {
                     allMoves.addAll(atTemp.pieceMoves(gameBoard, temp));
                 }
             }
         }
+        return allMoves;
+    }
+
+    private Collection<ChessMove> allPossibleValidMoves(TeamColor team) {
+        Collection<ChessMove> allMoves = new ArrayList<>();
         return allMoves;
     }
 

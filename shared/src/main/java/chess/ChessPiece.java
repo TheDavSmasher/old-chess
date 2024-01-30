@@ -85,6 +85,20 @@ public class ChessPiece {
         return Objects.hash(color, type);
     }
 
+    public String toString() {
+        String s = "";
+        switch (type) {
+            case BISHOP -> s = "b";
+            case KNIGHT -> s = "n";
+            case ROOK -> s = "r";
+            case KING -> s = "k";
+            case PAWN -> s = "p";
+            case QUEEN -> s = "q";
+        }
+        if (color == ChessGame.TeamColor.WHITE) s = s.toUpperCase();
+        return s;
+    }
+
     private Collection<ChessMove> getAllPromotionMoves(ChessPosition start, ChessPosition end) {
         Collection<ChessMove> allMoves = new ArrayList<>();
         allMoves.add(new ChessMove(start, end, PieceType.QUEEN));
