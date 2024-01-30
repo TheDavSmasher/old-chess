@@ -72,7 +72,7 @@ public class ChessGame {
         if (move.getPromotionPiece() == null) {
             gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
         } else {
-            gameBoard.addPiece(move.getEndPosition(), new ChessPiece(currentTurn, move.getPromotionPiece()));
+            gameBoard.addPiece(move.getEndPosition(), new ChessPiece(gameBoard.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
         }
         gameBoard.addPiece(move.getStartPosition(), null);
     }
@@ -139,8 +139,7 @@ public class ChessGame {
     }
 
     private Collection<ChessMove> allPossibleValidMoves(TeamColor team) {
-        Collection<ChessMove> allMoves = new ArrayList<>();
-        return allMoves;
+        throw new RuntimeException("Not implemented");
     }
 
     /**
