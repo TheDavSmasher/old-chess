@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -75,6 +77,14 @@ public class ChessGame {
         gameBoard.addPiece(move.getStartPosition(), null);
     }
 
+    private TeamColor getOtherTeam(TeamColor teamColor) {
+        if (teamColor == TeamColor.WHITE) {
+            return TeamColor.BLACK;
+        } else {
+            return TeamColor.WHITE;
+        }
+    }
+
     /**
      * Determines if the given team is in check
      *
@@ -82,7 +92,14 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> allOpposingMoves = allPossibleTeamMoves(getOtherTeam(teamColor));
+        for (ChessMove move : allOpposingMoves) {
+            ChessPiece temp = gameBoard.getPiece(move.getEndPosition());
+            if (temp != null && temp.getTeamColor() == teamColor && temp.getPieceType() == ChessPiece.PieceType.KING) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -92,7 +109,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return isInCheck(teamColor) && allPossibleTeamMoves(teamColor).isEmpty();
     }
 
     /**
@@ -103,7 +120,21 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return !isInCheck(teamColor) && allPossibleTeamMoves(teamColor).isEmpty();
+    }
+
+    private Collection<ChessMove> allPossibleTeamMoves(TeamColor team) {
+        Collection<ChessMove> allMoves = new ArrayList<>();
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition temp = new ChessPosition(i,j);
+                ChessPiece atTemp = gameBoard.getPiece(temp);
+                if (atTemp != null && atTemp.getTeamColor() == team) {
+                    allMoves.addAll(atTemp.pieceMoves(gameBoard, temp));
+                }
+            }
+        }
+        return allMoves;
     }
 
     /**
