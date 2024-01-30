@@ -69,8 +69,9 @@ public class ChessGame {
 
     private boolean moveLeavesInCheck(ChessMove move) {
         ChessBoard testBoard = gameBoard.clone();
+        TeamColor colorToCheck = gameBoard.getPiece(move.getStartPosition()).getTeamColor();
         makeMoveInGame(move, testBoard);
-        return isInCheckTest(currentTurn, testBoard);
+        return isInCheckTest(colorToCheck, testBoard);
     }
 
     /**
