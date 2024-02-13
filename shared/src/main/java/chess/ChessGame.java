@@ -33,6 +33,17 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         currentTurn = team;
     }
+    private void changeTurn() {
+        setTeamTurn(getOtherTeam(currentTurn));
+    }
+
+    private TeamColor getOtherTeam(TeamColor teamColor) {
+        if (teamColor == TeamColor.WHITE) {
+            return TeamColor.BLACK;
+        } else {
+            return TeamColor.WHITE;
+        }
+    }
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -88,6 +99,7 @@ public class ChessGame {
         if (gameBoard.getPiece(move.getStartPosition()).getTeamColor() != currentTurn) {
             throw new InvalidMoveException("Piece not part of current turn's color.");
         }
+        gameBoard.getPiece(move.getStartPosition()).pieceMoved();
         makeMoveInGame(move, gameBoard);
         changeTurn();
     }
@@ -101,17 +113,6 @@ public class ChessGame {
         board.addPiece(move.getStartPosition(), null);
     }
 
-    private void changeTurn() {
-        setTeamTurn(getOtherTeam(currentTurn));
-    }
-
-    private TeamColor getOtherTeam(TeamColor teamColor) {
-        if (teamColor == TeamColor.WHITE) {
-            return TeamColor.BLACK;
-        } else {
-            return TeamColor.WHITE;
-        }
-    }
 
     /**
      * Determines if the given team is in check

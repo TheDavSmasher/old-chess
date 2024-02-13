@@ -12,11 +12,7 @@ public class ChessBoard implements Cloneable {
     private ChessPiece[][] board;
 
     public ChessBoard() {
-         this(new ChessPiece[8][8]);
-    }
-
-    public ChessBoard(ChessPiece[][] board) {
-        this.board = board;
+         board = new ChessPiece[8][8];
     }
 
     /**
