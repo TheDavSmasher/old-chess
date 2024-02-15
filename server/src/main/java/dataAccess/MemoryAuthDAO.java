@@ -1,6 +1,6 @@
 package dataAccess;
 
-import dataModels.authData;
+import dataModels.AuthData;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
@@ -8,15 +8,15 @@ import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO {
     static MemoryAuthDAO instance;
-    private final HashSet<authData> data;
+    private final HashSet<AuthData> data;
 
     MemoryAuthDAO() {
         data = new HashSet<>();
 
     }
     @Override
-    public authData getAuth(String token) {
-        for (authData auth : data) {
+    public AuthData getAuth(String token) {
+        for (AuthData auth : data) {
             if (auth.authToken().equals(token)) {
                 return auth;
             }
@@ -25,9 +25,9 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public authData createAuth(String username) {
+    public AuthData createAuth(String username) {
         String token = UUID.randomUUID().toString();
-        authData newAuth = new authData(username, token);
+        AuthData newAuth = new AuthData(username, token);
         data.add(newAuth);
         return newAuth;
     }

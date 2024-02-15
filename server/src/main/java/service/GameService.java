@@ -3,8 +3,8 @@ package service;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.MemoryGameDAO;
-import dataModels.authData;
-import dataModels.gameData;
+import dataModels.AuthData;
+import dataModels.GameData;
 import service.request.AuthRequest;
 import service.request.CreateGameRequest;
 import service.request.JoinGameRequest;
@@ -34,7 +34,7 @@ public class GameService {
             if (UserService.validUser(request.authToken()) == null) {
                 throw new UnauthorizedException();
             }
-            gameData newGame = gameDAO.createGame(request.gameName());
+            GameData newGame = gameDAO.createGame(request.gameName());
             return new CreateGameResponse(newGame.gameID());
         } catch (DataAccessException e) {
             throw new UnexpectedException();
@@ -45,7 +45,7 @@ public class GameService {
         try {
             GameDAO gameDAO = MemoryGameDAO.getInstance();
 
-            authData auth = UserService.validUser(request.authToken());
+            AuthData auth = UserService.validUser(request.authToken());
             if (auth == null) {
                 throw new UnauthorizedException();
             }

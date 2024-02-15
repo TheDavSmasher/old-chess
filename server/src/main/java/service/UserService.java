@@ -1,13 +1,13 @@
 package service;
 
 import dataAccess.*;
-import dataModels.authData;
-import dataModels.userData;
+import dataModels.AuthData;
+import dataModels.UserData;
 import service.request.AuthRequest;
 import service.result.*;
 
 public class UserService {
-    public static UserEnterResponse register(userData request) throws ServiceException {
+    public static UserEnterResponse register(UserData request) throws ServiceException {
         try {
             UserDAO userDAO = MemoryUserDAO.getInstance();
 
@@ -24,7 +24,7 @@ public class UserService {
         }
     }
 
-    public static UserEnterResponse login(userData request) throws ServiceException {
+    public static UserEnterResponse login(UserData request) throws ServiceException {
         try {
             UserDAO userDAO = MemoryUserDAO.getInstance();
             AuthDAO authDAO = MemoryAuthDAO.getInstance();
@@ -32,7 +32,7 @@ public class UserService {
             if (userDAO.getUser(request.username()) == null) {
                 throw new UnauthorizedException();
             }
-            authData newAuth = authDAO.createAuth(request.username());
+            AuthData newAuth = authDAO.createAuth(request.username());
             return new UserEnterResponse(newAuth.username(), newAuth.authToken());
         } catch (DataAccessException e) {
             throw new UnexpectedException();
@@ -52,7 +52,7 @@ public class UserService {
         }
     }
 
-    public static authData validUser(String authToken) throws DataAccessException {
+    public static AuthData validUser(String authToken) throws DataAccessException {
         AuthDAO authDAO = MemoryAuthDAO.getInstance();
         return authDAO.getAuth(authToken);
     }

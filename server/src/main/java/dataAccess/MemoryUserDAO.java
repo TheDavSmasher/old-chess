@@ -1,21 +1,20 @@
 package dataAccess;
 
-import dataModels.userData;
+import dataModels.UserData;
 
 import java.util.HashSet;
-import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO {
     static MemoryUserDAO instance;
-    private final HashSet<userData> data;
+    private final HashSet<UserData> data;
 
     MemoryUserDAO() {
         data = new HashSet<>();
     }
 
     @Override
-    public userData getUser(String username) {
-        for (userData user : data) {
+    public UserData getUser(String username) {
+        for (UserData user : data) {
             if (user.username().equals(username)) {
                 return user;
             }
@@ -25,8 +24,8 @@ public class MemoryUserDAO implements UserDAO {
 
 
     @Override
-    public userData getUser(String username, String password) {
-        for (userData user : data) {
+    public UserData getUser(String username, String password) {
+        for (UserData user : data) {
             if (user.username().equals(username) && user.password().equals(password)) {
                 return user;
             }
@@ -36,7 +35,7 @@ public class MemoryUserDAO implements UserDAO {
 
     @Override
     public void createUser(String username, String password, String email) {
-        data.add(new userData(username, password, email));
+        data.add(new UserData(username, password, email));
     }
 
     @Override

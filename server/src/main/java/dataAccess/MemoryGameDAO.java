@@ -1,26 +1,26 @@
 package dataAccess;
 
 import chess.ChessGame;
-import dataModels.gameData;
+import dataModels.GameData;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 
 public class MemoryGameDAO implements GameDAO {
     static MemoryGameDAO instance;
-    private final HashSet<gameData> data;
+    private final HashSet<GameData> data;
 
     MemoryGameDAO() {
         data = new HashSet<>();
     }
     @Override
-    public ArrayList<gameData> listGames() {
-        return new ArrayList<gameData>(data);
+    public ArrayList<GameData> listGames() {
+        return new ArrayList<GameData>(data);
     }
 
     @Override
-    public gameData getGame(int gameID) {
-        for (gameData game : data) {
+    public GameData getGame(int gameID) {
+        for (GameData game : data) {
             if (game.gameID() == gameID) {
                 return game;
             }
@@ -29,20 +29,20 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public gameData createGame(String gameName) {
+    public GameData createGame(String gameName) {
         int newID = data.size() + 1;
-        gameData newGame = new gameData(newID, null, null, gameName, new ChessGame());
+        GameData newGame = new GameData(newID, null, null, gameName, new ChessGame());
         data.add(newGame);
         return newGame;
     }
 
     @Override
     public void updateGame(int gameID, String color, String username) {
-        gameData oldGame = getGame(gameID);
+        GameData oldGame = getGame(gameID);
         if (Objects.equals(color, "WHITE")) {
-            data.add(new gameData(oldGame.gameID(), username, oldGame.blackUsername(), oldGame.gameName(), oldGame.game()));
+            data.add(new GameData(oldGame.gameID(), username, oldGame.blackUsername(), oldGame.gameName(), oldGame.game()));
         } else {
-            data.add(new gameData(oldGame.gameID(), oldGame.whiteUsername(), username, oldGame.gameName(), oldGame.game()));
+            data.add(new GameData(oldGame.gameID(), oldGame.whiteUsername(), username, oldGame.gameName(), oldGame.game()));
         }
         data.remove(oldGame);
     }
