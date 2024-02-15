@@ -29,10 +29,11 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public int createGame(String gameName) {
+    public gameData createGame(String gameName) {
         int newID = data.size() + 1;
-        data.add(new gameData(newID, null, null, gameName, new ChessGame()));
-        return newID;
+        gameData newGame = new gameData(newID, null, null, gameName, new ChessGame());
+        data.add(newGame);
+        return newGame;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class MemoryGameDAO implements GameDAO {
         data.clear();
     }
 
-    static GameDAO getInstance() {
+    public static GameDAO getInstance() {
         if (instance == null) {
             instance = new MemoryGameDAO();
         }

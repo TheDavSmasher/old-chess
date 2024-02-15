@@ -16,7 +16,7 @@ public class MemoryUserDAO implements UserDAO {
     @Override
     public userData getUser(String username) {
         for (userData user : data) {
-            if (Objects.equals(user.username(), username)) {
+            if (user.username().equals(username)) {
                 return user;
             }
         }
@@ -27,7 +27,7 @@ public class MemoryUserDAO implements UserDAO {
     @Override
     public userData getUser(String username, String password) {
         for (userData user : data) {
-            if (Objects.equals(user.username(), username) && Objects.equals(user.password(), password)) {
+            if (user.username().equals(username) && user.password().equals(password)) {
                 return user;
             }
         }
@@ -41,7 +41,7 @@ public class MemoryUserDAO implements UserDAO {
 
     @Override
     public void deleteUser(String username) {
-        data.removeIf(user -> Objects.equals(user.username(),username));
+        data.removeIf(user -> user.username().equals(username));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class MemoryUserDAO implements UserDAO {
         data.clear();
     }
 
-    static UserDAO getInstance() {
+    public static UserDAO getInstance() {
         if (instance == null) {
             instance = new MemoryUserDAO();
         }
