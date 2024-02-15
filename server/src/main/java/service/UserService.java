@@ -4,8 +4,7 @@ import dataAccess.*;
 import dataModels.authData;
 import dataModels.userData;
 import service.request.AuthRequest;
-import service.result.UserEnterResponse;
-import service.result.ServiceException;
+import service.result.*;
 
 public class UserService {
     public static UserEnterResponse register(userData request) throws ServiceException {
@@ -13,15 +12,15 @@ public class UserService {
             UserDAO userDAO = MemoryUserDAO.getInstance();
 
             if (request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()) {
-                throw new ServiceException("Error: bad request");
+                throw new BadRequestException();
             }
             if (userDAO.getUser(request.username()) != null) {
-                throw new ServiceException("Error: already taken");
+                throw new PreexistingException();
             }
             userDAO.createUser(request.username(), request.password(), request.email());
             return UserService.login(request);
         } catch (DataAccessException e) {
-            throw new ServiceException( "Error: " + e.getMessage());
+            throw new UnexpectedException();
         }
     }
 
@@ -31,12 +30,12 @@ public class UserService {
             AuthDAO authDAO = MemoryAuthDAO.getInstance();
 
             if (userDAO.getUser(request.username()) == null) {
-                throw new ServiceException("Error: unauthorized");
+                throw new UnauthorizedException();
             }
             authData newAuth = authDAO.createAuth(request.username());
             return new UserEnterResponse(newAuth.username(), newAuth.authToken());
         } catch (DataAccessException e) {
-            throw new ServiceException( "Error: " + e.getMessage());
+            throw new UnexpectedException();
         }
     }
 
@@ -45,11 +44,11 @@ public class UserService {
             AuthDAO authDAO = MemoryAuthDAO.getInstance();
 
             if (UserService.validUser(request.authToken()) == null) {
-                throw new ServiceException("Error: unauthorized");
+                throw new UnauthorizedException();
             }
             authDAO.deleteAuth(request.authToken());
         } catch (DataAccessException e) {
-            throw new ServiceException( "Error: " + e.getMessage());
+            throw new UnexpectedException();
         }
     }
 

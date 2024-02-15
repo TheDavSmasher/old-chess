@@ -1,6 +1,7 @@
 package service;
 
 import dataAccess.*;
+import service.result.UnexpectedException;
 import service.result.ServiceException;
 
 public class AppService {
@@ -14,7 +15,7 @@ public class AppService {
             userDAO.clear();
             gameDAO.clear();
         } catch (DataAccessException e) {
-            throw new ServiceException("Error: " + e.getMessage());
+            throw new UnexpectedException();
         }
     }
 }

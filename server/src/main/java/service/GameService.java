@@ -8,9 +8,7 @@ import dataModels.gameData;
 import service.request.AuthRequest;
 import service.request.CreateGameRequest;
 import service.request.JoinGameRequest;
-import service.result.CreateGameResponse;
-import service.result.ListGamesResponse;
-import service.result.ServiceException;
+import service.result.*;
 
 public class GameService {
     public static ListGamesResponse getAllGames(AuthRequest request) throws ServiceException {
@@ -18,11 +16,11 @@ public class GameService {
             GameDAO gameDAO = MemoryGameDAO.getInstance();
 
             if (UserService.validUser(request.authToken()) == null) {
-                throw new ServiceException("Error: unauthorized");
+                throw new UnauthorizedException();
             }
             return new ListGamesResponse(gameDAO.listGames());
         } catch (DataAccessException e) {
-            throw new ServiceException("Error: " + e.getMessage());
+            throw new UnexpectedException();
         }
     }
 
@@ -31,15 +29,15 @@ public class GameService {
             GameDAO gameDAO = MemoryGameDAO.getInstance();
 
             if (request.gameName() == null || request.gameName().isEmpty()) {
-                throw new ServiceException("Error: bad request");
+                throw new BadRequestException();
             }
             if (UserService.validUser(request.authToken()) == null) {
-                throw new ServiceException("Error: unauthorized");
+                throw new UnauthorizedException();
             }
             gameData newGame = gameDAO.createGame(request.gameName());
             return new CreateGameResponse(newGame.gameID());
         } catch (DataAccessException e) {
-            throw new ServiceException("Error: " + e.getMessage());
+            throw new UnexpectedException();
         }
     }
 
@@ -49,23 +47,23 @@ public class GameService {
 
             authData auth = UserService.validUser(request.authToken());
             if (auth == null) {
-                throw new ServiceException("Error: unauthorized");
+                throw new UnauthorizedException();
             }
             if (request.gameID() <= 0 || gameDAO.getGame(request.gameID()) == null) {
-                throw new ServiceException("Error: bad request");
+                throw new BadRequestException();
             }
             if (request.playerColor() != null) {
                 if (!request.playerColor().equals("WHITE") && !request.playerColor().equals("BLACK")) {
-                    throw new ServiceException("Error: bad request");
+                    throw new BadRequestException();
                 }
                 if (request.playerColor().equals("WHITE") && gameDAO.getGame(request.gameID()).whiteUsername() != null
                 || request.playerColor().equals("BLACK") && gameDAO.getGame(request.gameID()).blackUsername() != null) {
-                    throw new ServiceException("Error: already taken");
+                    throw new PreexistingException();
                 }
                 gameDAO.updateGame(request.gameID(), request.playerColor(), auth.username());
             }
         } catch (DataAccessException e) {
-            throw new ServiceException("Error: " + e.getMessage());
+            throw new UnexpectedException();
         }
     }
 }
