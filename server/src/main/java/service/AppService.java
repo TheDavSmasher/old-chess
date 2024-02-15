@@ -1,11 +1,10 @@
 package service;
 
 import dataAccess.*;
-import service.result.FailureResponse;
-import service.result.Response;
+import service.result.ServiceException;
 
 public class AppService {
-    public static Response clearData(){
+    public static void clearData() throws ServiceException {
         try {
             AuthDAO authDAO = MemoryAuthDAO.getInstance();
             UserDAO userDAO = MemoryUserDAO.getInstance();
@@ -14,10 +13,8 @@ public class AppService {
             authDAO.clear();
             userDAO.clear();
             gameDAO.clear();
-
-            return new Response(200);
         } catch (DataAccessException e) {
-            return new FailureResponse(500, "Error: " + e.getMessage());
+            throw new ServiceException("Error: " + e.getMessage());
         }
     }
 }
