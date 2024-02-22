@@ -10,13 +10,13 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        Spark.delete("/clear", (request, response) -> (new ClearHandler()).handle(request));
-        Spark.post("/user", (request, response) -> (new RegisterHandler()).handle(request));
-        Spark.post("/session", (request, response) -> (new LoginHandler()).handle(request));
-        Spark.delete("/session", (request, response) -> (new LogoutHandler()).handle(request));
-        Spark.get("/game", (request, response) -> (new ListGameHandler()).handle(request));
-        Spark.post("/game", (request, response) -> (new CreateGameHandler()).handle(request));
-        Spark.put("/game", (request, response) -> (new JoinGameHandler()).handle(request));
+        Spark.delete("/clear", (request, response) -> (new ClearHandler()).handle(request, response));
+        Spark.post("/user", (request, response) -> (new RegisterHandler()).handle(request, response));
+        Spark.post("/session", (request, response) -> (new LoginHandler()).handle(request, response));
+        Spark.delete("/session", (request, response) -> (new LogoutHandler()).handle(request, response));
+        Spark.get("/game", (request, response) -> (new ListGameHandler()).handle(request, response));
+        Spark.post("/game", (request, response) -> (new CreateGameHandler()).handle(request, response));
+        Spark.put("/game", (request, response) -> (new JoinGameHandler()).handle(request, response));
 
         Spark.awaitInitialization();
         return Spark.port();

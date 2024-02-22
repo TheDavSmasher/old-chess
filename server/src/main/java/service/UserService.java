@@ -4,10 +4,11 @@ import dataAccess.*;
 import dataModels.AuthData;
 import dataModels.UserData;
 import service.request.AuthRequest;
+import service.request.UserEnterRequest;
 import service.result.*;
 
 public class UserService {
-    public static UserEnterResponse register(UserData request) throws ServiceException {
+    public static UserEnterResponse register(UserEnterRequest request) throws ServiceException {
         try {
             UserDAO userDAO = MemoryUserDAO.getInstance();
 
@@ -24,7 +25,7 @@ public class UserService {
         }
     }
 
-    public static UserEnterResponse login(UserData request) throws ServiceException {
+    public static UserEnterResponse login(UserEnterRequest request) throws ServiceException {
         try {
             UserDAO userDAO = MemoryUserDAO.getInstance();
             AuthDAO authDAO = MemoryAuthDAO.getInstance();
@@ -42,10 +43,6 @@ public class UserService {
     public static void logout(AuthRequest request) throws ServiceException {
         try {
             AuthDAO authDAO = MemoryAuthDAO.getInstance();
-
-            if (UserService.validUser(request.authToken()) == null) {
-                throw new UnauthorizedException();
-            }
             authDAO.deleteAuth(request.authToken());
         } catch (DataAccessException e) {
             throw new UnexpectedException();
