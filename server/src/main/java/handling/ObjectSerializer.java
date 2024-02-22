@@ -4,8 +4,6 @@ import dataAccess.DataAccessException;
 import service.UserService;
 import spark.*;
 
-import static java.util.Objects.isNull;
-
 public abstract class ObjectSerializer {
     public abstract String handle(Request request, Response response);
 
