@@ -15,7 +15,11 @@ public class MemoryGameDAO implements GameDAO {
     }
     @Override
     public ArrayList<GameData> listGames() {
-        return new ArrayList<GameData>(data);
+        ArrayList<GameData> gameList = new ArrayList<>();
+        for (GameData game : data) {
+            gameList.add(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), null));
+        }
+        return gameList;
     }
 
     @Override
