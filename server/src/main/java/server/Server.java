@@ -1,6 +1,5 @@
 package server;
 
-import handling.*;
 import spark.*;
 
 public class Server {

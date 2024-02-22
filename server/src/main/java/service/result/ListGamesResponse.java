@@ -1,6 +1,6 @@
 package service.result;
 
-import dataModels.GameData;
+import model.GameData;
 
 import java.util.ArrayList;
 

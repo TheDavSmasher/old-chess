@@ -1,4 +1,4 @@
-package handling;
+package server;
 
 import dataAccess.DataAccessException;
 import service.UserService;

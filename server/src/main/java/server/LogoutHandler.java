@@ -1,4 +1,4 @@
-package handling;
+package server;
 
 import service.UserService;
 import service.request.AuthRequest;

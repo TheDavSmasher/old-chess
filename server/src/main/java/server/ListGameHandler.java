@@ -1,23 +1,27 @@
-package handling;
+package server;
 
-import service.AppService;
+import com.google.gson.Gson;
+import service.GameService;
+import service.result.ListGamesResponse;
 import service.result.ServiceException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
-public class ClearHandler extends ObjectSerializer {
+public class ListGameHandler extends ObjectSerializer {
 
     @Override
     public String handle(Request request, Response response) {
+        authorizedCheck(request);
+        Gson gson = new Gson();
         response.type("application/json");
+        ListGamesResponse listResponse = null;
         try {
-            AppService.clearData();
-
+            listResponse = GameService.getAllGames();
         } catch (ServiceException e) {
             Spark.halt(500, "{ \"message\": \"Error: " + e.getMessage() + "\" }");
         }
         response.status(200);
-        return "{}";
+        return gson.toJson(listResponse);
     }
 }

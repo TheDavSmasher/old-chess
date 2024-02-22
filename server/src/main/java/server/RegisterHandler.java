@@ -1,26 +1,23 @@
-package handling;
+package server;
 
 import com.google.gson.Gson;
-import service.GameService;
-import service.request.AuthRequest;
-import service.request.JoinGameRequest;
-import service.result.BadRequestException;
-import service.result.PreexistingException;
-import service.result.ServiceException;
+import service.UserService;
+import service.request.UserEnterRequest;
+import service.result.*;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
-public class JoinGameHandler extends ObjectSerializer {
+public class RegisterHandler extends ObjectSerializer {
+
     @Override
     public String handle(Request request, Response response) {
-        authorizedCheck(request);
         Gson gson = new Gson();
         response.type("application/json");
-        JoinGameRequest joinRequest = gson.fromJson(request.body(), JoinGameRequest.class);
-        AuthRequest authRequest = new AuthRequest(getAuthToken(request));
+        UserEnterRequest registerRequest = gson.fromJson(request.body(), UserEnterRequest.class);
+        UserEnterResponse registerResponse = null;
         try {
-            GameService.joinGame(joinRequest, authRequest);
+            registerResponse = UserService.register(registerRequest);
         } catch (BadRequestException e) {
             Spark.halt(400, "{ \"message\": \"Error: bad request\" }");
         } catch (PreexistingException e) {
@@ -29,6 +26,6 @@ public class JoinGameHandler extends ObjectSerializer {
             Spark.halt(500, "{ \"message\": \"Error: " + e.getMessage() + "\" }");
         }
         response.status(200);
-        return "{}";
+        return gson.toJson(registerResponse);
     }
 }

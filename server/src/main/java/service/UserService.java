@@ -1,8 +1,7 @@
 package service;
 
 import dataAccess.*;
-import dataModels.AuthData;
-import dataModels.UserData;
+import model.AuthData;
 import service.request.AuthRequest;
 import service.request.UserEnterRequest;
 import service.result.*;
