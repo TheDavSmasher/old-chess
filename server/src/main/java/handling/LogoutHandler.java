@@ -22,6 +22,6 @@ public class LogoutHandler extends ObjectSerializer {
             Spark.halt(500, "{ \"message\": \"Error: " + e.getMessage() + "\" }");
         }
         response.status(200);
-        return "";
+        return "{}";
     }
 }
