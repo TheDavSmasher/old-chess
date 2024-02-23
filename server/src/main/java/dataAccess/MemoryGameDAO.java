@@ -4,7 +4,6 @@ import chess.ChessGame;
 import model.GameData;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Objects;
 
 public class MemoryGameDAO implements GameDAO {
     static MemoryGameDAO instance;
@@ -43,12 +42,12 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public void updateGame(int gameID, String color, String username) {
         GameData oldGame = getGame(gameID);
-        if (Objects.equals(color, "WHITE")) {
+        deleteGame(gameID);
+        if (color.equals("WHITE")) {
             data.add(new GameData(oldGame.gameID(), username, oldGame.blackUsername(), oldGame.gameName(), oldGame.game()));
         } else {
             data.add(new GameData(oldGame.gameID(), oldGame.whiteUsername(), username, oldGame.gameName(), oldGame.game()));
         }
-        data.remove(oldGame);
     }
 
     @Override
