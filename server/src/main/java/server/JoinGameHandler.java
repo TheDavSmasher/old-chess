@@ -7,6 +7,7 @@ import service.request.JoinGameRequest;
 import service.result.BadRequestException;
 import service.result.PreexistingException;
 import service.result.ServiceException;
+import service.result.UnauthorizedException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -14,7 +15,6 @@ import spark.Spark;
 public class JoinGameHandler extends ObjectSerializer {
     @Override
     public String handle(Request request, Response response) {
-        authorizedCheck(request);
         Gson gson = new Gson();
         response.type("application/json");
         JoinGameRequest joinRequest = gson.fromJson(request.body(), JoinGameRequest.class);
@@ -23,6 +23,8 @@ public class JoinGameHandler extends ObjectSerializer {
             GameService.joinGame(joinRequest, authRequest);
         } catch (BadRequestException e) {
             Spark.halt(400, "{ \"message\": \"Error: bad request\" }");
+        } catch (UnauthorizedException e) {
+            Spark.halt(401, "{ \"message\": \"Error: unauthorized\" }");
         } catch (PreexistingException e) {
             Spark.halt(403, "{ \"message\": \"Error: already taken\" }");
         } catch (ServiceException e) {

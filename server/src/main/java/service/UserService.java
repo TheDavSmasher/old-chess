@@ -42,6 +42,9 @@ public class UserService {
 
     public static void logout(AuthRequest request) throws ServiceException {
         try {
+            if (UserService.validUser(request.authToken()) == null) {
+                throw new UnauthorizedException();
+            }
             AuthDAO authDAO = MemoryAuthDAO.getInstance();
             authDAO.deleteAuth(request.authToken());
         } catch (DataAccessException e) {

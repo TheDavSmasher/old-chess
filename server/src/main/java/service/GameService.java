@@ -11,8 +11,11 @@ import service.request.JoinGameRequest;
 import service.result.*;
 
 public class GameService {
-    public static ListGamesResponse getAllGames() throws ServiceException {
+    public static ListGamesResponse getAllGames(AuthRequest auth) throws ServiceException {
         try {
+            if (UserService.validUser(auth.authToken()) == null) {
+                throw new UnauthorizedException();
+            }
             GameDAO gameDAO = MemoryGameDAO.getInstance();
             return new ListGamesResponse(gameDAO.listGames());
         } catch (DataAccessException e) {
@@ -20,8 +23,11 @@ public class GameService {
         }
     }
 
-    public static CreateGameResponse createGame(CreateGameRequest request) throws ServiceException {
+    public static CreateGameResponse createGame(CreateGameRequest request, AuthRequest auth) throws ServiceException {
         try {
+            if (UserService.validUser(auth.authToken()) == null) {
+                throw new UnauthorizedException();
+            }
             GameDAO gameDAO = MemoryGameDAO.getInstance();
 
             if (request.gameName() == null || request.gameName().isEmpty()) {
@@ -36,9 +42,12 @@ public class GameService {
 
     public static void joinGame(JoinGameRequest request, AuthRequest authRequest) throws ServiceException {
         try {
+            AuthData auth = UserService.validUser(authRequest.authToken());
+            if (auth == null) {
+                throw new UnauthorizedException();
+            }
             GameDAO gameDAO = MemoryGameDAO.getInstance();
 
-            AuthData auth = UserService.validUser(authRequest.authToken());
             if (request.gameID() <= 0 || gameDAO.getGame(request.gameID()) == null) {
                 throw new BadRequestException();
             }
