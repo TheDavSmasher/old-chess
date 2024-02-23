@@ -52,8 +52,12 @@ public class UserService {
         }
     }
 
-    public static AuthData validUser(String authToken) throws DataAccessException {
-        AuthDAO authDAO = MemoryAuthDAO.getInstance();
-        return authDAO.getAuth(authToken);
+    public static AuthData validUser(String authToken) throws UnexpectedException {
+        try {
+            AuthDAO authDAO = MemoryAuthDAO.getInstance();
+            return authDAO.getAuth(authToken);
+        } catch (DataAccessException e) {
+            throw new UnexpectedException();
+        }
     }
 }
