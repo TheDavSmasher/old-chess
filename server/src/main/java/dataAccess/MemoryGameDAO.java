@@ -3,6 +3,7 @@ package dataAccess;
 import chess.ChessGame;
 import model.GameData;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 
 public class MemoryGameDAO implements GameDAO {
@@ -18,6 +19,7 @@ public class MemoryGameDAO implements GameDAO {
         for (GameData game : data) {
             gameList.add(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), null));
         }
+        gameList.sort(Comparator.comparingInt(GameData::gameID));
         return gameList;
     }
 
