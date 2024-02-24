@@ -122,7 +122,7 @@ public class ChessPiece {
         Collection<ChessMove> endMoves = new ArrayList<ChessMove>();
         int pieceDirection = (color == ChessGame.TeamColor.BLACK ? -1 : 1);
         int promotionRow = (color == ChessGame.TeamColor.BLACK ? 1 : 8);
-        ChessPiece atTemp = null;
+        ChessPiece atTemp;
         //Move Forward
         ChessPosition temp = new ChessPosition(start.getRow() + pieceDirection, start.getColumn());
         if (!temp.outOfBounds()) {
@@ -144,27 +144,20 @@ public class ChessPiece {
                 }
             }
         }
-        //Eat Left
-        temp = new ChessPosition(start.getRow() + pieceDirection, start.getColumn() - 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp != null && atTemp.color != color) {
-                if (temp.getRow() == promotionRow) {
-                    endMoves.addAll(getAllPromotionMoves(start, temp));
-                } else {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-            }
-        }
-        //Eat Right
-        temp = new ChessPosition(start.getRow() + pieceDirection, start.getColumn() + 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp != null && atTemp.color != color) {
-                if (temp.getRow() == promotionRow) {
-                    endMoves.addAll(getAllPromotionMoves(start, temp));
-                } else {
-                    endMoves.add(new ChessMove(start, temp, null));
+        //Eating
+        ChessPosition[] tempList = {
+                new ChessPosition(start.getRow() + pieceDirection, start.getColumn() - 1),
+                new ChessPosition(start.getRow() + pieceDirection, start.getColumn() + 1)
+        };
+        for (ChessPosition tempPos : tempList) {
+            if (!tempPos.outOfBounds()) {
+                atTemp = board.getPiece(tempPos);
+                if (atTemp != null && atTemp.color != color) {
+                    if (tempPos.getRow() == promotionRow) {
+                        endMoves.addAll(getAllPromotionMoves(start, tempPos));
+                    } else {
+                        endMoves.add(new ChessMove(start, tempPos, null));
+                    }
                 }
             }
         }
@@ -172,250 +165,88 @@ public class ChessPiece {
     }
 
     private Collection<ChessMove> getCross(ChessBoard board, ChessPosition start) {
-        Collection<ChessMove> endMoves = new ArrayList<ChessMove>();
-        ChessPosition temp = null;
-        ChessPiece atTemp = null;
         //Right
         int moveLimit = 8 - start.getColumn();
-        for (int i = 1; i <= moveLimit; i++) {
-            temp = new ChessPosition(start.getRow(), start.getColumn() + i);
-            if (!temp.outOfBounds()) {
-                atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-                if (atTemp != null) { break; }
-            }
-        }
+        Collection<ChessMove> endMoves = new ArrayList<>(addMoveList(board, start, moveLimit, 0, +1));
         //Left
         moveLimit = start.getColumn() - 1;
-        for (int i = 1; i <= moveLimit; i++) {
-            temp = new ChessPosition(start.getRow(), start.getColumn() - i);
-            if (!temp.outOfBounds()) {
-                atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-                if (atTemp != null) { break; }
-            }
-        }
+        endMoves.addAll(addMoveList(board, start, moveLimit, 0, -1));
         //Down
         moveLimit = 8 - start.getRow();
-        for (int i = 1; i <= moveLimit; i++) {
-            temp = new ChessPosition(start.getRow() + i, start.getColumn());
-            if (!temp.outOfBounds()) {
-                atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-                if (atTemp != null) { break; }
-            }
-        }
+        endMoves.addAll(addMoveList(board, start, moveLimit, +1, 0));
         //Up
         moveLimit = start.getRow() - 1;
-        for (int i = 1; i <= moveLimit; i++) {
-            temp = new ChessPosition(start.getRow() - i, start.getColumn());
-            if (!temp.outOfBounds()) {
-                atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-                if (atTemp != null) { break; }
-            }
-        }
+        endMoves.addAll(addMoveList(board, start, moveLimit, -1, 0));
         return endMoves;
     }
 
     private Collection<ChessMove> getDiagonals(ChessBoard board, ChessPosition start) {
-        Collection<ChessMove> endMoves = new ArrayList<ChessMove>();
-        ChessPosition temp = null;
-        ChessPiece atTemp = null;
         //Down Right
         int moveLimit = 8 - Math.max(start.getRow(), start.getColumn());
-        for (int i = 1; i <= moveLimit; i++) {
-            temp = new ChessPosition(start.getRow() + i, start.getColumn() + i);
-            if (!temp.outOfBounds()) {
-                atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-                if (atTemp != null) { break; }
-            }
-        }
+        Collection<ChessMove> endMoves = new ArrayList<>(addMoveList(board, start, moveLimit, +1, +1));
         //Down Left
         moveLimit = 8 - Math.max(start.getRow(), 9 - start.getColumn());
-        for (int i = 1; i <= moveLimit; i++) {
-            temp = new ChessPosition(start.getRow() + i, start.getColumn() - i);
-            if (!temp.outOfBounds()) {
-                atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-                if (atTemp != null) { break; }
-            }
-        }
+        endMoves.addAll(addMoveList(board, start, moveLimit, +1, -1));
         //Up Right
         moveLimit = 8 - Math.max(9 - start.getRow(), start.getColumn());
-        for (int i = 1; i <= moveLimit; i++) {
-            temp = new ChessPosition(start.getRow() - i, start.getColumn() + i);
-            if (!temp.outOfBounds()) {
-                atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-                if (atTemp != null) { break; }
-            }
-        }
+        endMoves.addAll(addMoveList(board, start, moveLimit, -1, +1));
         //Up Left
         moveLimit = 8 - Math.max(9 - start.getRow(), 9 - start.getColumn());
-        for (int i = 1; i <= moveLimit; i++) {
-            temp = new ChessPosition(start.getRow() - i, start.getColumn() - i);
-            if (!temp.outOfBounds()) {
-                atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-                if (atTemp != null) { break; }
-            }
-        }
+        endMoves.addAll(addMoveList(board, start, moveLimit, -1, -1));
         return endMoves;
     }
 
     private Collection<ChessMove> getKing(ChessBoard board, ChessPosition start) {
-        Collection<ChessMove> endMoves = new ArrayList<ChessMove>();
-        ChessPiece atTemp = null;
-        //Down Right
-        ChessPosition temp = new ChessPosition(start.getRow() + 1, start.getColumn() + 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Right
-        temp = new ChessPosition(start.getRow(), start.getColumn() + 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Up Right
-        temp = new ChessPosition(start.getRow() - 1, start.getColumn() + 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Up
-        temp = new ChessPosition(start.getRow() - 1, start.getColumn());
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Up Left
-        temp = new ChessPosition(start.getRow() - 1, start.getColumn() - 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Left
-        temp = new ChessPosition(start.getRow(), start.getColumn() - 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Down Left
-        temp = new ChessPosition(start.getRow() + 1, start.getColumn() - 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Down
-        temp = new ChessPosition(start.getRow() + 1, start.getColumn());
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
+        ChessPosition[] tempList = {
+                new ChessPosition(start.getRow() + 1, start.getColumn() + 1),
+                new ChessPosition(start.getRow(), start.getColumn() + 1),
+                new ChessPosition(start.getRow() - 1, start.getColumn() + 1),
+                new ChessPosition(start.getRow() - 1, start.getColumn()),
+                new ChessPosition(start.getRow() - 1, start.getColumn() - 1),
+                new ChessPosition(start.getRow(), start.getColumn() - 1),
+                new ChessPosition(start.getRow() + 1, start.getColumn() - 1),
+                new ChessPosition(start.getRow() + 1, start.getColumn())
+        };
+        return new ArrayList<>(addMoveTemps(board, start, tempList));
+    }
+
+    private Collection<ChessMove> getKnight(ChessBoard board, ChessPosition start) {
+        ChessPosition[] tempList = {
+                new ChessPosition(start.getRow() + 2, start.getColumn() + 1),
+                new ChessPosition(start.getRow() + 1, start.getColumn() + 2),
+                new ChessPosition(start.getRow() - 1, start.getColumn() + 2),
+                new ChessPosition(start.getRow() - 2, start.getColumn() + 1),
+                new ChessPosition(start.getRow() - 2, start.getColumn() - 1),
+                new ChessPosition(start.getRow() - 1, start.getColumn() - 2),
+                new ChessPosition(start.getRow() + 1, start.getColumn() - 2),
+                new ChessPosition(start.getRow() + 2, start.getColumn() - 1)
+        };
+        return new ArrayList<>(addMoveTemps(board, start, tempList));
+    }
+
+    private Collection<ChessMove> addMoveList(ChessBoard board, ChessPosition start, int limit, int rowMod, int colMod) {
+        Collection<ChessMove> endMoves = new ArrayList<>();
+        for (int i = 1; i <= limit; i++) {
+            ChessPosition temp = new ChessPosition(start.getRow() + (i * rowMod), start.getColumn() + (i * colMod));
+            if (!temp.outOfBounds()) {
+                ChessPiece atTemp = board.getPiece(temp);
+                if (atTemp == null || (atTemp.color != color)) {
+                    endMoves.add(new ChessMove(start, temp, null));
+                }
+                if (atTemp != null) { break; }
             }
         }
         return endMoves;
     }
 
-    private Collection<ChessMove> getKnight(ChessBoard board, ChessPosition start) {
-        Collection<ChessMove> endMoves = new ArrayList<ChessMove>();
-        ChessPiece atTemp = null;
-        //Down Bottom Right
-        ChessPosition temp = new ChessPosition(start.getRow() + 2, start.getColumn() + 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Down Middle Right
-        temp = new ChessPosition(start.getRow() + 1, start.getColumn() + 2);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Up Middle Right
-        temp = new ChessPosition(start.getRow() - 1, start.getColumn() + 2);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Up Top Right
-        temp = new ChessPosition(start.getRow() - 2, start.getColumn() + 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Up Top Left
-        temp = new ChessPosition(start.getRow() - 2, start.getColumn() - 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Up Middle Left
-        temp = new ChessPosition(start.getRow() - 1, start.getColumn() - 2);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Down Middle Left
-        temp = new ChessPosition(start.getRow() + 1, start.getColumn() - 2);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
-            }
-        }
-        //Down Bottom Left
-        temp = new ChessPosition(start.getRow() + 2, start.getColumn() - 1);
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null || (atTemp.color != color)) {
-                endMoves.add(new ChessMove(start, temp, null));
+    private Collection<ChessMove> addMoveTemps(ChessBoard board, ChessPosition start, ChessPosition[] tempList) {
+        Collection<ChessMove> endMoves = new ArrayList<>();
+        for (ChessPosition temp : tempList) {
+            if (!temp.outOfBounds()) {
+                ChessPiece atTemp = board.getPiece(temp);
+                if (atTemp == null || (atTemp.color != color)) {
+                    endMoves.add(new ChessMove(start, temp, null));
+                }
             }
         }
         return endMoves;
