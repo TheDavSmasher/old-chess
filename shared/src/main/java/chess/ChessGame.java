@@ -99,7 +99,6 @@ public class ChessGame {
         if (gameBoard.getPiece(move.getStartPosition()).getTeamColor() != currentTurn) {
             throw new InvalidMoveException("Piece not part of current turn's color.");
         }
-        gameBoard.getPiece(move.getStartPosition()).pieceMoved();
         makeMoveInGame(move, gameBoard);
         changeTurn();
     }

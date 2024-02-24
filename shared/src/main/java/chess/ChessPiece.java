@@ -13,12 +13,10 @@ import java.util.Objects;
 public class ChessPiece {
     private final ChessGame.TeamColor color;
     private final PieceType type;
-    private boolean hasMoved;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         color = pieceColor;
         this.type = type;
-        hasMoved = false;
     }
 
     /**
@@ -45,14 +43,6 @@ public class ChessPiece {
      */
     public PieceType getPieceType() {
         return type;
-    }
-
-    public boolean hasPieceMoved() {
-        return hasMoved;
-    }
-
-    public void pieceMoved() {
-        hasMoved = true;
     }
 
     /**
