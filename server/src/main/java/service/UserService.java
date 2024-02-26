@@ -21,7 +21,7 @@ public class UserService {
             userDAO.createUser(request.username(), request.password(), request.email());
             return UserService.login(request);
         } catch (DataAccessException e) {
-            throw new UnexpectedException();
+            throw new UnexpectedException(e.getMessage());
         }
     }
 
@@ -36,7 +36,7 @@ public class UserService {
             AuthData newAuth = authDAO.createAuth(request.username());
             return new UserEnterResponse(newAuth.username(), newAuth.authToken());
         } catch (DataAccessException e) {
-            throw new UnexpectedException();
+            throw new UnexpectedException(e.getMessage());
         }
     }
 
@@ -48,7 +48,7 @@ public class UserService {
             AuthDAO authDAO = MemoryAuthDAO.getInstance();
             authDAO.deleteAuth(request.authToken());
         } catch (DataAccessException e) {
-            throw new UnexpectedException();
+            throw new UnexpectedException(e.getMessage());
         }
     }
 
@@ -57,7 +57,7 @@ public class UserService {
             AuthDAO authDAO = MemoryAuthDAO.getInstance();
             return authDAO.getAuth(authToken);
         } catch (DataAccessException e) {
-            throw new UnexpectedException();
+            throw new UnexpectedException(e.getMessage());
         }
     }
 }

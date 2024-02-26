@@ -15,7 +15,7 @@ public class AppService {
             userDAO.clear();
             gameDAO.clear();
         } catch (DataAccessException e) {
-            throw new UnexpectedException();
+            throw new UnexpectedException(e.getMessage());
         }
     }
 }
