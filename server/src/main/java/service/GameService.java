@@ -3,6 +3,7 @@ package service;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.MemoryGameDAO;
+import dataAccess.SQLGameDAO;
 import model.AuthData;
 import model.GameData;
 import service.request.AuthRequest;
@@ -16,7 +17,7 @@ public class GameService {
             if (UserService.validUser(auth.authToken()) == null) {
                 throw new UnauthorizedException();
             }
-            GameDAO gameDAO = MemoryGameDAO.getInstance();
+            GameDAO gameDAO = SQLGameDAO.getInstance();
             return new ListGamesResponse(gameDAO.listGames());
         } catch (DataAccessException e) {
             throw new UnexpectedException(e.getMessage());
@@ -28,7 +29,7 @@ public class GameService {
             if (UserService.validUser(auth.authToken()) == null) {
                 throw new UnauthorizedException();
             }
-            GameDAO gameDAO = MemoryGameDAO.getInstance();
+            GameDAO gameDAO = SQLGameDAO.getInstance();
 
             if (request.gameName() == null || request.gameName().isEmpty()) {
                 throw new BadRequestException();
@@ -46,7 +47,7 @@ public class GameService {
             if (auth == null) {
                 throw new UnauthorizedException();
             }
-            GameDAO gameDAO = MemoryGameDAO.getInstance();
+            GameDAO gameDAO = SQLGameDAO.getInstance();
             GameData oldGame = gameDAO.getGame(request.gameID());
             if (request.gameID() <= 0 || oldGame == null) {
                 throw new BadRequestException();
