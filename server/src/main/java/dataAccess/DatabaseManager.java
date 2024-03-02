@@ -41,6 +41,7 @@ public class DatabaseManager {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
+            conn.setCatalog("chess");
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
@@ -77,7 +78,7 @@ public class DatabaseManager {
                   `authToken` varchar(255) NOT NULL,
                   `username` varchar(255) NOT NULL,
                   PRIMARY KEY (`authToken`),
-                  INDEX(username)
+                  INDEX (username)
                 )
                 """,
                 """
@@ -85,8 +86,8 @@ public class DatabaseManager {
                   `username` varchar(255) NOT NULL,
                   `password` varchar(255) NOT NULL,
                   `email` varchar(255) NOT NULL,
-                  PRIMARY KEY (`username`)
-                  INDEX(`username`)
+                  PRIMARY KEY (`username`),
+                  INDEX (`username`)
                 )
                 """,
                 """
@@ -97,19 +98,27 @@ public class DatabaseManager {
                   `gameName` varchar(255) NOT NULL,
                   `game` TEXT NOT NULL,
                   PRIMARY KEY (`gameID`),
-                  INDEX(`gameName`)
+                  INDEX (`gameName`)
                 )
                 """
         };
 
-        try (Connection connection = DatabaseManager.getConnection()) {
-            connection.setCatalog("chess");
+        Connection connection = null;
+        try (Connection c = DatabaseManager.getConnection()) {
+            connection = c;
+            connection.setAutoCommit(false);
             for (String statement : createStatements) {
                 try (PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
             }
+            connection.commit();
         } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ignored) {}
+            }
             throw new DataAccessException(e.getMessage());
         }
     }
