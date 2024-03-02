@@ -2,6 +2,7 @@ package dataAccess;
 
 import model.GameData;
 
+import java.sql.*;
 import java.util.ArrayList;
 
 public class SQLGameDAO implements GameDAO {
@@ -12,35 +13,96 @@ public class SQLGameDAO implements GameDAO {
     }
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
-        //FIXME SELECT gameID, whiteUsername, blackUsername, gameName FROM games
-        return null;
+        ArrayList<GameData> gameList = new ArrayList<>();
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String sql = "SELECT gameID, whiteUsername, blackUsername, gameName FROM games";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    while (rs.next()) {
+                        int id = rs.getInt("gameID");
+                        String white = rs.getString("whiteUsername");
+                        String black = rs.getString("blackUsername");
+                        String name = rs.getString("gameName");
+
+                        gameList.add(new GameData(id, white, black, name, null));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+        return gameList;
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        //FIXME SELECT * FROM games WHERE gameID = gameID
-        return null;
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String sql = "SELECT * FROM games WHERE gameID =?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setInt(1, gameID);
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    if (!rs.next()) return null;
+                    int id = rs.getInt("gameID");
+                    String white = rs.getString("whiteUsername");
+                    String black = rs.getString("blackUsername");
+                    String name = rs.getString("gameName");
+
+                    return new GameData(id, white, black, name, null); //FIXME deserialize game
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
-        //FIXME INSERT INTO games (gameName, game) VALUES (gameName, newGame)
-        return null;
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String sql = "INSERT INTO games (gameName, game) VALUES (?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, gameName);
+                preparedStatement.setString(2, ""); //FIXME create and serialize game
+
+                preparedStatement.executeUpdate();
+
+                int id;
+                try (ResultSet rs = preparedStatement.getGeneratedKeys()) { id = rs.getInt(1); }
+
+                return new GameData(id, null, null, gameName, null); //FIXME add game
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
     public void updateGame(int gameID, String color, String username) throws DataAccessException {
-        //FIXME UPDATE games SET blackUsername/whiteUsername = username WHERE gameID = gameID
-    }
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String sql;
+            if (color.equals("WHITE")) sql = "UPDATE games SET whiteUsername=? WHERE gameID=?";
+            else sql = "UPDATE games SET blackUsername=? WHERE gameID=?";
 
-    @Override
-    public void deleteGame(int gameID) throws DataAccessException {
-        //FIXME DELETE FROM games WHERE gameID = gameID
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setInt(2, gameID);
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
     public void clear() throws DataAccessException {
-        //FIXME DELETE FROM games
+        try (Connection connection = DatabaseManager.getConnection()) {
+            String sql = "TRUNCATE games";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     static public GameDAO getInstance() throws DataAccessException {
