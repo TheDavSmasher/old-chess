@@ -6,6 +6,10 @@ import java.util.ArrayList;
 
 public class SQLGameDAO implements GameDAO {
     static SQLGameDAO instance;
+
+    public SQLGameDAO () throws DataAccessException {
+        DatabaseManager.configureDatabase();
+    }
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
         return null;
@@ -36,7 +40,7 @@ public class SQLGameDAO implements GameDAO {
 
     }
 
-    static public GameDAO getInstance() {
+    static public GameDAO getInstance() throws DataAccessException {
         if (instance == null) {
             instance = new SQLGameDAO();
         }

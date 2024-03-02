@@ -67,4 +67,49 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
+
+    public static void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+
+        String[] createStatements = {
+                """
+                CREATE TABLE IF NOT EXISTS auth (
+                  `authToken` varchar(255) NOT NULL,
+                  `username` varchar(255) NOT NULL,
+                  PRIMARY KEY (`authToken`),
+                  INDEX(username)
+                )
+                """,
+                """
+                CREATE TABLE IF NOT EXISTS user (
+                  `username` varchar(255) NOT NULL,
+                  `password` varchar(255) NOT NULL,
+                  `email` varchar(255) NOT NULL,
+                  PRIMARY KEY (`username`)
+                  INDEX(`username`)
+                )
+                """,
+                """
+                CREATE TABLE IF NOT EXISTS game (
+                  `gameID` int NOT NULL AUTO_INCREMENT,
+                  `whiteUsername` varchar(255),
+                  `blackUsername` varchar(255),
+                  `gameName` varchar(255) NOT NULL,
+                  `game` TEXT NOT NULL,
+                  PRIMARY KEY (`gameID`),
+                  INDEX(`gameName`)
+                )
+                """
+        };
+
+        try (Connection connection = DatabaseManager.getConnection()) {
+            for (String statement : createStatements) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
 }

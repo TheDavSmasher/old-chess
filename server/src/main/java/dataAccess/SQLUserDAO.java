@@ -4,6 +4,10 @@ import model.UserData;
 
 public class SQLUserDAO implements UserDAO {
     static SQLUserDAO instance;
+
+    public SQLUserDAO () throws DataAccessException {
+        DatabaseManager.configureDatabase();
+    }
     @Override
     public UserData getUser(String username) throws DataAccessException {
         return null;
@@ -24,7 +28,7 @@ public class SQLUserDAO implements UserDAO {
 
     }
 
-    static public UserDAO getInstance() {
+    static public UserDAO getInstance() throws DataAccessException {
         if (instance == null) {
             instance = new SQLUserDAO();
         }

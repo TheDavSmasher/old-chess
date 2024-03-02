@@ -4,6 +4,10 @@ import model.AuthData;
 
 public class SQLAuthDAO implements AuthDAO {
     static SQLAuthDAO instance;
+
+    public SQLAuthDAO() throws DataAccessException {
+        DatabaseManager.configureDatabase();
+    }
     @Override
     public AuthData getAuth(String token) throws DataAccessException {
         return null;
@@ -24,7 +28,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     }
 
-    static public AuthDAO getInstance() {
+    static public AuthDAO getInstance() throws DataAccessException {
         if (instance == null) {
             instance = new SQLAuthDAO();
         }
