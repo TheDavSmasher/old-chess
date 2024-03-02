@@ -2,7 +2,8 @@ package dataAccess;
 
 import model.AuthData;
 
-public class SQLAuthDao implements AuthDAO {
+public class SQLAuthDAO implements AuthDAO {
+    static SQLAuthDAO instance;
     @Override
     public AuthData getAuth(String token) throws DataAccessException {
         return null;
@@ -21,5 +22,12 @@ public class SQLAuthDao implements AuthDAO {
     @Override
     public void clear() throws DataAccessException {
 
+    }
+
+    static public AuthDAO getInstance() {
+        if (instance == null) {
+            instance = new SQLAuthDAO();
+        }
+        return instance;
     }
 }

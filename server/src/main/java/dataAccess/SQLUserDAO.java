@@ -3,6 +3,7 @@ package dataAccess;
 import model.UserData;
 
 public class SQLUserDAO implements UserDAO {
+    static SQLUserDAO instance;
     @Override
     public UserData getUser(String username) throws DataAccessException {
         return null;
@@ -21,5 +22,12 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public void clear() throws DataAccessException {
 
+    }
+
+    static public UserDAO getInstance() {
+        if (instance == null) {
+            instance = new SQLUserDAO();
+        }
+        return instance;
     }
 }

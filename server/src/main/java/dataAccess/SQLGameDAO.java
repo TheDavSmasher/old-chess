@@ -5,6 +5,7 @@ import model.GameData;
 import java.util.ArrayList;
 
 public class SQLGameDAO implements GameDAO {
+    static SQLGameDAO instance;
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
         return null;
@@ -33,5 +34,12 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public void clear() throws DataAccessException {
 
+    }
+
+    static public GameDAO getInstance() {
+        if (instance == null) {
+            instance = new SQLGameDAO();
+        }
+        return instance;
     }
 }
