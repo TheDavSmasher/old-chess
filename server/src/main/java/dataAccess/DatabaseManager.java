@@ -81,7 +81,7 @@ public class DatabaseManager {
                 )
                 """,
                 """
-                CREATE TABLE IF NOT EXISTS user (
+                CREATE TABLE IF NOT EXISTS users (
                   `username` varchar(255) NOT NULL,
                   `password` varchar(255) NOT NULL,
                   `email` varchar(255) NOT NULL,
@@ -90,7 +90,7 @@ public class DatabaseManager {
                 )
                 """,
                 """
-                CREATE TABLE IF NOT EXISTS game (
+                CREATE TABLE IF NOT EXISTS games (
                   `gameID` int NOT NULL AUTO_INCREMENT,
                   `whiteUsername` varchar(255),
                   `blackUsername` varchar(255),
