@@ -1,5 +1,7 @@
 package dataAccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
 
 import java.sql.*;
@@ -46,8 +48,10 @@ public class SQLGameDAO implements GameDAO {
                     String white = rs.getString("whiteUsername");
                     String black = rs.getString("blackUsername");
                     String name = rs.getString("gameName");
+                    String gameJson = rs.getString("game");
+                    ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
 
-                    return new GameData(id, white, black, name, null); //FIXME deserialize game
+                    return new GameData(id, white, black, name, game);
                 }
             }
         } catch (SQLException e) {
@@ -59,16 +63,18 @@ public class SQLGameDAO implements GameDAO {
     public GameData createGame(String gameName) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection()) {
             String sql = "INSERT INTO games (gameName, game) VALUES (?, ?)";
+            ChessGame game = new ChessGame();
+            String gameJson = new Gson().toJson(game);
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, gameName);
-                preparedStatement.setString(2, ""); //FIXME create and serialize game
+                preparedStatement.setString(2, gameJson);
 
                 preparedStatement.executeUpdate();
 
                 int id;
                 try (ResultSet rs = preparedStatement.getGeneratedKeys()) { id = rs.getInt(1); }
 
-                return new GameData(id, null, null, gameName, null); //FIXME add game
+                return new GameData(id, null, null, gameName, game);
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
