@@ -47,16 +47,16 @@ public class GameService {
                 throw new UnauthorizedException();
             }
             GameDAO gameDAO = MemoryGameDAO.getInstance();
-
-            if (request.gameID() <= 0 || gameDAO.getGame(request.gameID()) == null) {
+            GameData oldGame = gameDAO.getGame(request.gameID());
+            if (request.gameID() <= 0 || oldGame == null) {
                 throw new BadRequestException();
             }
             if (request.playerColor() != null) {
                 if (!request.playerColor().equals("WHITE") && !request.playerColor().equals("BLACK")) {
                     throw new BadRequestException();
                 }
-                if (request.playerColor().equals("WHITE") && gameDAO.getGame(request.gameID()).whiteUsername() != null
-                || request.playerColor().equals("BLACK") && gameDAO.getGame(request.gameID()).blackUsername() != null) {
+                if (request.playerColor().equals("WHITE") && oldGame.whiteUsername() != null
+                || request.playerColor().equals("BLACK") && oldGame.blackUsername() != null) {
                     throw new PreexistingException();
                 }
                 gameDAO.updateGame(request.gameID(), request.playerColor(), auth.username());
