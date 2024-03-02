@@ -103,6 +103,7 @@ public class DatabaseManager {
         };
 
         try (Connection connection = DatabaseManager.getConnection()) {
+            connection.setCatalog("chess");
             for (String statement : createStatements) {
                 try (PreparedStatement preparedStatement = connection.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
