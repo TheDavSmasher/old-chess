@@ -3,6 +3,8 @@ package dataAccessTests;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.SQLAuthDAO;
+import model.AuthData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,19 +22,28 @@ class SQLAuthDAOTest {
     }
 
     @Test
-    void getAuthTest() {
+    void getAuthTest() throws DataAccessException {
+        String token = authDAO.createAuth(username).authToken();
+
+        Assertions.assertEquals(new AuthData(username, token), authDAO.getAuth(token));
     }
 
     @Test
-    void getAuthFail() {
+    void getAuthFail() throws DataAccessException {
+        Assertions.assertNull(authDAO.getAuth(null));
+        Assertions.assertNull(authDAO.getAuth("not-an-auth-token"));
     }
 
     @Test
-    void createAuthTest() {
+    void createAuthTest() throws DataAccessException {
+        AuthData authData = authDAO.createAuth(username);
+        Assertions.assertEquals(username, authData.username());
+        Assertions.assertNotNull(authData.authToken());
     }
 
     @Test
     void createAuthFail() {
+        Assertions.assertThrows(DataAccessException.class, () -> authDAO.createAuth(null));
     }
 
     @Test
