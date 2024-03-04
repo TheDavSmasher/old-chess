@@ -109,7 +109,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public void updateGameBoard(int gameID, String gameJson) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection()) {
-            String sql = "UPDATE games SET game=? WHERE gameID=";
+            String sql = "UPDATE games SET game=? WHERE gameID=?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, gameJson);
                 preparedStatement.setInt(2, gameID);
