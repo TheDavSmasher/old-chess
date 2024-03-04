@@ -106,6 +106,7 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
+    @Override
     public void updateGameBoard(int gameID, String gameJson) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection()) {
             String sql = "UPDATE games SET game=? WHERE gameID=";

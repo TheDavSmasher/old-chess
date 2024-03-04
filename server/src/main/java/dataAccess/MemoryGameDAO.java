@@ -52,6 +52,11 @@ public class MemoryGameDAO implements GameDAO {
         }
     }
 
+    @Override
+    public void updateGameBoard(int gameID, String gameJson) throws DataAccessException {
+
+    }
+
     private void deleteGame(int gameID) {
         data.removeIf(game -> game.gameID() == gameID);
     }
