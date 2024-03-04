@@ -7,19 +7,35 @@ import static org.junit.jupiter.api.Assertions.*;
 class SQLGameDAOTest {
 
     @Test
-    void listGames() {
+    void listGamesTest() {
     }
 
     @Test
-    void getGame() {
+    void listGamesFail() {
     }
 
     @Test
-    void createGame() {
+    void getGameTest() {
     }
 
     @Test
-    void updateGame() {
+    void getGameFail() {
+    }
+
+    @Test
+    void createGameTest() {
+    }
+
+    @Test
+    void createGameFail() {
+    }
+
+    @Test
+    void updateGameTest() {
+    }
+
+    @Test
+    void updateGameFail() {
     }
 
     @Test

@@ -7,15 +7,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class SQLUserDAOTest {
 
     @Test
-    void getUser() {
+    void getUserTest() {
     }
 
     @Test
-    void testGetUser() {
+    void getUserFail() {
     }
 
     @Test
-    void createUser() {
+    void createUserTest() {
+    }
+
+    @Test
+    void createUserFail() {
     }
 
     @Test

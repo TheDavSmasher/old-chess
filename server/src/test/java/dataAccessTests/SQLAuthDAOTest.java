@@ -7,15 +7,27 @@ import static org.junit.jupiter.api.Assertions.*;
 class SQLAuthDAOTest {
 
     @Test
-    void getAuth() {
+    void getAuthTest() {
     }
 
     @Test
-    void createAuth() {
+    void getAuthFail() {
     }
 
     @Test
-    void deleteAuth() {
+    void createAuthTest() {
+    }
+
+    @Test
+    void createAuthFail() {
+    }
+
+    @Test
+    void deleteAuthTest() {
+    }
+
+    @Test
+    void deleteAuthFail() {
     }
 
     @Test
