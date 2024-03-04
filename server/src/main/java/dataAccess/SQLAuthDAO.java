@@ -41,7 +41,9 @@ public class SQLAuthDAO implements AuthDAO {
                 preparedStatement.setString(1, token);
                 preparedStatement.setString(2, username);
 
-                preparedStatement.executeUpdate();
+                if (preparedStatement.executeUpdate() == 0) {
+                    throw new DataAccessException("Did not create any auth");
+                }
 
                 return new AuthData(username, token);
             }
@@ -57,7 +59,9 @@ public class SQLAuthDAO implements AuthDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, token);
 
-                preparedStatement.executeUpdate();
+                if (preparedStatement.executeUpdate() == 0) {
+                    throw new DataAccessException("Did not delete any auth");
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());

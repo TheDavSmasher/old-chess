@@ -69,7 +69,9 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.setString(1, gameName);
                 preparedStatement.setString(2, gameJson);
 
-                preparedStatement.executeUpdate();
+                if (preparedStatement.executeUpdate() == 0) {
+                    throw new DataAccessException("Did not create any game");
+                }
 
                 int id;
                 try (ResultSet rs = preparedStatement.getGeneratedKeys()) {
@@ -95,7 +97,9 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.setString(1, username);
                 preparedStatement.setInt(2, gameID);
 
-                preparedStatement.executeUpdate();
+                if (preparedStatement.executeUpdate() == 0) {
+                    throw new DataAccessException("Did not update any game");
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
@@ -108,6 +112,10 @@ public class SQLGameDAO implements GameDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, gameJson);
                 preparedStatement.setInt(2, gameID);
+
+                if (preparedStatement.executeUpdate() == 0) {
+                    throw new DataAccessException("Did not update any game");
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());

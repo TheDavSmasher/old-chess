@@ -56,7 +56,9 @@ public class SQLUserDAO implements UserDAO {
                 preparedStatement.setString(2, hashedPassword);
                 preparedStatement.setString(3, email);
 
-                preparedStatement.executeUpdate();
+                if (preparedStatement.executeUpdate() == 0) {
+                    throw new DataAccessException("Did not create any user");
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
