@@ -26,6 +26,10 @@ class SQLAuthDAOTest {
         String token = authDAO.createAuth(username).authToken();
 
         Assertions.assertEquals(new AuthData(username, token), authDAO.getAuth(token));
+
+        token = authDAO.createAuth(username).authToken(); //Non-unique username in database
+
+        Assertions.assertEquals(new AuthData(username, token), authDAO.getAuth(token));
     }
 
     @Test
@@ -47,14 +51,27 @@ class SQLAuthDAOTest {
     }
 
     @Test
-    void deleteAuthTest() {
+    void deleteAuthTest() throws DataAccessException {
+        String token = authDAO.createAuth(username).authToken();
+        Assertions.assertDoesNotThrow(() -> authDAO.deleteAuth(token));
     }
 
     @Test
-    void deleteAuthFail() {
+    void deleteAuthFail() throws DataAccessException {
+        Assertions.assertThrows(DataAccessException.class, () -> authDAO.deleteAuth(null));
+        Assertions.assertThrows(DataAccessException.class, () -> authDAO.deleteAuth("not-an-auth-token"));
+
+        String token = authDAO.createAuth(username).authToken();
+        authDAO.deleteAuth(token);
+
+        Assertions.assertThrows(DataAccessException.class, () -> authDAO.deleteAuth(token));
     }
 
     @Test
-    void clear() {
+    void clear() throws DataAccessException {
+        authDAO.createAuth(username);
+
+        Assertions.assertDoesNotThrow(() -> authDAO.clear());
+        Assertions.assertDoesNotThrow(() -> authDAO.clear()); // Multiple clears, clear when empty
     }
 }
