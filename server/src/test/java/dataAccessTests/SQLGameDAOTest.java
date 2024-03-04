@@ -43,11 +43,19 @@ class SQLGameDAOTest {
     }
 
     @Test
-    void updateGameTest() {
+    void updateGamePlayerTest() {
     }
 
     @Test
-    void updateGameFail() {
+    void updateGamePlayerFail() {
+    }
+
+    @Test
+    void updateGameBoardTest() {
+    }
+
+    @Test
+    void updateGameBoardFail() {
     }
 
     @Test
