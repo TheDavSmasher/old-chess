@@ -85,7 +85,7 @@ public class SQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int gameID, String color, String username) throws DataAccessException {
+    public void updateGamePlayer(int gameID, String color, String username) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection()) {
             String sql;
             if (color.equals("WHITE")) sql = "UPDATE games SET whiteUsername=? WHERE gameID=?";

@@ -2,7 +2,6 @@ package service;
 
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
-import dataAccess.MemoryGameDAO;
 import dataAccess.SQLGameDAO;
 import model.AuthData;
 import model.GameData;
@@ -60,7 +59,7 @@ public class GameService {
                 || request.playerColor().equals("BLACK") && oldGame.blackUsername() != null) {
                     throw new PreexistingException();
                 }
-                gameDAO.updateGame(request.gameID(), request.playerColor(), auth.username());
+                gameDAO.updateGamePlayer(request.gameID(), request.playerColor(), auth.username());
             }
         } catch (DataAccessException e) {
             throw new UnexpectedException(e.getMessage());

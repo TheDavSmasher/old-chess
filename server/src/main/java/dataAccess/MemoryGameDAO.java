@@ -42,7 +42,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int gameID, String color, String username) {
+    public void updateGamePlayer(int gameID, String color, String username) {
         GameData oldGame = getGame(gameID);
         deleteGame(gameID);
         if (color.equals("WHITE")) {
