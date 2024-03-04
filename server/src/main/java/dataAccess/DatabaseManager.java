@@ -41,7 +41,7 @@ public class DatabaseManager {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
-            conn.setCatalog("chess");
+            conn.setCatalog(databaseName);
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
