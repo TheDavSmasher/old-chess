@@ -1,7 +1,7 @@
 import chess.*;
 
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import static java.lang.Character.isUpperCase;
 import static ui.EscapeSequences.*;
@@ -10,6 +10,7 @@ import static ui.EscapeSequences.UNSET_TEXT_COLOR;
 public class ChessClient {
 
     private static final int BOARD_SIZE = 8;
+    private static String authToken;
 
     public static void run(PrintStream out) {
         out.print(ERASE_SCREEN);
@@ -24,6 +25,56 @@ public class ChessClient {
         printChessBoard(out, board, false);
         out.println();
         printChessBoard(out, board, true);
+    }
+
+    public static String evaluate(String input) {
+        String[] tokens = input.toLowerCase().split(" ");
+        String command = (tokens.length > 0) ? tokens[0] : "help";
+        String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        return switch (command) {
+            case "register" -> register(params);
+            case "signin" -> signIn(params);
+            case "logout" -> logout();
+            case "create" -> createGame(params);
+            case "games" -> listGames();
+            case "join" -> joinGame(params);
+            case "observe" -> observeGame(params);
+            case "quit" -> "quit";
+            default -> help();
+        };
+    }
+
+    public static String help() {
+        return "Help wanted";
+    }
+
+    private static String observeGame(String[] params) {
+        return null;
+    }
+
+    private static String joinGame(String[] params) {
+        return null;
+    }
+
+    private static String listGames() {
+        return null;
+    }
+
+    private static String createGame(String[] params) {
+        return null;
+    }
+
+    private static String logout() {
+        return null;
+    }
+
+    private static String register(String[] params) {
+        return null;
+    }
+
+    private static String signIn(String[] params) {
+        //TODO talk to server
+        return null;
     }
 
     private static void printChessBoard(PrintStream out, String[][] board, boolean whiteBottom) {
