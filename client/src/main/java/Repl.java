@@ -5,10 +5,16 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 public class Repl {
 
+    private final ChessClient client;
+
+    public Repl() {
+        client = new ChessClient();
+    }
+
     public void run() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.println("Intro");
-        out.print("Options");
+        out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -17,7 +23,7 @@ public class Repl {
             String line = scanner.nextLine();
 
             try {
-                result = ChessClient.evaluate(line);
+                result = client.evaluate(line);
             } catch (Throwable e) {
                 out.print(e);
             }
