@@ -19,6 +19,10 @@ public class Main {
         out.print(ERASE_SCREEN);
 
         ChessGame testGame = new ChessGame();
+        try {
+            testGame.makeMove(new ChessMove(new ChessPosition(2,1), new ChessPosition(3,1), null));
+        } catch (InvalidMoveException ignored) {}
+
         String[][] board = getChessBoardAsArray(testGame.getBoard());
 
         printChessBoard(out, board, false);
@@ -62,7 +66,7 @@ public class Main {
         drawSideHeader(out, col, whiteBottom);
         boolean isWhite = firstIsWhite;
         for (int i = 0; i < BOARD_SIZE; i++) {
-            int boardCol = whiteBottom ? (BOARD_SIZE - i - 1) : i;
+            int boardCol = whiteBottom ? i : (BOARD_SIZE - i - 1);
             String pieceString = boardRow[boardCol];
             drawChessSquare(out, pieceString, isWhite);
             isWhite = !isWhite;
