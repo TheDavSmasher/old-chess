@@ -24,6 +24,7 @@ public class Repl {
 
             try {
                 result = client.evaluate(line);
+                out.print(UNSET_TEXT_COLOR + result);
             } catch (Throwable e) {
                 out.print(e);
             }
