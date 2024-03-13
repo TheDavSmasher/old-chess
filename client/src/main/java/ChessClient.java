@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import static java.lang.Character.isUpperCase;
 import static ui.EscapeSequences.*;
-import static ui.EscapeSequences.UNSET_TEXT_COLOR;
 
 public class ChessClient {
 
