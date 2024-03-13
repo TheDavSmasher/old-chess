@@ -14,7 +14,7 @@ public class Repl {
     public void run() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.println("Intro");
-        out.print(client.help());
+        client.help(out);
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -23,8 +23,7 @@ public class Repl {
             String line = scanner.nextLine();
 
             try {
-                result = client.evaluate(line);
-                out.print(UNSET_TEXT_COLOR + result);
+                result = client.evaluate(line, out);
             } catch (Throwable e) {
                 out.print(e);
             }
@@ -33,6 +32,6 @@ public class Repl {
     }
 
     private void printPrompt(PrintStream out) {
-        out.print("\n" + UNSET_TEXT_COLOR + ">>> " + SET_TEXT_COLOR_GREEN);
+        out.print("\n" + UNSET_TEXT_COLOR + ">>> ");
     }
 }
