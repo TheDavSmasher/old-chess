@@ -31,54 +31,121 @@ public class ChessClient {
         printChessBoard(out, board, true);
     }
 
-    public String evaluate(String input) {
+    public String evaluate(String input, PrintStream out) {
         String[] tokens = input.toLowerCase().split(" ");
-        String command = (tokens.length > 0) ? tokens[0] : "help";
+        int command = (tokens.length > 0) ? Integer.parseInt(tokens[0]) : 0;
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        if (loggedInCheck()) {
+            return switch (command) {
+                case 1 -> listGames(out);
+                case 2 -> createGame(out, params);
+                case 3 -> joinGame(out, params);
+                case 4 -> observeGame(out, params);
+                case 5 -> logout(out);
+                default -> help(out);
+            };
+        }
         return switch (command) {
-            case "register" -> register(params);
-            case "signin" -> signIn(params);
-            case "logout" -> logout();
-            case "create" -> createGame(params);
-            case "games" -> listGames();
-            case "join" -> joinGame(params);
-            case "observe" -> observeGame(params);
-            case "quit" -> "quit";
-            default -> help();
+            case 1 -> register(out, params);
+            case 2 -> signIn(out, params);
+            case 3 -> "quit";
+            default -> help(out);
         };
     }
 
-    public String help() {
-        return "Help wanted";
+    public String help(PrintStream out) {
+        if (!loggedInCheck()) {
+            out.print( """
+                   1 - Register
+                   2 - Login
+                   3 - Quit
+                   
+                   0 - Help""");
+        } else {
+            out.print("""
+               1 - List Games
+               2 - Create Game
+               3 - Join Game
+               4 - Observe Game
+               5 - Logout
+               
+               0 - Help""");
+        }
+        return "";
     }
 
-    private String observeGame(String[] params) {
-        return null;
-    }
+    private String register(PrintStream out, String[] params) {
+        if (params.length < 3) {
+            out.print("Please provide a username, password, and email.\nFormat: 1 username password email");
+            return "Retry";
+        }
+        String username = params[0];
+        String password = params[1];
+        String email = params[2];
 
-    private String joinGame(String[] params) {
-        return null;
-    }
-
-    private String listGames() {
-        return null;
-    }
-
-    private String createGame(String[] params) {
-        return null;
-    }
-
-    private String logout() {
-        return null;
-    }
-
-    private String register(String[] params) {
-        return null;
-    }
-
-    private String signIn(String[] params) {
         //TODO talk to server
-        return null;
+        authToken = "tempToken";
+        help(out);
+
+        return "Welcome new user";
+    }
+
+    private String signIn(PrintStream out, String[] params) {
+        if (params.length < 2) {
+            out.print("Please provide a username and password.\nFormat: 2 username password");
+            return "Retry";
+        }
+        String username = params[0];
+        String password = params[1];
+
+        //TODO talk to server
+        authToken = "tempToken";
+        help(out);
+
+        return "Welcome back";
+    }
+
+    private String listGames(PrintStream out) {
+        return "Here's the games";
+    }
+
+    private String createGame(PrintStream out, String[] params) {
+        if (params.length < 1) {
+            out.print("Please provide a game ID.\\nFormat: 2 gameName");
+            return "Retry";
+        }
+        //TODO talk to server
+        return "Created new game";
+    }
+
+    private String joinGame(PrintStream out, String[] params) {
+        if (params.length < 2) {
+            out.print("Please provide a game ID and color.\nFormat: 3 gameID 1/2");
+            return "Retry";
+        }
+        //TODO talk to server
+        return "You joined";
+    }
+
+    private String observeGame(PrintStream out, String[] params) {
+        if (params.length < 1) {
+            out.print("Please provide a game ID.\nFormat: 4 gameID");
+            return "Retry";
+        }
+        //TODO talk to server
+        return "You're now watching";
+    }
+
+    private String logout(PrintStream out) {
+        // TODO talk to server
+        authToken = null;
+        help(out);
+
+        return "See you later!";
+    }
+
+    private boolean loggedInCheck() {
+        return authToken != null;
     }
 
     private void printChessBoard(PrintStream out, String[][] board, boolean whiteBottom) {
