@@ -16,21 +16,6 @@ public class ChessClient {
         authToken = null;
     }
 
-    public void run(PrintStream out) {
-        out.print(ERASE_SCREEN);
-
-        ChessGame testGame = new ChessGame();
-        try {
-            testGame.makeMove(new ChessMove(new ChessPosition(2,1), new ChessPosition(3,1), null));
-        } catch (InvalidMoveException ignored) {}
-
-        String[][] board = getChessBoardAsArray(testGame.getBoard());
-
-        printChessBoard(out, board, false);
-        out.println();
-        printChessBoard(out, board, true);
-    }
-
     public String evaluate(String input, PrintStream out) {
         String[] tokens = input.toLowerCase().split(" ");
         int command = (tokens.length > 0) ? Integer.parseInt(tokens[0]) : 0;
