@@ -54,14 +54,15 @@ public class GameService {
                 throw new BadRequestException();
             }
             if (request.playerColor() != null) {
-                if (!request.playerColor().equals("WHITE") && !request.playerColor().equals("BLACK")) {
+                String color = request.playerColor().toUpperCase();
+                if (!color.equals("WHITE") && !color.equals("BLACK")) {
                     throw new BadRequestException();
                 }
-                if (request.playerColor().equals("WHITE") && oldGame.whiteUsername() != null
-                || request.playerColor().equals("BLACK") && oldGame.blackUsername() != null) {
+                if (color.equals("WHITE") && oldGame.whiteUsername() != null
+                || color.equals("BLACK") && oldGame.blackUsername() != null) {
                     throw new PreexistingException();
                 }
-                gameDAO.updateGamePlayer(request.gameID(), request.playerColor(), auth.username());
+                gameDAO.updateGamePlayer(request.gameID(), color, auth.username());
             }
         } catch (DataAccessException e) {
             throw new UnexpectedException(e.getMessage());
