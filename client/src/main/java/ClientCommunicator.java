@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import model.response.ErrorMessage;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -48,7 +49,8 @@ public class ClientCommunicator {
             try (InputStream responseBody = connection.getErrorStream()) {
                 reader = new InputStreamReader(responseBody);
                 BufferedReader bufferedReader = new BufferedReader(reader);
-                throw new IOException(bufferedReader.readLine());
+                ErrorMessage errorMessage = new Gson().fromJson(bufferedReader.readLine(), ErrorMessage.class);
+                throw new IOException(errorMessage.message());
             }
         }
     }
