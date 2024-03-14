@@ -1,3 +1,5 @@
+package client;
+
 import com.google.gson.Gson;
 import model.dataAccess.GameData;
 import model.request.CreateGameRequest;

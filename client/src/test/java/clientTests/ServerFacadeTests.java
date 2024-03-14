@@ -1,5 +1,6 @@
 package clientTests;
 
+import client.ServerFacade;
 import org.junit.jupiter.api.*;
 import server.ChessServer;
 
@@ -7,6 +8,7 @@ import server.ChessServer;
 public class ServerFacadeTests {
 
     private static ChessServer server;
+    static ServerFacade facade;
 
     @BeforeAll
     public static void init() {
