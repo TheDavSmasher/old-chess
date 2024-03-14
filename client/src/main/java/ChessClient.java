@@ -120,7 +120,7 @@ public class ChessClient {
             return "Retry";
         }
         try {
-            ServerFacade.createGame(authToken, params[1]);
+            ServerFacade.createGame(authToken, params[0]);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
@@ -130,7 +130,7 @@ public class ChessClient {
 
     private String joinGame(PrintStream out, String[] params) {
         if (params.length < 2) {
-            out.print("Please provide a game ID and color.\nFormat: 3 gameID 1/2");
+            out.print("Please provide a game ID and color.\nFormat: 3 WHITE/BLACK gameID");
             return "Retry";
         }
         try {
