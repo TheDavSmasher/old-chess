@@ -1,11 +1,8 @@
 package clientTests;
 
-import chess.ChessGame;
-import client.ClientCommunicator;
 import client.ServerFacade;
 import model.dataAccess.GameData;
 import model.response.CreateGameResponse;
-import model.response.EmptyResponse;
 import org.junit.jupiter.api.*;
 import server.ChessServer;
 
@@ -16,8 +13,6 @@ import java.util.ArrayList;
 public class ServerFacadeTests {
 
     private static ChessServer server;
-    static ServerFacade facade;
-    private static int currentPort;
     private final String username = "davhig";
     private final String password = "passTest";
     private final String email = "davhig@gmeia.com";
@@ -30,9 +25,8 @@ public class ServerFacadeTests {
     public static void init() {
         server = new ChessServer();
         var port = server.run(0);
-        currentPort = port;
         System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade(port);
+        ServerFacade.setPort(port);
     }
 
     @BeforeEach
