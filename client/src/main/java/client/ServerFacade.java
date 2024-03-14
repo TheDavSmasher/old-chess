@@ -17,7 +17,7 @@ public class ServerFacade {
 
     private static String urlPort = "http://localhost:8080/";
 
-    public ServerFacade(int port) {
+    public static void setPort(int port) {
         urlPort = "http://localhost:" + port + "/";
     }
 
