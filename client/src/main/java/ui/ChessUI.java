@@ -12,9 +12,9 @@ import static ui.EscapeSequences.UNSET_TEXT_COLOR;
 
 public class ChessUI {
 
-    private final int BOARD_SIZE = 8;
+    private static final int BOARD_SIZE = 8;
 
-    public String[][] getChessBoardAsArray(ChessBoard chessBoard) {
+    public static String[][] getChessBoardAsArray(ChessBoard chessBoard) {
         String[][] stringBoard = new String[8][8];
 
         for (int i = 0; i < BOARD_SIZE; i++) {
@@ -29,7 +29,7 @@ public class ChessUI {
         return stringBoard;
     }
 
-    public void printChessBoard(PrintStream out, String[][] board, boolean whiteBottom) {
+    public static void printChessBoard(PrintStream out, String[][] board, boolean whiteBottom) {
         printTopHeader(out, whiteBottom);
 
         boolean firstIsWhite = true;
@@ -42,7 +42,7 @@ public class ChessUI {
         printTopHeader(out, whiteBottom);
     }
 
-    private void printTopHeader(PrintStream out, boolean whiteBottom) {
+    private static void printTopHeader(PrintStream out, boolean whiteBottom) {
         String[] columns = { " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
         setGreyBG(out);
         out.print("   ");
@@ -55,13 +55,13 @@ public class ChessUI {
         out.println();
     }
 
-    private void drawSideHeader(PrintStream out, int col, boolean whiteBottom) {
+    private static void drawSideHeader(PrintStream out, int col, boolean whiteBottom) {
         setGreyBG(out);
         int actual = whiteBottom ? (BOARD_SIZE - col) : (col + 1);
         out.print(" " + actual + " ");
     }
 
-    private void drawChessRow(PrintStream out, int col, String[] boardRow, boolean firstIsWhite, boolean whiteBottom) {
+    private static void drawChessRow(PrintStream out, int col, String[] boardRow, boolean firstIsWhite, boolean whiteBottom) {
         drawSideHeader(out, col, whiteBottom);
         boolean isWhite = firstIsWhite;
         for (int i = 0; i < BOARD_SIZE; i++) {
@@ -75,7 +75,7 @@ public class ChessUI {
         out.println();
     }
 
-    private void drawChessSquare(PrintStream out, String pieceString, boolean isWhite) {
+    private static void drawChessSquare(PrintStream out, String pieceString, boolean isWhite) {
         if (isWhite) {
             setWhiteBG(out);
         } else {
@@ -95,28 +95,28 @@ public class ChessUI {
 
     }
 
-    private void setBlackBG(PrintStream out) {
+    private static void setBlackBG(PrintStream out) {
         out.print(SET_BG_COLOR_BLACK);
     }
 
-    private void setRedText(PrintStream out) {
+    private static void setRedText(PrintStream out) {
         out.print(SET_TEXT_COLOR_RED);
     }
 
-    private void setBlueText(PrintStream out) {
+    private static void setBlueText(PrintStream out) {
         out.print(SET_TEXT_COLOR_BLUE);
     }
 
-    private void setWhiteBG(PrintStream out) {
+    private static void setWhiteBG(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
     }
 
-    private void setGreyBG(PrintStream out) {
+    private static void setGreyBG(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
-    private void resetBGColor(PrintStream out) {
+    private static void resetBGColor(PrintStream out) {
         out.print(UNSET_BG_COLOR);
         out.print(UNSET_TEXT_COLOR);
     }

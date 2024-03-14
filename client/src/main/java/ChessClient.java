@@ -108,10 +108,9 @@ public class ChessClient {
         try {
             testGame.makeMove(new ChessMove(new ChessPosition(2,1), new ChessPosition(3,1), null));
         } catch (InvalidMoveException ignored) {}
-        ChessUI chessUI = new ChessUI();
-        String[][] board = chessUI.getChessBoardAsArray(testGame.getBoard());
+        String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
 
-        chessUI.printChessBoard(out, board, true);
+        ChessUI.printChessBoard(out, board, true);
         return "You joined";
     }
 
@@ -122,9 +121,8 @@ public class ChessClient {
         }
         //TODO talk to server
         ChessGame testGame = new ChessGame();
-        ChessUI chessUI = new ChessUI();
-        String[][] board = chessUI.getChessBoardAsArray(testGame.getBoard());
-        chessUI.printChessBoard(out, board, false);
+        String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
+        ChessUI.printChessBoard(out, board, false);
 
         return "You're now watching";
     }
