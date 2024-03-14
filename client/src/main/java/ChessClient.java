@@ -2,6 +2,7 @@ import chess.*;
 import model.dataAccess.GameData;
 import ui.ChessUI;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +66,12 @@ public class ChessClient {
         String password = params[1];
         String email = params[2];
 
-        authToken = ServerFacade.register(username, password, email).authToken();
+        try {
+            authToken = ServerFacade.register(username, password, email).authToken();
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Error Caught";
+        }
         help(out);
 
         return "Welcome new user";
@@ -79,14 +85,25 @@ public class ChessClient {
         String username = params[0];
         String password = params[1];
 
-        authToken = ServerFacade.login(username, password).authToken();
+        try {
+            authToken = ServerFacade.login(username, password).authToken();
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Error Caught";
+        }
         help(out);
 
         return "Welcome back";
     }
 
     private String listGames(PrintStream out) {
-        ArrayList<GameData> allGames = ServerFacade.listGames(authToken);
+        ArrayList<GameData> allGames;
+        try {
+            allGames = ServerFacade.listGames(authToken);
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Error Caught";
+        }
         out.print("Games:");
         int i = 0;
         for (GameData data : allGames) {
@@ -102,7 +119,12 @@ public class ChessClient {
             out.print("Please provide a game ID.\\nFormat: 2 gameName");
             return "Retry";
         }
-        ServerFacade.createGame(authToken, params[1]);
+        try {
+            ServerFacade.createGame(authToken, params[1]);
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Error Caught";
+        }
         return "Created new game";
     }
 
@@ -111,11 +133,14 @@ public class ChessClient {
             out.print("Please provide a game ID and color.\nFormat: 3 gameID 1/2");
             return "Retry";
         }
-        GameData gameData = ServerFacade.joinGame(authToken, params[0], Integer.parseInt(params[1]));
-        //TODO check if null
-        ChessGame testGame = gameData.game();
+        try {
+            ServerFacade.joinGame(authToken, params[0], Integer.parseInt(params[1]));
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Error Caught";
+        }
+        ChessGame testGame = new ChessGame();
         String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
-
         ChessUI.printChessBoard(out, board, true);
         return "You joined";
     }
@@ -125,9 +150,13 @@ public class ChessClient {
             out.print("Please provide a game ID.\nFormat: 4 gameID");
             return "Retry";
         }
-        GameData gameData = ServerFacade.joinGame(authToken, params[0], Integer.parseInt(params[1]));
-        //TODO check if null
-        ChessGame testGame = gameData.game();
+        try {
+            ServerFacade.observeGame(authToken, Integer.parseInt(params[0]));
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Error Caught";
+        }
+        ChessGame testGame = new ChessGame();
         String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
         ChessUI.printChessBoard(out, board, false);
 
@@ -135,7 +164,12 @@ public class ChessClient {
     }
 
     private String logout(PrintStream out) {
-        ServerFacade.logout(authToken);
+        try {
+            ServerFacade.logout(authToken);
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Error Caught";
+        }
         authToken = null;
         help(out);
 
