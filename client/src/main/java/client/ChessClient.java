@@ -18,7 +18,13 @@ public class ChessClient {
 
     public String evaluate(String input, PrintStream out) {
         String[] tokens = input.toLowerCase().split(" ");
-        int command = (tokens.length > 0) ? Integer.parseInt(tokens[0]) : 0;
+        int command;
+        try {
+            command = (tokens.length > 0) ? Integer.parseInt(tokens[0]) : 0;
+        } catch (NumberFormatException e) {
+            help(out, false);
+            return "Wrong option";
+        }
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         if (loggedInCheck()) {
             return switch (command) {
@@ -27,27 +33,28 @@ public class ChessClient {
                 case 3 -> joinGame(out, params);
                 case 4 -> observeGame(out, params);
                 case 5 -> logout(out);
-                default -> help(out);
+                default -> help(out, false);
             };
         }
         return switch (command) {
             case 1 -> register(out, params);
             case 2 -> signIn(out, params);
             case 3 -> "quit";
-            default -> help(out);
+            default -> help(out, false);
         };
     }
 
-    public String help(PrintStream out) {
-        if (!loggedInCheck()) {
-            out.print( """
+    public String help(PrintStream out, boolean simple) {
+        if (simple) {
+            if (!loggedInCheck()) {
+                out.print( """
                    1 - Register
                    2 - Login
                    3 - Quit
                    
                    0 - Help""");
-        } else {
-            out.print("""
+            } else {
+                out.print("""
                1 - List Games
                2 - Create Game
                3 - Join Game
@@ -55,6 +62,30 @@ public class ChessClient {
                5 - Logout
                
                0 - Help""");
+            }
+        } else {
+            if (!loggedInCheck()) {
+                out.print( """
+                   1 - Register: creates a new user in the database. Username must be unique.
+                       Format: 1 username password email
+                   2 - Login: logs in to the server with a pre-registered username with its corresponding password.
+                       Format: 2 username password
+                   3 - Quit: exit out of the client.
+                   
+                   0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+            } else {
+                out.print("""
+               1 - List Games: show all games that are currently being hosted in the server.
+               2 - Create Game: create a new game in the database with a name. The game's name can include spaces.
+                   Format: 2 gameName
+               3 - Join Game: join an existing game with as a specific player color.
+                   Format: 3 white/black gameID
+               4 - Observe Game: see the current state of a game without becoming a player,
+                   Format: 4 gameID
+               5 - Logout: leave your current session and return to login menu.
+               
+               0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+            }
         }
         return "";
     }
@@ -74,7 +105,7 @@ public class ChessClient {
             out.print(e.getMessage());
             return "Error Caught";
         }
-        help(out);
+        help(out, true);
 
         return "Welcome new user";
     }
@@ -93,7 +124,7 @@ public class ChessClient {
             out.print(e.getMessage());
             return "Error Caught";
         }
-        help(out);
+        help(out, true);
 
         return "Welcome back";
     }
@@ -122,7 +153,8 @@ public class ChessClient {
             return "Retry";
         }
         try {
-            ServerFacade.createGame(authToken, params[0]);
+            String fullName = stringFromParams(params);
+            ServerFacade.createGame(authToken, fullName);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
@@ -143,7 +175,8 @@ public class ChessClient {
         }
         ChessGame testGame = new ChessGame();
         String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
-        ChessUI.printChessBoard(out, board, true);
+        boolean white = params[0].equalsIgnoreCase("white");
+        ChessUI.printChessBoard(out, board, white);
         return "You joined";
     }
 
@@ -160,7 +193,7 @@ public class ChessClient {
         }
         ChessGame testGame = new ChessGame();
         String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
-        ChessUI.printChessBoard(out, board, false);
+        ChessUI.printChessBoard(out, board, true);
 
         return "You're now watching";
     }
@@ -173,12 +206,23 @@ public class ChessClient {
             return "Error Caught";
         }
         authToken = null;
-        help(out);
+        help(out, true);
 
         return "See you later!";
     }
 
     private boolean loggedInCheck() {
         return authToken != null;
+    }
+
+    private String stringFromParams(String[] params) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < params.length; i++) {
+            result.append(params[i]);
+            if (i < params.length - 1) {
+                result.append(" ");
+            }
+        }
+        return result.toString();
     }
 }

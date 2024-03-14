@@ -15,8 +15,8 @@ public class Repl {
 
     public void run() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        out.println("Intro");
-        client.help(out);
+        out.println("Welcome to my Chess Server!");
+        client.help(out, true);
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
