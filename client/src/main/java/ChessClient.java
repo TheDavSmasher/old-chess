@@ -65,7 +65,6 @@ public class ChessClient {
         String password = params[1];
         String email = params[2];
 
-        //TODO talk to server
         authToken = ServerFacade.register(username, password, email).authToken();
         help(out);
 
@@ -80,7 +79,6 @@ public class ChessClient {
         String username = params[0];
         String password = params[1];
 
-        //TODO talk to server
         authToken = ServerFacade.login(username, password).authToken();
         help(out);
 
@@ -104,7 +102,6 @@ public class ChessClient {
             out.print("Please provide a game ID.\\nFormat: 2 gameName");
             return "Retry";
         }
-        //TODO talk to server
         ServerFacade.createGame(authToken, params[1]);
         return "Created new game";
     }
@@ -114,9 +111,9 @@ public class ChessClient {
             out.print("Please provide a game ID and color.\nFormat: 3 gameID 1/2");
             return "Retry";
         }
-        //TODO talk to server
-
-        ChessGame testGame = ServerFacade.joinGame(authToken, params[0], Integer.parseInt(params[1])).game();
+        GameData gameData = ServerFacade.joinGame(authToken, params[0], Integer.parseInt(params[1]));
+        //TODO check if null
+        ChessGame testGame = gameData.game();
         String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
 
         ChessUI.printChessBoard(out, board, true);
@@ -128,8 +125,9 @@ public class ChessClient {
             out.print("Please provide a game ID.\nFormat: 4 gameID");
             return "Retry";
         }
-        //TODO talk to server
-        ChessGame testGame = ServerFacade.observeGame(authToken, Integer.parseInt(params[0])).game();
+        GameData gameData = ServerFacade.joinGame(authToken, params[0], Integer.parseInt(params[1]));
+        //TODO check if null
+        ChessGame testGame = gameData.game();
         String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
         ChessUI.printChessBoard(out, board, false);
 
@@ -137,7 +135,6 @@ public class ChessClient {
     }
 
     private String logout(PrintStream out) {
-        // TODO talk to server
         ServerFacade.logout(authToken);
         authToken = null;
         help(out);
