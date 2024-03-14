@@ -13,7 +13,11 @@ import java.util.ArrayList;
 
 public class ServerFacade {
 
-    private static final String urlPort = "http://localhost:8080/";
+    private static String urlPort = "http://localhost:8080/";
+
+    public ServerFacade(int port) {
+        urlPort = "http://localhost:" + port + "/";
+    }
 
     public static UserEnterResponse register(String username, String password, String email) throws IOException {
         String url = urlPort + "user";
