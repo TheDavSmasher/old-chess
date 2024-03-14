@@ -16,13 +16,12 @@ public class ServerFacade {
         return null;
     }
 
-    public static int createGame(String authToken, String gameName) {
-        return 0;
+    public static void createGame(String authToken, String gameName) {
     }
 
-    public static void observeGame(String authToken, int gameID) {}
+    public static GameData observeGame(String authToken, int gameID) {return null;}
 
-    public static void joinGame(String authToken, String color, int gameID) {}
+    public static GameData joinGame(String authToken, String color, int gameID) {return null;}
 
     public static void logout(String authToken) {}
 }

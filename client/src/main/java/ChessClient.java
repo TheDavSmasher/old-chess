@@ -1,7 +1,9 @@
 import chess.*;
+import model.GameData;
 import ui.ChessUI;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ChessClient {
@@ -64,7 +66,7 @@ public class ChessClient {
         String email = params[2];
 
         //TODO talk to server
-        authToken = "tempToken";
+        authToken = ServerFacade.register(username, password, email).authToken();
         help(out);
 
         return "Welcome new user";
@@ -79,13 +81,21 @@ public class ChessClient {
         String password = params[1];
 
         //TODO talk to server
-        authToken = "tempToken";
+        authToken = ServerFacade.login(username, password).authToken();
         help(out);
 
         return "Welcome back";
     }
 
     private String listGames(PrintStream out) {
+        ArrayList<GameData> allGames = ServerFacade.listGames(authToken);
+        out.print("Games:");
+        int i = 0;
+        for (GameData data : allGames) {
+            String white = (data.whiteUsername() != null) ? data.whiteUsername() : "No one";
+            String black = (data.blackUsername() != null) ? data.blackUsername() : "No one";
+            out.print("\n  " + (++i) + ". " + data.gameName() + ": " + white + " vs " + black);
+        }
         return "Here's the games";
     }
 
@@ -95,6 +105,7 @@ public class ChessClient {
             return "Retry";
         }
         //TODO talk to server
+        ServerFacade.createGame(authToken, params[1]);
         return "Created new game";
     }
 
@@ -104,10 +115,8 @@ public class ChessClient {
             return "Retry";
         }
         //TODO talk to server
-        ChessGame testGame = new ChessGame();
-        try {
-            testGame.makeMove(new ChessMove(new ChessPosition(2,1), new ChessPosition(3,1), null));
-        } catch (InvalidMoveException ignored) {}
+
+        ChessGame testGame = ServerFacade.joinGame(authToken, params[0], Integer.parseInt(params[1])).game();
         String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
 
         ChessUI.printChessBoard(out, board, true);
@@ -120,7 +129,7 @@ public class ChessClient {
             return "Retry";
         }
         //TODO talk to server
-        ChessGame testGame = new ChessGame();
+        ChessGame testGame = ServerFacade.observeGame(authToken, Integer.parseInt(params[0])).game();
         String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
         ChessUI.printChessBoard(out, board, false);
 
@@ -129,6 +138,7 @@ public class ChessClient {
 
     private String logout(PrintStream out) {
         // TODO talk to server
+        ServerFacade.logout(authToken);
         authToken = null;
         help(out);
 
