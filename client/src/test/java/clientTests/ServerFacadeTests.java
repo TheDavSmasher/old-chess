@@ -185,4 +185,9 @@ public class ServerFacadeTests {
 
         Assertions.assertThrows(IOException.class, () -> ServerFacade.logout(tempAuth));
     }
+
+    @Test
+    public void ClearTest() {
+        Assertions.assertDoesNotThrow(ServerFacade::clear);
+    }
 }
