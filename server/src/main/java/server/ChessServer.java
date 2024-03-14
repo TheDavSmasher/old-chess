@@ -2,7 +2,7 @@ package server;
 
 import spark.*;
 
-public class Server {
+public class ChessServer {
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
