@@ -9,12 +9,10 @@ import com.google.gson.JsonSyntaxException;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.SQLGameDAO;
-import model.GameData;
+import model.dataAccess.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SQLGameDAOTest {
 

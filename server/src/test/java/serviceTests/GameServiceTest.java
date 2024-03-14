@@ -1,21 +1,21 @@
 package serviceTests;
 
-import model.GameData;
+import model.dataAccess.GameData;
+import model.response.CreateGameResponse;
+import model.response.ListGamesResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.AppService;
 import service.GameService;
 import service.UserService;
-import service.request.AuthRequest;
-import service.request.CreateGameRequest;
-import service.request.JoinGameRequest;
-import service.request.UserEnterRequest;
+import model.request.AuthRequest;
+import model.request.CreateGameRequest;
+import model.request.JoinGameRequest;
+import model.request.UserEnterRequest;
 import service.result.*;
 
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
 

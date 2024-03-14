@@ -1,6 +1,6 @@
 package dataAccess;
 
-import model.UserData;
+import model.dataAccess.UserData;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.Connection;

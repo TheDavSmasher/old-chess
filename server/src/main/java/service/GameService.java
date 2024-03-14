@@ -3,11 +3,13 @@ package service;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.SQLGameDAO;
-import model.AuthData;
-import model.GameData;
-import service.request.AuthRequest;
-import service.request.CreateGameRequest;
-import service.request.JoinGameRequest;
+import model.dataAccess.AuthData;
+import model.dataAccess.GameData;
+import model.request.AuthRequest;
+import model.request.CreateGameRequest;
+import model.request.JoinGameRequest;
+import model.response.CreateGameResponse;
+import model.response.ListGamesResponse;
 import service.result.*;
 
 public class GameService {

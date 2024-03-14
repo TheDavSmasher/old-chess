@@ -1,6 +1,6 @@
 package dataAccess;
 
-import model.AuthData;
+import model.dataAccess.AuthData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

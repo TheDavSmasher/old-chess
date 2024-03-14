@@ -3,12 +3,10 @@ package dataAccessTests;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.SQLAuthDAO;
-import model.AuthData;
+import model.dataAccess.AuthData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SQLAuthDAOTest {
 

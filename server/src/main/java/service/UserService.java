@@ -1,9 +1,10 @@
 package service;
 
 import dataAccess.*;
-import model.AuthData;
-import service.request.AuthRequest;
-import service.request.UserEnterRequest;
+import model.dataAccess.AuthData;
+import model.request.AuthRequest;
+import model.request.UserEnterRequest;
+import model.response.UserEnterResponse;
 import service.result.*;
 
 public class UserService {

@@ -1,6 +1,6 @@
-package service.result;
+package model.response;
 
-import model.GameData;
+import model.dataAccess.GameData;
 
 import java.util.ArrayList;
 

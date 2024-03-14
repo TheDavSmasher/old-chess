@@ -2,10 +2,10 @@ package server;
 
 import com.google.gson.Gson;
 import service.UserService;
-import service.request.UserEnterRequest;
+import model.request.UserEnterRequest;
 import service.result.ServiceException;
 import service.result.UnauthorizedException;
-import service.result.UserEnterResponse;
+import model.response.UserEnterResponse;
 import spark.Request;
 import spark.Response;
 import spark.Spark;

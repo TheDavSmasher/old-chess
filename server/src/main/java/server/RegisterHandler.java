@@ -1,8 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
+import model.response.UserEnterResponse;
 import service.UserService;
-import service.request.UserEnterRequest;
+import model.request.UserEnterRequest;
 import service.result.*;
 import spark.Request;
 import spark.Response;

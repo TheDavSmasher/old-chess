@@ -1,7 +1,7 @@
 package dataAccess;
 
 import chess.ChessGame;
-import model.GameData;
+import model.dataAccess.GameData;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;

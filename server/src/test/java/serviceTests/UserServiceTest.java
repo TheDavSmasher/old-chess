@@ -1,16 +1,15 @@
 package serviceTests;
 
-import model.AuthData;
+import model.dataAccess.AuthData;
+import model.response.UserEnterResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.AppService;
 import service.UserService;
-import service.request.AuthRequest;
-import service.request.UserEnterRequest;
+import model.request.AuthRequest;
+import model.request.UserEnterRequest;
 import service.result.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 

@@ -1,5 +1,5 @@
 import chess.*;
-import model.GameData;
+import model.dataAccess.GameData;
 import ui.ChessUI;
 
 import java.io.PrintStream;

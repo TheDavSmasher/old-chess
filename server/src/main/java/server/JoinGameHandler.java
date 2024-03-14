@@ -2,8 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import service.GameService;
-import service.request.AuthRequest;
-import service.request.JoinGameRequest;
+import model.request.AuthRequest;
+import model.request.JoinGameRequest;
 import service.result.BadRequestException;
 import service.result.PreexistingException;
 import service.result.ServiceException;

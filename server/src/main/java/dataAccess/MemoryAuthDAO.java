@@ -1,6 +1,6 @@
 package dataAccess;
 
-import model.AuthData;
+import model.dataAccess.AuthData;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
