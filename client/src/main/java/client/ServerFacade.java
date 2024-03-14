@@ -60,4 +60,9 @@ public class ServerFacade {
         String url = urlPort + "session";
         ClientCommunicator.doDelete(url, authToken, EmptyResponse.class);
     }
+
+    public static void clear() throws IOException {
+        String url = urlPort + "db";
+        ClientCommunicator.doDelete(url, null, EmptyResponse.class);
+    }
 }
