@@ -1,7 +1,5 @@
 package server;
 
-import dataAccess.DataAccessException;
-import service.UserService;
 import spark.*;
 
 public abstract class ObjectSerializer {
