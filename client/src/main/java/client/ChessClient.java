@@ -11,9 +11,11 @@ import java.util.Arrays;
 
 public class ChessClient {
     private String authToken;
+    private int[] existingGames;
 
     public ChessClient() {
         authToken = null;
+        existingGames = null;
     }
 
     public String evaluate(String input, PrintStream out) {
@@ -137,9 +139,11 @@ public class ChessClient {
             out.print(e.getMessage());
             return "Error Caught";
         }
+        existingGames = new int[allGames.size()];
         out.print("Games:");
         int i = 0;
         for (GameData data : allGames) {
+            existingGames[i] = data.gameID();
             String white = (data.whiteUsername() != null) ? data.whiteUsername() : "No one";
             String black = (data.blackUsername() != null) ? data.blackUsername() : "No one";
             out.print("\n  " + (++i) + ". " + data.gameName() + ": " + white + " vs " + black);
@@ -167,8 +171,18 @@ public class ChessClient {
             out.print("Please provide a game ID and color.\nFormat: 3 WHITE/BLACK gameID");
             return "Retry";
         }
+        if (existingGames == null) {
+            out.print("Please list the games before you can join!");
+            return "List first";
+        }
         try {
-            ServerFacade.joinGame(authToken, params[0], Integer.parseInt(params[1]));
+            int index = Integer.parseInt(params[1]) - 1;
+            if (index >= existingGames.length) {
+                out.print("That game does not exist!");
+                return "Out of range";
+            }
+            int gameID = existingGames[index];
+            ServerFacade.joinGame(authToken, params[0], gameID);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
@@ -185,8 +199,18 @@ public class ChessClient {
             out.print("Please provide a game ID.\nFormat: 4 gameID");
             return "Retry";
         }
+        if (existingGames == null) {
+            out.print("Please list the games before you can join!");
+            return "List first";
+        }
         try {
-            ServerFacade.observeGame(authToken, Integer.parseInt(params[0]));
+            int index = Integer.parseInt(params[1]) - 1;
+            if (index >= existingGames.length) {
+                out.print("That game does not exist!");
+                return "Out of range";
+            }
+            int gameID = existingGames[index];
+            ServerFacade.observeGame(authToken, gameID);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
