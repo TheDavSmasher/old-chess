@@ -21,6 +21,7 @@ public class ChessClient implements ServerMessageObserver {
     public ChessClient() {
         authToken = null;
         existingGames = null;
+        ServerFacade.setObserver(this);
     }
 
     public String evaluate(String input, PrintStream out) {

@@ -1,5 +1,7 @@
 package client;
 
+import client.websocket.ServerMessageObserver;
+import client.websocket.WebsocketCommunicator;
 import com.google.gson.Gson;
 import model.dataAccess.GameData;
 import model.request.CreateGameRequest;
@@ -16,9 +18,13 @@ import java.util.ArrayList;
 public class ServerFacade {
 
     private static String urlPort = "http://localhost:8080/";
+    private static WebsocketCommunicator websocket;
 
     public static void setPort(int port) {
         urlPort = "http://localhost:" + port + "/";
+    }
+    public static void setObserver(ServerMessageObserver observer) {
+        websocket = new WebsocketCommunicator(observer);
     }
 
     public static UserEnterResponse register(String username, String password, String email) throws IOException {

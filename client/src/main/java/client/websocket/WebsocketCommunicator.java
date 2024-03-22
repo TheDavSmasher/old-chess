@@ -10,7 +10,11 @@ import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 
 public class WebsocketCommunicator extends Endpoint {
-    private ServerMessageObserver observer;
+    private final ServerMessageObserver observer;
+
+    public WebsocketCommunicator(ServerMessageObserver messageObserver) {
+        observer = messageObserver;
+    }
 
     public void onMessage(String message) {
         try {
