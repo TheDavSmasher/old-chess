@@ -2,6 +2,10 @@ package serviceTests;
 
 import model.dataAccess.AuthData;
 import model.response.UserEnterResponse;
+import model.response.result.BadRequestException;
+import model.response.result.PreexistingException;
+import model.response.result.ServiceException;
+import model.response.result.UnauthorizedException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

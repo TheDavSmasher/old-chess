@@ -1,4 +1,4 @@
-package service.result;
+package model.response.result;
 
 public class UnexpectedException extends ServiceException {
 

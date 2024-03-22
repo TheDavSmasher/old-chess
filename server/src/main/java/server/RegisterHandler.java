@@ -2,6 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import model.response.UserEnterResponse;
+import model.response.result.BadRequestException;
+import model.response.result.PreexistingException;
+import model.response.result.ServiceException;
 import service.UserService;
 import model.request.UserEnterRequest;
 import service.result.*;

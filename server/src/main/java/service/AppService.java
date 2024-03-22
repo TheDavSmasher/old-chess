@@ -1,8 +1,8 @@
 package service;
 
 import dataAccess.*;
-import service.result.UnexpectedException;
-import service.result.ServiceException;
+import model.response.result.UnexpectedException;
+import model.response.result.ServiceException;
 
 public class AppService {
     public static void clearData() throws ServiceException {

@@ -1,7 +1,7 @@
 package server;
 
 import service.AppService;
-import service.result.ServiceException;
+import model.response.result.ServiceException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;

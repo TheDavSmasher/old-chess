@@ -10,6 +10,7 @@ import model.request.CreateGameRequest;
 import model.request.JoinGameRequest;
 import model.response.CreateGameResponse;
 import model.response.ListGamesResponse;
+import model.response.result.*;
 import service.result.*;
 
 public class GameService {

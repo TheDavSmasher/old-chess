@@ -2,8 +2,8 @@ package server;
 
 import service.UserService;
 import model.request.AuthRequest;
-import service.result.ServiceException;
-import service.result.UnauthorizedException;
+import model.response.result.ServiceException;
+import model.response.result.UnauthorizedException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
