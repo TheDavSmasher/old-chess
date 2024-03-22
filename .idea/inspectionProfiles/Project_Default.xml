@@ -15,6 +15,17 @@
           <option value="server" />
           <option value="server" />
           <option value="server" />
+          <option value="client" />
+          <option value="client" />
+          <option value="client" />
+          <option value="client" />
+          <option value="client" />
+          <option value="client" />
+          <option value="client" />
+          <option value="client" />
+          <option value="client" />
+          <option value="client" />
+          <option value="client" />
         </list>
       </option>
       <option name="ignoredPackages">
@@ -29,6 +40,17 @@
           <option value="org.eclipse.jetty:jetty-webapp:9.4.31.v20200723" />
           <option value="org.eclipse.jetty:jetty-xml:9.4.31.v20200723" />
           <option value="com.google.protobuf:protobuf-java:3.19.4" />
+          <option value="com.google.protobuf:protobuf-java:3.19.4" />
+          <option value="org.eclipse.jetty:jetty-client:9.4.31.v20200723" />
+          <option value="org.eclipse.jetty:jetty-http:9.4.31.v20200723" />
+          <option value="org.eclipse.jetty:jetty-io:9.4.31.v20200723" />
+          <option value="org.eclipse.jetty:jetty-security:9.4.31.v20200723" />
+          <option value="org.eclipse.jetty:jetty-server:9.4.31.v20200723" />
+          <option value="org.eclipse.jetty:jetty-util:9.4.31.v20200723" />
+          <option value="org.eclipse.jetty:jetty-webapp:9.4.31.v20200723" />
+          <option value="org.eclipse.jetty:jetty-xml:9.4.31.v20200723" />
+          <option value="org.springframework.security:spring-security-core:6.2.1" />
+          <option value="org.springframework:spring-core:6.1.2" />
         </list>
       </option>
       <option name="ignoredReasons">
@@ -37,6 +59,17 @@
           <option value="Other" />
           <option value="Other" />
           <option value="Other" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />
