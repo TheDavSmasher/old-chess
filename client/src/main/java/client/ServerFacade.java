@@ -54,12 +54,14 @@ public class ServerFacade {
         String url = urlPort + "game";
         String body = new Gson().toJson(new JoinGameRequest(null, gameID));
         HttpCommunicator.doPut(url, body, authToken, EmptyResponse.class);
+        websocket.observeGame();
     }
 
     public static void joinGame(String authToken, String color, int gameID) throws IOException {
         String url = urlPort + "game";
         String body = new Gson().toJson(new JoinGameRequest(color, gameID));
         HttpCommunicator.doPut(url, body, authToken, EmptyResponse.class);
+        websocket.joinGame();
     }
 
     public static void logout(String authToken) throws IOException {
