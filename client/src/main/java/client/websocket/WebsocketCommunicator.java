@@ -1,12 +1,15 @@
 package client.websocket;
 
 import com.google.gson.Gson;
+import jakarta.websocket.Endpoint;
+import jakarta.websocket.EndpointConfig;
+import jakarta.websocket.Session;
 import model.response.ErrorResponse;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 
-public class WebsocketCommunicator {
+public class WebsocketCommunicator extends Endpoint {
     private ServerMessageObserver observer;
 
     public void onMessage(String message) {
@@ -17,5 +20,10 @@ public class WebsocketCommunicator {
         } catch (Exception e) {
             observer.notify(new ErrorMessage(e.getMessage()));
         }
+    }
+
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
+
     }
 }
