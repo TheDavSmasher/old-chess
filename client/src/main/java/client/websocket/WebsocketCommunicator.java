@@ -24,6 +24,9 @@ public class WebsocketCommunicator extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-
     }
+
+    public void joinGame() {}
+
+    public void observeGame() {}
 }
