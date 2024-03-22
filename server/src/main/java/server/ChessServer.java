@@ -16,6 +16,7 @@ public class ChessServer {
         Spark.get("/game", (request, response) -> (new ListGameHandler()).handle(request, response));
         Spark.post("/game", (request, response) -> (new CreateGameHandler()).handle(request, response));
         Spark.put("/game", (request, response) -> (new JoinGameHandler()).handle(request, response));
+        Spark.webSocket("/connect", WSServer.class);
 
         Spark.awaitInitialization();
         return Spark.port();
