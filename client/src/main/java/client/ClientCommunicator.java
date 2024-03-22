@@ -1,7 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
-import model.response.ErrorMessage;
+import model.response.ErrorResponse;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -51,7 +51,7 @@ public class ClientCommunicator {
             try (InputStream responseBody = connection.getErrorStream()) {
                 reader = new InputStreamReader(responseBody);
                 BufferedReader bufferedReader = new BufferedReader(reader);
-                ErrorMessage errorMessage = new Gson().fromJson(bufferedReader.readLine(), ErrorMessage.class);
+                ErrorResponse errorMessage = new Gson().fromJson(bufferedReader.readLine(), ErrorResponse.class);
                 throw new IOException(errorMessage.message());
             }
         }
