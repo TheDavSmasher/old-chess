@@ -23,8 +23,8 @@ public class ServerFacade {
     public static void setPort(int port) {
         urlPort = "http://localhost:" + port + "/";
     }
-    public static void setObserver(ServerMessageObserver observer) {
-        websocket = new WebsocketCommunicator(observer);
+    public static void setObserver(ServerMessageObserver observer) throws IOException {
+        websocket = new WebsocketCommunicator(urlPort, observer);
     }
 
     public static UserEnterResponse register(String username, String password, String email) throws IOException {
