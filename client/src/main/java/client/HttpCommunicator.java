@@ -7,7 +7,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 
-public class ClientCommunicator {
+public class HttpCommunicator {
     public static <T> T doPost(String urlString, String body, String authToken, Class<T> responseClass) throws IOException {
         return doServerMethod(urlString, "POST", body, authToken, responseClass);
     }
