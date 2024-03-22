@@ -1,15 +1,20 @@
 package client;
 
 import chess.*;
+import client.websocket.ServerMessageObserver;
 import model.dataAccess.GameData;
 import ui.ChessUI;
+import webSocketMessages.serverMessages.ErrorMessage;
+import webSocketMessages.serverMessages.LoadGameMessage;
+import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ChessClient {
+public class ChessClient implements ServerMessageObserver {
     private String authToken;
     private int[] existingGames;
 
@@ -248,5 +253,26 @@ public class ChessClient {
             }
         }
         return result.toString();
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        switch (message.getServerMessageType()) {
+            case NOTIFICATION -> displayNotification((Notification) message);
+            case ERROR -> displayError((ErrorMessage) message);
+            case LOAD_GAME -> loadGame((LoadGameMessage) message);
+        }
+    }
+
+    private void displayNotification(Notification notification) {
+
+    }
+
+    private void displayError(ErrorMessage errorMessage) {
+
+    }
+
+    private void loadGame(LoadGameMessage message) {
+
     }
 }
