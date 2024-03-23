@@ -50,25 +50,34 @@ public class WebsocketCommunicator extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void joinGame(String authToken, int gameID, String color) {
+    public void joinGame(String authToken, int gameID, String color) throws IOException {
         ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(color.toUpperCase());
         JoinPlayerCommand command = new JoinPlayerCommand(authToken, gameID, teamColor);
+        sendCommand(new Gson().toJson(command));
     }
 
-    public void observeGame(String authToken, int gameID) {
+    public void observeGame(String authToken, int gameID) throws IOException {
         JoinObserverCommand command = new JoinObserverCommand(authToken, gameID);
+        sendCommand(new Gson().toJson(command));
     }
 
-    public void makeMove(String authToken, int gameID, ChessMove move) {
+    public void makeMove(String authToken, int gameID, ChessMove move) throws IOException {
         MakeMoveCommand command = new MakeMoveCommand(authToken, gameID, move);
+        sendCommand(new Gson().toJson(command));
     }
 
-    public void leaveGame(String authToken, int gameID) {
+    public void leaveGame(String authToken, int gameID) throws IOException {
         LeaveCommand command = new LeaveCommand(authToken, gameID);
+        sendCommand(new Gson().toJson(command));
     }
 
-    public void resignGame(String authToken, int gameID) {
+    public void resignGame(String authToken, int gameID) throws IOException {
         ResignCommand command = new ResignCommand(authToken, gameID);
+        sendCommand(new Gson().toJson(command));
+    }
+
+    private void sendCommand(String jsonMessage) throws IOException {
+        session.getBasicRemote().sendText(jsonMessage);
     }
 
     private static class NotificationDeserializer implements JsonDeserializer<ServerMessage> {
