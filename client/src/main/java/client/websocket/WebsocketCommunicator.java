@@ -1,11 +1,14 @@
 package client.websocket;
 
+import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.*;
 import jakarta.websocket.*;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -47,9 +50,26 @@ public class WebsocketCommunicator extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void joinGame(String authToken) {}
+    public void joinGame(String authToken, int gameID, String color) {
+        ChessGame.TeamColor teamColor = ChessGame.TeamColor.valueOf(color.toUpperCase());
+        JoinPlayerCommand command = new JoinPlayerCommand(authToken, gameID, teamColor);
+    }
 
-    public void observeGame(String authToken) {}
+    public void observeGame(String authToken, int gameID) {
+        JoinObserverCommand command = new JoinObserverCommand(authToken, gameID);
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move) {
+        MakeMoveCommand command = new MakeMoveCommand(authToken, gameID, move);
+    }
+
+    public void leaveGame(String authToken, int gameID) {
+        LeaveCommand command = new LeaveCommand(authToken, gameID);
+    }
+
+    public void resignGame(String authToken, int gameID) {
+        ResignCommand command = new ResignCommand(authToken, gameID);
+    }
 
     private static class NotificationDeserializer implements JsonDeserializer<ServerMessage> {
         @Override
