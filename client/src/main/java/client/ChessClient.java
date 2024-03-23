@@ -19,10 +19,14 @@ public class ChessClient implements ServerMessageObserver {
     private String authToken;
     private int[] existingGames;
     private PrintStream out;
+    private boolean inGame;
+    private boolean whitePlayer;
 
     public ChessClient() {
         authToken = null;
         existingGames = null;
+        inGame = false;
+        whitePlayer = true;
     }
 
     public void setOut(PrintStream out) {
@@ -202,8 +206,8 @@ public class ChessClient implements ServerMessageObserver {
         }
         ChessGame testGame = new ChessGame();
         String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
-        boolean white = params[0].equalsIgnoreCase("white");
-        ChessUI.printChessBoard(out, board, white);
+        whitePlayer = params[0].equalsIgnoreCase("white");
+        ChessUI.printChessBoard(out, board, whitePlayer);
         return "You joined";
     }
 
@@ -285,5 +289,7 @@ public class ChessClient implements ServerMessageObserver {
     private void loadGame(LoadGameMessage message) {
         String gameJson = message.getGame();
         ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+        ChessUI.printChessBoard(out, ChessUI.getChessBoardAsArray(game.getBoard()), whitePlayer);
+        //TODO reprint options
     }
 }
