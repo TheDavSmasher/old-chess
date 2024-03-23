@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessMove;
 import client.websocket.ServerMessageObserver;
 import client.websocket.WebsocketCommunicator;
 import com.google.gson.Gson;
@@ -72,5 +73,18 @@ public class ServerFacade {
     public static void clear() throws IOException {
         String url = urlPort + "db";
         HttpCommunicator.doDelete(url, null, EmptyResponse.class);
+    }
+
+    public static void makeMove(String authToken, int gameID, ChessMove move) throws IOException {
+        websocket.makeMove(authToken, gameID, move);
+    }
+
+    public static void leaveGame(String authToken, int gameID) throws IOException {
+        websocket.leaveGame(authToken, gameID);
+    }
+
+    public static void resignGame(String authToken, int gameID) throws IOException {
+        websocket.resignGame(authToken, gameID);
+
     }
 }

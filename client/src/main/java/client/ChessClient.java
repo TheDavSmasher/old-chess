@@ -19,14 +19,16 @@ public class ChessClient implements ServerMessageObserver {
     private String authToken;
     private int[] existingGames;
     private PrintStream out;
-    private boolean inGame;
+    private int currentGame;
     private boolean whitePlayer;
+    private MenuState currentState;
 
     public ChessClient() {
         authToken = null;
         existingGames = null;
-        inGame = false;
+        currentGame = 0;
         whitePlayer = true;
+        currentState = MenuState.PRE_LOGIN;
     }
 
     public void setOut(PrintStream out) {
@@ -43,68 +45,131 @@ public class ChessClient implements ServerMessageObserver {
             return "Wrong option";
         }
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-        if (loggedInCheck()) {
-            return switch (command) {
-                case 1 -> listGames(out);
-                case 2 -> createGame(params);
-                case 3 -> joinGame(params);
-                case 4 -> observeGame(params);
-                case 5 -> logout();
-                default -> help(false);
-            };
+        switch (currentState) {
+            case PRE_LOGIN -> {
+                return switch (command) {
+                    case 1 -> register(params);
+                    case 2 -> signIn(params);
+                    case 3 -> "quit";
+                    default -> help(false);
+                };
+            }
+            case POST_LOGIN -> {
+                return switch (command) {
+                    case 1 -> listGames(out);
+                    case 2 -> createGame(params);
+                    case 3 -> joinGame(params);
+                    case 4 -> observeGame(params);
+                    case 5 -> logout();
+                    default -> help(false);
+                };
+            }
+            case MID_GAME -> {
+                return switch (command) {
+                    case 1 -> redrawBoard();
+                    case 2 -> makeMove(params);
+                    case 3 -> highlightMoves(params);
+                    case 4 -> leaveGame();
+                    case 5 -> resignGame();
+                    default -> help(false);
+                };
+            }
+            case OBSERVING -> {
+                return switch (command) {
+                    case 1 -> redrawBoard();
+                    case 2 -> highlightMoves(params);
+                    case 3 -> leaveGame();
+                    default -> help(false);
+                };
+            }
+            default -> {
+                return "Not sure how we got here";
+            }
         }
-        return switch (command) {
-            case 1 -> register(params);
-            case 2 -> signIn(params);
-            case 3 -> "quit";
-            default -> help(false);
-        };
+    }
+
+    private enum MenuState {
+        PRE_LOGIN,
+        POST_LOGIN,
+        MID_GAME,
+        OBSERVING
     }
 
     public String help(boolean simple) {
         if (simple) {
-            if (!loggedInCheck()) {
-                out.print( """
-                   1 - Register
-                   2 - Login
-                   3 - Quit
-                   
-                   0 - Help""");
-            } else {
-                out.print("""
-               1 - List Games
-               2 - Create Game
-               3 - Join Game
-               4 - Observe Game
-               5 - Logout
-               
-               0 - Help""");
+            switch (currentState) {
+                case PRE_LOGIN -> out.print("""
+                    1 - Register
+                    2 - Login
+                    3 - Quit
+                    
+                    0 - Help""");
+                case POST_LOGIN -> out.print("""
+                    1 - List Games
+                    2 - Create Game
+                    3 - Join Game
+                    4 - Observe Game
+                    5 - Logout
+                    
+                    0 - Help""");
+                case MID_GAME -> out.print("""
+                    1 - Redraw Board
+                    2 - Make Move
+                    3 - Highlight Legal Moves
+                    4 - Leave
+                    5 - Resign
+                    
+                    0 - Help""");
+                case OBSERVING -> out.print("""
+                    1 - Redraw Board
+                    2 - Highlight Legal Moves
+                    3 - Stop watching
+                    
+                    0 - Help""");
             }
         } else {
-            if (!loggedInCheck()) {
-                out.print( """
-                   1 - Register: creates a new user in the database. Username must be unique.
+            switch (currentState) {
+                case PRE_LOGIN -> out.print("""
+                    1 - Register: creates a new user in the database. Username must be unique.
                        Format: 1 username password email
-                   2 - Login: logs in to the server with a pre-registered username with its corresponding password.
+                    2 - Login: logs in to the server with a pre-registered username with its corresponding password.
                        Format: 2 username password
-                   3 - Quit: exit out of the client.
-                   
-                   0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
-            } else {
-                out.print("""
-               1 - List Games: show all games that are currently being hosted in the server.
-               2 - Create Game: create a new game in the database with a name. The game's name can include spaces.
-                   Format: 2 gameName
-               3 - Join Game: join an existing game with as a specific player color.
-                   Format: 3 white/black gameID
-               4 - Observe Game: see the current state of a game without becoming a player,
-                   Format: 4 gameID
-               5 - Logout: leave your current session and return to login menu.
-               
-               0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+                    3 - Quit: exit out of the client.
+                    
+                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+                case POST_LOGIN -> out.print("""
+                    1 - List Games: show all games that are currently being hosted in the server.
+                    2 - Create Game: create a new game in the database with a name. The game's name can include spaces.
+                       Format: 2 gameName
+                    3 - Join Game: join an existing game with as a specific player color.
+                       Format: 3 white/black gameID
+                    4 - Observe Game: see the current state of a game without becoming a player,
+                       Format: 4 gameID
+                    5 - Logout: leave your current session and return to login menu.
+                    
+                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+                case MID_GAME -> out.print("""
+                    1 - Redraw Board: print the board again for the current state of the game.
+                    2 - Make Move: select a piece in a given position and give its ending position.
+                       Please make sure the move is legal.
+                       Format: 2 start end        Format positions column then row, such as G6.
+                    3 - Highlight Legal Moves: select a position on the board to see all legal moves the piece in that position can make.
+                       Format: 3 position        Format positions column then row, such as G6.
+                    4 - Leave: leave the current game, emptying your position and allowing anyone to join. Join again to continue.
+                    5 - Resign: forfeit the current game, rendering it unplayable and the opposing player as winner.
+                        This action cannot be undone.
+                    
+                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+                case OBSERVING -> out.print("""
+                    1 - Redraw Board: print the board again for the current state of the game.
+                    2 - Highlight Legal Moves: select a position on the board to see all legal moves the piece in that position can make.
+                       Format: 3 position        Format positions column then row, such as G6.
+                    3 - Stop Watching: leave the current game, returning to the menu.
+                    
+                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
             }
         }
-        return "";
+        return "Helping";
     }
 
     private String register(String[] params) {
@@ -118,6 +183,7 @@ public class ChessClient implements ServerMessageObserver {
 
         try {
             authToken = ServerFacade.register(username, password, email).authToken();
+            currentState = MenuState.POST_LOGIN;
             ServerFacade.setObserver(this);
         } catch (IOException e) {
             out.print(e.getMessage());
@@ -138,6 +204,7 @@ public class ChessClient implements ServerMessageObserver {
 
         try {
             authToken = ServerFacade.login(username, password).authToken();
+            currentState = MenuState.POST_LOGIN;
             ServerFacade.setObserver(this);
         } catch (IOException e) {
             out.print(e.getMessage());
@@ -198,16 +265,17 @@ public class ChessClient implements ServerMessageObserver {
                 out.print("That game does not exist!");
                 return "Out of range";
             }
-            int gameID = existingGames[index];
-            ServerFacade.joinGame(authToken, params[0], gameID);
+            currentGame = existingGames[index];
+            currentState = MenuState.MID_GAME;
+            ServerFacade.joinGame(authToken, params[0], currentGame);
+            whitePlayer = params[0].equalsIgnoreCase("white");
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
         }
-        ChessGame testGame = new ChessGame();
-        String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
-        whitePlayer = params[0].equalsIgnoreCase("white");
-        ChessUI.printChessBoard(out, board, whitePlayer);
+        //ChessGame testGame = new ChessGame();
+        //String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
+        //ChessUI.printChessBoard(out, board, whitePlayer);
         return "You joined";
     }
 
@@ -226,15 +294,16 @@ public class ChessClient implements ServerMessageObserver {
                 out.print("That game does not exist!");
                 return "Out of range";
             }
-            int gameID = existingGames[index];
-            ServerFacade.observeGame(authToken, gameID);
+            currentGame = existingGames[index];
+            currentState = MenuState.OBSERVING;
+            ServerFacade.observeGame(authToken, currentGame);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
         }
-        ChessGame testGame = new ChessGame();
-        String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
-        ChessUI.printChessBoard(out, board, true);
+        //ChessGame testGame = new ChessGame();
+        //String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
+        //ChessUI.printChessBoard(out, board, true);
 
         return "You're now watching";
     }
@@ -252,10 +321,6 @@ public class ChessClient implements ServerMessageObserver {
         return "See you later!";
     }
 
-    private boolean loggedInCheck() {
-        return authToken != null;
-    }
-
     private String stringFromParams(String[] params) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < params.length; i++) {
@@ -265,6 +330,106 @@ public class ChessClient implements ServerMessageObserver {
             }
         }
         return result.toString();
+    }
+
+    private String redrawBoard() {
+        return "TODO get board and print";
+    }
+
+    private String makeMove(String[] params) {
+        if (params.length < 2) {
+            out.print("""
+                Please provide a start and end position.
+                If a pawn is to be promoted, also provide what it should become.
+                Format: 2 start end (pieceType)""");
+            return "Retry";
+        }
+        try {
+            ChessPiece.PieceType type;
+            if (params.length < 3) {
+                type = null;
+            } else {
+                type = typeFromString(params[2]);
+            }
+            ChessMove move = new ChessMove(positionFromString(params[0]), positionFromString(params[1]), type);
+            ServerFacade.makeMove(authToken, currentGame, move);
+            return "Move made";
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Retry";
+        }
+    }
+
+    private String highlightMoves(String[] params) {
+        if (params.length < 1) {
+            out.print("Please provide a start position.\nFormat: 3 start");
+        }
+        try {
+            ChessPosition start = positionFromString(params[0]);
+            //TODO get game
+            String[][] gameBoard = ChessUI.getChessBoardAsArray(new ChessBoard());
+            //TODO get moves
+            String[][] moves = ChessUI.getValidMovesInArray(new ArrayList<>());
+            ChessUI.printChessBoard(out, gameBoard, moves, whitePlayer);
+            return "Valid Moves shown";
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Retry";
+        }
+    }
+
+    private String leaveGame() {
+        currentGame = 0;
+        currentState = MenuState.POST_LOGIN;
+        try {
+            ServerFacade.leaveGame(authToken, currentGame);
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Caught Error";
+        }
+        return "Playing later";
+    }
+
+    private String resignGame() {
+        currentGame = 0;
+        currentState = MenuState.POST_LOGIN;
+        try {
+            ServerFacade.resignGame(authToken, currentGame);
+        } catch (IOException e) {
+            out.print(e.getMessage());
+            return "Caught Error";
+        }
+        return "Sore Loser";
+    }
+
+    private ChessPosition positionFromString(String moveString) throws IOException {
+        if (moveString.length() != 2) {
+            throw new IOException("Wrong move format!");
+        }
+        char column = Character.toUpperCase(moveString.charAt(0));
+        char row = moveString.charAt(1);
+        int colInt = switch (column) {
+            case 'A' -> 1;
+            case 'B' -> 2;
+            case 'C' -> 3;
+            case 'D' -> 4;
+            case 'E' -> 5;
+            case 'F' -> 6;
+            case 'G' -> 7;
+            case 'H' -> 8;
+            default -> throw new IOException("Column does not exist!");
+        };
+        int rowInt = Integer.parseInt(String.valueOf(row));
+        if (rowInt > 8 || rowInt < 1) throw new IOException("Row does not exist!");
+        return new ChessPosition(rowInt, colInt);
+    }
+
+    private ChessPiece.PieceType typeFromString (String type) throws IOException {
+        try {
+            return ChessPiece.PieceType.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("That Piece Type does not exist.");
+        }
     }
 
     @Override
@@ -290,6 +455,6 @@ public class ChessClient implements ServerMessageObserver {
         String gameJson = message.getGame();
         ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
         ChessUI.printChessBoard(out, ChessUI.getChessBoardAsArray(game.getBoard()), whitePlayer);
-        //TODO reprint options
+        help(true);
     }
 }
