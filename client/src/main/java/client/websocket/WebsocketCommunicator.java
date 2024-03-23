@@ -1,12 +1,14 @@
 package client.websocket;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import jakarta.websocket.*;
 import webSocketMessages.serverMessages.ErrorMessage;
+import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 
 public class WebsocketCommunicator extends Endpoint {
@@ -26,8 +28,10 @@ public class WebsocketCommunicator extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     try {
-                        //TODO type adapt
-                        ServerMessage serverMessage = new Gson().fromJson(message, Notification.class);
+                        GsonBuilder builder = new GsonBuilder();
+                        builder.registerTypeAdapter(ServerMessage.class, new NotificationDeserializer());
+                        Gson gson = builder.create();
+                        ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
                         observer.notify(serverMessage);
                     } catch (Exception e) {
                         observer.notify(new ErrorMessage(e.getMessage()));
@@ -46,4 +50,19 @@ public class WebsocketCommunicator extends Endpoint {
     public void joinGame() {}
 
     public void observeGame() {}
+
+    private static class NotificationDeserializer implements JsonDeserializer<ServerMessage> {
+        @Override
+        public Notification deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            String typeString = jsonObject.get("serverMessageType").getAsString();
+            ServerMessage.ServerMessageType messageType = ServerMessage.ServerMessageType.valueOf(typeString);
+
+            return switch (messageType) {
+                case NOTIFICATION -> context.deserialize(jsonElement, Notification.class);
+                case LOAD_GAME -> context.deserialize(jsonElement, LoadGameMessage.class);
+                case ERROR -> context.deserialize(jsonElement, ErrorMessage.class);
+            };
+        }
+    }
 }
