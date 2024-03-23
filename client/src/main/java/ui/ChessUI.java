@@ -71,7 +71,7 @@ public class ChessUI {
             out.print(columns[index]);
         }
         out.print("   ");
-        resetBGColor(out);
+        resetColor(out);
         out.println();
     }
 
@@ -90,7 +90,7 @@ public class ChessUI {
             isWhite = !isWhite;
         }
         drawSideHeader(out, col, whiteBottom);
-        resetBGColor(out);
+        resetColor(out);
         out.println();
     }
 
@@ -163,7 +163,7 @@ public class ChessUI {
         }
     }
 
-    private static void setRedText(PrintStream out) {
+    public static void setRedText(PrintStream out) {
         out.print(SET_TEXT_COLOR_RED);
     }
 
@@ -200,7 +200,7 @@ public class ChessUI {
         out.print(SET_BG_COLOR_YELLOW);
     }
 
-    private static void resetBGColor(PrintStream out) {
+    public static void resetColor(PrintStream out) {
         out.print(UNSET_BG_COLOR);
         out.print(UNSET_TEXT_COLOR);
     }

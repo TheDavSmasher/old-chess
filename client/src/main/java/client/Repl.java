@@ -14,9 +14,10 @@ public class Repl {
     }
 
     public void run() {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.println("Welcome to my Chess Server!");
-        client.help(out, true);
+        client.setOut(out);
+        client.help(true);
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -25,7 +26,7 @@ public class Repl {
             String line = scanner.nextLine();
 
             try {
-                result = client.evaluate(line, out);
+                result = client.evaluate(line);
             } catch (Throwable e) {
                 out.print(e);
             }

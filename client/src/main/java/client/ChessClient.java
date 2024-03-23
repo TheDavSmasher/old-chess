@@ -2,6 +2,7 @@ package client;
 
 import chess.*;
 import client.websocket.ServerMessageObserver;
+import com.google.gson.Gson;
 import model.dataAccess.GameData;
 import ui.ChessUI;
 import webSocketMessages.serverMessages.ErrorMessage;
@@ -17,41 +18,46 @@ import java.util.Arrays;
 public class ChessClient implements ServerMessageObserver {
     private String authToken;
     private int[] existingGames;
+    private PrintStream out;
 
     public ChessClient() {
         authToken = null;
         existingGames = null;
     }
 
-    public String evaluate(String input, PrintStream out) {
+    public void setOut(PrintStream out) {
+        this.out = out;
+    }
+
+    public String evaluate(String input) {
         String[] tokens = input.toLowerCase().split(" ");
         int command;
         try {
             command = (tokens.length > 0) ? Integer.parseInt(tokens[0]) : 0;
         } catch (NumberFormatException e) {
-            help(out, false);
+            help(false);
             return "Wrong option";
         }
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         if (loggedInCheck()) {
             return switch (command) {
                 case 1 -> listGames(out);
-                case 2 -> createGame(out, params);
-                case 3 -> joinGame(out, params);
-                case 4 -> observeGame(out, params);
-                case 5 -> logout(out);
-                default -> help(out, false);
+                case 2 -> createGame(params);
+                case 3 -> joinGame(params);
+                case 4 -> observeGame(params);
+                case 5 -> logout();
+                default -> help(false);
             };
         }
         return switch (command) {
-            case 1 -> register(out, params);
-            case 2 -> signIn(out, params);
+            case 1 -> register(params);
+            case 2 -> signIn(params);
             case 3 -> "quit";
-            default -> help(out, false);
+            default -> help(false);
         };
     }
 
-    public String help(PrintStream out, boolean simple) {
+    public String help(boolean simple) {
         if (simple) {
             if (!loggedInCheck()) {
                 out.print( """
@@ -97,7 +103,7 @@ public class ChessClient implements ServerMessageObserver {
         return "";
     }
 
-    private String register(PrintStream out, String[] params) {
+    private String register(String[] params) {
         if (params.length < 3) {
             out.print("Please provide a username, password, and email.\nFormat: 1 username password email");
             return "Retry";
@@ -113,12 +119,12 @@ public class ChessClient implements ServerMessageObserver {
             out.print(e.getMessage());
             return "Error Caught";
         }
-        help(out, true);
+        help(true);
 
         return "Welcome new user";
     }
 
-    private String signIn(PrintStream out, String[] params) {
+    private String signIn(String[] params) {
         if (params.length < 2) {
             out.print("Please provide a username and password.\nFormat: 2 username password");
             return "Retry";
@@ -133,7 +139,7 @@ public class ChessClient implements ServerMessageObserver {
             out.print(e.getMessage());
             return "Error Caught";
         }
-        help(out, true);
+        help(true);
 
         return "Welcome back";
     }
@@ -158,7 +164,7 @@ public class ChessClient implements ServerMessageObserver {
         return "Here's the games";
     }
 
-    private String createGame(PrintStream out, String[] params) {
+    private String createGame(String[] params) {
         if (params.length < 1) {
             out.print("Please provide a game ID.\\nFormat: 2 gameName");
             return "Retry";
@@ -173,7 +179,7 @@ public class ChessClient implements ServerMessageObserver {
         return "Created new game";
     }
 
-    private String joinGame(PrintStream out, String[] params) {
+    private String joinGame(String[] params) {
         if (params.length < 2) {
             out.print("Please provide a game ID and color.\nFormat: 3 WHITE/BLACK gameID");
             return "Retry";
@@ -201,7 +207,7 @@ public class ChessClient implements ServerMessageObserver {
         return "You joined";
     }
 
-    private String observeGame(PrintStream out, String[] params) {
+    private String observeGame(String[] params) {
         if (params.length < 1) {
             out.print("Please provide a game ID.\nFormat: 4 gameID");
             return "Retry";
@@ -229,7 +235,7 @@ public class ChessClient implements ServerMessageObserver {
         return "You're now watching";
     }
 
-    private String logout(PrintStream out) {
+    private String logout() {
         try {
             ServerFacade.logout(authToken);
         } catch (IOException e) {
@@ -237,7 +243,7 @@ public class ChessClient implements ServerMessageObserver {
             return "Error Caught";
         }
         authToken = null;
-        help(out, true);
+        help(true);
 
         return "See you later!";
     }
@@ -267,14 +273,17 @@ public class ChessClient implements ServerMessageObserver {
     }
 
     private void displayNotification(Notification notification) {
-
+        out.print(notification.getNotification());
     }
 
     private void displayError(ErrorMessage errorMessage) {
-
+        ChessUI.setRedText(out);
+        out.print(errorMessage.getError());
+        ChessUI.resetColor(out);
     }
 
     private void loadGame(LoadGameMessage message) {
-
+        String gameJson = message.getGame();
+        ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
     }
 }
