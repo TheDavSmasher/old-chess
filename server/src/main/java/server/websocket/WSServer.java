@@ -16,31 +16,31 @@ public class WSServer {
         Gson gson = builder.create();
         UserGameCommand gameCommand = gson.fromJson(message, UserGameCommand.class);
         switch (gameCommand.getCommandType()){
-            case JOIN_PLAYER -> join((JoinObserverCommand) gameCommand);
-            case JOIN_OBSERVER -> observe((JoinObserverCommand) gameCommand);
-            case MAKE_MOVE -> move((MakeMoveCommand) gameCommand);
-            case LEAVE -> leave((LeaveCommand) gameCommand);
-            case RESIGN -> resign((ResignCommand) gameCommand);
+            case JOIN_PLAYER -> join((JoinObserverCommand) gameCommand, session);
+            case JOIN_OBSERVER -> observe((JoinObserverCommand) gameCommand, session);
+            case MAKE_MOVE -> move((MakeMoveCommand) gameCommand, session);
+            case LEAVE -> leave((LeaveCommand) gameCommand, session);
+            case RESIGN -> resign((ResignCommand) gameCommand, session);
         }
     }
 
-    private void join(JoinObserverCommand command) {
+    private void join(JoinObserverCommand command, Session session) {
         ;
     }
 
-    private void observe(JoinObserverCommand command) {
+    private void observe(JoinObserverCommand command, Session session) {
         ;
     }
 
-    private void move(MakeMoveCommand command) {
+    private void move(MakeMoveCommand command, Session session) {
         ;
     }
 
-    private void leave(LeaveCommand command) {
+    private void leave(LeaveCommand command, Session session) {
         ;
     }
 
-    private void resign(ResignCommand command) {
+    private void resign(ResignCommand command, Session session) {
         ;
     }
 
