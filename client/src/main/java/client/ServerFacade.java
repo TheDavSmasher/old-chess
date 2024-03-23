@@ -85,6 +85,5 @@ public class ServerFacade {
 
     public static void resignGame(String authToken, int gameID) throws IOException {
         websocket.resignGame(authToken, gameID);
-
     }
 }
