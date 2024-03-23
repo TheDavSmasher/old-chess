@@ -13,11 +13,16 @@ import java.util.Objects;
 public class ChessGame {
     private ChessBoard gameBoard = new ChessBoard();
     private TeamColor currentTurn;
+    private boolean inPlay;
 
     public ChessGame() {
         gameBoard.resetBoard();
         currentTurn = TeamColor.WHITE;
+        inPlay = true;
     }
+
+    public boolean gameInPlay() { return inPlay; }
+    private void endGame() { inPlay = false; }
 
     /**
      * @return Which team's turn it is
@@ -93,6 +98,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (!inPlay) {
+            throw new InvalidMoveException("The game has already ended.");
+        }
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if (validMoves == null || !validMoves.contains(move)) {
             throw new InvalidMoveException("Move chosen is illegal.");
