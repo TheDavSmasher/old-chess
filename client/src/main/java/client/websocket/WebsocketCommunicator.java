@@ -47,9 +47,9 @@ public class WebsocketCommunicator extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void joinGame() {}
+    public void joinGame(String authToken) {}
 
-    public void observeGame() {}
+    public void observeGame(String authToken) {}
 
     private static class NotificationDeserializer implements JsonDeserializer<ServerMessage> {
         @Override
