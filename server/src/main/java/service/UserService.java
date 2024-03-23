@@ -6,7 +6,6 @@ import model.request.AuthRequest;
 import model.request.UserEnterRequest;
 import model.response.UserEnterResponse;
 import model.response.result.*;
-import service.result.*;
 
 public class UserService {
     public static UserEnterResponse register(UserEnterRequest request) throws ServiceException {

@@ -13,7 +13,6 @@ import service.AppService;
 import service.UserService;
 import model.request.AuthRequest;
 import model.request.UserEnterRequest;
-import service.result.*;
 
 class UserServiceTest {
 

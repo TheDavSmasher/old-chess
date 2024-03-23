@@ -7,7 +7,6 @@ import model.response.result.PreexistingException;
 import model.response.result.ServiceException;
 import service.UserService;
 import model.request.UserEnterRequest;
-import service.result.*;
 import spark.Request;
 import spark.Response;
 import spark.Spark;

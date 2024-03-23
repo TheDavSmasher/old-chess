@@ -9,7 +9,7 @@ import passoffTests.obfuscatedTestClasses.TestServerFacade;
 import passoffTests.testClasses.TestException;
 import passoffTests.testClasses.TestModels;
 import passoffTests.testClasses.WebsocketTestingEnvironment;
-import server.Server;
+import server.ChessServer;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -24,7 +24,7 @@ public class WebSocketTests {
 
     private static WebsocketTestingEnvironment environment;
     private static TestServerFacade serverFacade;
-    private static Server server;
+    private static ChessServer server;
     private static Long waitTime;
     private TestUser white;
     private TestUser black;
@@ -40,7 +40,7 @@ public class WebSocketTests {
 
     @BeforeAll
     public static void init() throws URISyntaxException {
-        server = new Server();
+        server = new ChessServer();
         var port = Integer.toString(server.run(0));
         System.out.println("Started test HTTP server on " + port);
 

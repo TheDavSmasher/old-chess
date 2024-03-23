@@ -11,7 +11,6 @@ import model.request.JoinGameRequest;
 import model.response.CreateGameResponse;
 import model.response.ListGamesResponse;
 import model.response.result.*;
-import service.result.*;
 
 public class GameService {
     public static ListGamesResponse getAllGames(AuthRequest auth) throws ServiceException {
