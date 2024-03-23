@@ -1,5 +1,6 @@
 package server;
 
+import server.websocket.WSServer;
 import spark.*;
 
 public class ChessServer {

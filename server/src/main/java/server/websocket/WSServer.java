@@ -1,4 +1,4 @@
-package server;
+package server.websocket;
 
 import com.google.gson.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -46,7 +46,8 @@ public class WSServer {
 
     private static class CommandDeserializer implements JsonDeserializer<UserGameCommand> {
         @Override
-        public UserGameCommand deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+        public UserGameCommand deserialize(JsonElement jsonElement, Type type,
+                                           JsonDeserializationContext context) throws JsonParseException {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             String typeString = jsonObject.get("commandType").getAsString();
             UserGameCommand.CommandType commandType = UserGameCommand.CommandType.valueOf(typeString);
