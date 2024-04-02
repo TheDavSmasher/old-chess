@@ -98,6 +98,7 @@ public class ChessClient implements ServerMessageObserver {
     }
 
     public String help(boolean simple) {
+        out.println();
         if (simple) {
             switch (currentState) {
                 case PRE_LOGIN -> out.print("""
