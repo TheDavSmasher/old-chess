@@ -43,7 +43,7 @@ public class UserService {
 
     public static void logout(AuthRequest request) throws ServiceException {
         try {
-            if (UserService.validUser(request.authToken()) == null) {
+            if (UserService.getUser(request.authToken()) == null) {
                 throw new UnauthorizedException();
             }
             AuthDAO authDAO = SQLAuthDAO.getInstance();
@@ -53,7 +53,7 @@ public class UserService {
         }
     }
 
-    public static AuthData validUser(String authToken) throws UnexpectedException {
+    public static AuthData getUser(String authToken) throws UnexpectedException {
         try {
             AuthDAO authDAO = SQLAuthDAO.getInstance();
             return authDAO.getAuth(authToken);

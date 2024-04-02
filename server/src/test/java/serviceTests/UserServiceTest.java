@@ -96,12 +96,12 @@ class UserServiceTest {
     @Test
     public void validUserTest() throws ServiceException {
         String authToken = "non-existent";
-        AuthData auth = UserService.validUser(authToken);
+        AuthData auth = UserService.getUser(authToken);
 
         Assertions.assertNull(auth);
 
         authToken = UserService.register(enterRequest).authToken();
-        auth = UserService.validUser(authToken);
+        auth = UserService.getUser(authToken);
 
         Assertions.assertNotNull(auth);
         Assertions.assertEquals(username, auth.username());
