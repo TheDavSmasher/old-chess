@@ -105,7 +105,8 @@ public class ChessClient implements ServerMessageObserver {
                     2 - Login
                     3 - Quit
                     
-                    0 - Help""");
+                    0 - Help
+                    """);
                 case POST_LOGIN -> out.print("""
                     1 - List Games
                     2 - Create Game
@@ -113,7 +114,8 @@ public class ChessClient implements ServerMessageObserver {
                     4 - Observe Game
                     5 - Logout
                     
-                    0 - Help""");
+                    0 - Help
+                    """);
                 case MID_GAME -> out.print("""
                     1 - Redraw Board
                     2 - Make Move
@@ -121,13 +123,15 @@ public class ChessClient implements ServerMessageObserver {
                     4 - Leave
                     5 - Resign
                     
-                    0 - Help""");
+                    0 - Help
+                    """);
                 case OBSERVING -> out.print("""
                     1 - Redraw Board
                     2 - Highlight Legal Moves
                     3 - Stop watching
                     
-                    0 - Help""");
+                    0 - Help
+                    """);
             }
         } else {
             switch (currentState) {
@@ -138,7 +142,8 @@ public class ChessClient implements ServerMessageObserver {
                        Format: 2 username password
                     3 - Quit: exit out of the client.
                     
-                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.
+                    """);
                 case POST_LOGIN -> out.print("""
                     1 - List Games: show all games that are currently being hosted in the server.
                     2 - Create Game: create a new game in the database with a name. The game's name can include spaces.
@@ -149,7 +154,8 @@ public class ChessClient implements ServerMessageObserver {
                        Format: 4 gameID
                     5 - Logout: leave your current session and return to login menu.
                     
-                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.
+                    """);
                 case MID_GAME -> out.print("""
                     1 - Redraw Board: print the board again for the current state of the game.
                     2 - Make Move: select a piece in a given position and give its ending position.
@@ -161,14 +167,16 @@ public class ChessClient implements ServerMessageObserver {
                     5 - Resign: forfeit the current game, rendering it unplayable and the opposing player as winner.
                         This action cannot be undone.
                     
-                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.
+                    """);
                 case OBSERVING -> out.print("""
                     1 - Redraw Board: print the board again for the current state of the game.
                     2 - Highlight Legal Moves: select a position on the board to see all legal moves the piece in that position can make.
                        Format: 3 position        Format positions column then row, such as G6.
                     3 - Stop Watching: leave the current game, returning to the menu.
                     
-                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.""");
+                    0 - Help: print this menu again. Also prints out if input is beyond what's accepted.
+                    """);
             }
         }
         return "Helping";
