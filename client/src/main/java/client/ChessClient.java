@@ -289,7 +289,7 @@ public class ChessClient implements ServerMessageObserver {
             return "List first";
         }
         try {
-            int index = Integer.parseInt(params[1]) - 1;
+            int index = Integer.parseInt(params[0]) - 1;
             if (index >= existingGames.length) {
                 out.print("That game does not exist!");
                 return "Out of range";
