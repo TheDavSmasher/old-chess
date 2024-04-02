@@ -62,9 +62,9 @@ public class GameService {
         }
     }
 
-    public static GameData getGame(AuthRequest authRequest, int gameID) throws ServiceException {
+    public static GameData getGame(String authToken, int gameID) throws ServiceException {
         try {
-            AuthData auth = UserService.getUser(authRequest.authToken());
+            AuthData auth = UserService.getUser(authToken);
             if (auth == null) {
                 throw new UnauthorizedException();
             }
@@ -75,9 +75,9 @@ public class GameService {
         }
     }
 
-    public static void leaveGame(AuthRequest authRequest, int gameID) throws ServiceException {
+    public static void leaveGame(String authToken, int gameID) throws ServiceException {
         try {
-            AuthData auth = UserService.getUser(authRequest.authToken());
+            AuthData auth = UserService.getUser(authToken);
             if (auth == null) {
                 throw new UnauthorizedException();
             }
@@ -96,9 +96,9 @@ public class GameService {
         }
     }
 
-    public static void updateGameState(AuthRequest authRequest, int gameID, String gameJson) throws ServiceException {
+    public static void updateGameState(String authToken, int gameID, String gameJson) throws ServiceException {
         try {
-            AuthData auth = UserService.getUser(authRequest.authToken());
+            AuthData auth = UserService.getUser(authToken);
             if (auth == null) {
                 throw new UnauthorizedException();
             }
