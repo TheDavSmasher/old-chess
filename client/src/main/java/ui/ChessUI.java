@@ -63,6 +63,7 @@ public class ChessUI {
     }
 
     private static void printTopHeader(PrintStream out, boolean whiteBottom) {
+        out.println();
         String[] columns = { " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
         setGreyBG(out);
         out.print("   ");

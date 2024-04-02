@@ -245,6 +245,7 @@ public class ChessClient implements ServerMessageObserver {
         try {
             String fullName = stringFromParams(params);
             ServerFacade.createGame(authToken, fullName);
+            out.print("Game created! List all games to see it and be able to join or observe it.");
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
@@ -385,6 +386,7 @@ public class ChessClient implements ServerMessageObserver {
             currentGameID = 0;
             currentGame = null;
             currentState = MenuState.POST_LOGIN;
+            help(false);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Caught Error";
@@ -398,6 +400,7 @@ public class ChessClient implements ServerMessageObserver {
             currentGameID = 0;
             currentGame = null;
             currentState = MenuState.POST_LOGIN;
+            help(false);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Caught Error";
