@@ -395,7 +395,7 @@ public class ChessClient implements ServerMessageObserver {
             currentGameID = 0;
             currentGame = null;
             currentState = MenuState.POST_LOGIN;
-            help(false);
+            help(true);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Caught Error";
@@ -409,7 +409,7 @@ public class ChessClient implements ServerMessageObserver {
             currentGameID = 0;
             currentGame = null;
             currentState = MenuState.POST_LOGIN;
-            help(false);
+            help(true);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Caught Error";
