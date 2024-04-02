@@ -22,7 +22,7 @@ public class ChessGame {
     }
 
     public boolean gameInPlay() { return inPlay; }
-    private void endGame() { inPlay = false; }
+    public void endGame() { inPlay = false; }
 
     /**
      * @return Which team's turn it is
