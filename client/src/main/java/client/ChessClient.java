@@ -285,6 +285,9 @@ public class ChessClient implements ServerMessageObserver {
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
+        } catch (NumberFormatException e) {
+            help(false);
+            return "Wrong option";
         }
         return "You joined";
     }
@@ -311,6 +314,9 @@ public class ChessClient implements ServerMessageObserver {
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
+        } catch (NumberFormatException e) {
+            help(false);
+            return "Wrong option";
         }
         return "You're now watching";
     }
@@ -457,12 +463,12 @@ public class ChessClient implements ServerMessageObserver {
     }
 
     private void displayNotification(Notification notification) {
-        out.print(notification.getNotification());
+        out.println(notification.getNotification());
     }
 
     private void displayError(ErrorMessage errorMessage) {
         ChessUI.setRedText(out);
-        out.print(errorMessage.getError());
+        out.println(errorMessage.getError());
         ChessUI.resetColor(out);
     }
 
