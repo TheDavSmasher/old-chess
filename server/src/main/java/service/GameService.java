@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.SQLGameDAO;
@@ -57,6 +58,53 @@ public class GameService {
                 String color = getColor(request, oldGame, auth);
                 gameDAO.updateGamePlayer(request.gameID(), color, auth.username());
             }
+        } catch (DataAccessException e) {
+            throw new UnexpectedException(e.getMessage());
+        }
+    }
+
+    public static GameData getGame(AuthRequest authRequest, int gameID) throws ServiceException {
+        try {
+            AuthData auth = UserService.validUser(authRequest.authToken());
+            if (auth == null) {
+                throw new UnauthorizedException();
+            }
+            GameDAO gameDAO = SQLGameDAO.getInstance();
+            return gameDAO.getGame(gameID);
+        } catch (DataAccessException e) {
+            throw new UnexpectedException(e.getMessage());
+        }
+    }
+
+    public static void leaveGame(AuthRequest authRequest, int gameID) throws ServiceException {
+        try {
+            AuthData auth = UserService.validUser(authRequest.authToken());
+            if (auth == null) {
+                throw new UnauthorizedException();
+            }
+            GameDAO gameDAO = SQLGameDAO.getInstance();
+            GameData oldGame = gameDAO.getGame(gameID);
+            if (gameID <= 0 || oldGame == null) {
+                throw new BadRequestException();
+            }
+            if (oldGame.whiteUsername().equals(auth.username())) {
+                gameDAO.updateGamePlayer(gameID, "WHITE", auth.username());
+            } else if (oldGame.blackUsername().equals(auth.username())) {
+                gameDAO.updateGamePlayer(gameID, "BLACK", auth.username());
+            }
+        } catch (DataAccessException e) {
+            throw new UnexpectedException(e.getMessage());
+        }
+    }
+
+    public static void updateGameState(AuthRequest authRequest, int gameID, String gameJson) throws ServiceException {
+        try {
+            AuthData auth = UserService.validUser(authRequest.authToken());
+            if (auth == null) {
+                throw new UnauthorizedException();
+            }
+            GameDAO gameDAO = SQLGameDAO.getInstance();
+            gameDAO.updateGameBoard(gameID, gameJson);
         } catch (DataAccessException e) {
             throw new UnexpectedException(e.getMessage());
         }
