@@ -31,11 +31,13 @@ public class WebsocketCommunicator extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     try {
-                        GsonBuilder builder = new GsonBuilder();
-                        builder.registerTypeAdapter(ServerMessage.class, new NotificationDeserializer());
-                        Gson gson = builder.create();
+                        Gson gson = new Gson();
                         ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
-                        observer.notify(serverMessage);
+                        switch (serverMessage.getServerMessageType()) {
+                            case NOTIFICATION -> observer.notify(gson.fromJson(message, Notification.class));
+                            case LOAD_GAME -> observer.notify(gson.fromJson(message, LoadGameMessage.class));
+                            case ERROR -> observer.notify(gson.fromJson(message, ErrorMessage.class));
+                        }
                     } catch (Exception e) {
                         observer.notify(new ErrorMessage(e.getMessage()));
                     }
@@ -78,20 +80,5 @@ public class WebsocketCommunicator extends Endpoint {
 
     private void sendCommand(String jsonMessage) throws IOException {
         session.getBasicRemote().sendText(jsonMessage);
-    }
-
-    private static class NotificationDeserializer implements JsonDeserializer<ServerMessage> {
-        @Override
-        public Notification deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-            String typeString = jsonObject.get("serverMessageType").getAsString();
-            ServerMessage.ServerMessageType messageType = ServerMessage.ServerMessageType.valueOf(typeString);
-
-            return switch (messageType) {
-                case NOTIFICATION -> context.deserialize(jsonElement, Notification.class);
-                case LOAD_GAME -> context.deserialize(jsonElement, LoadGameMessage.class);
-                case ERROR -> context.deserialize(jsonElement, ErrorMessage.class);
-            };
-        }
     }
 }
