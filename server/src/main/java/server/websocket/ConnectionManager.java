@@ -28,9 +28,10 @@ public class ConnectionManager {
         if (oldConnections == null) {
             connectionsToGames.put(gameID, new ArrayList<>());
             oldConnections = connectionsToGames.get(gameID);
+            oldConnections.add(newConnection);
+        } else {
+            oldConnections.add(newConnection);
         }
-        oldConnections.add(newConnection);
-        connectionsToGames.put(gameID, oldConnections);
         addToUsers(authToken, newConnection);
     }
 
@@ -63,9 +64,9 @@ public class ConnectionManager {
 
     public void notifyOthers(int gameID, String authToken, Notification notification) {
         ArrayList<Connection> gameConnections = connectionsToGames.get(gameID);
-        gameConnections.remove(userConnections.get(authToken));
         String message = new Gson().toJson(notification);
         for (Connection current : gameConnections) {
+            if (current == userConnections.get(authToken)) continue;
             sendToConnection(current, message);
         }
     }
