@@ -341,6 +341,10 @@ public class ChessClient implements ServerMessageObserver {
                 Format: 2 start end (pieceType)""");
             return "Retry";
         }
+        if (currentGame.getTeamTurn() != (whitePlayer ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK)) {
+            out.print("Please wait for your turn to make a move.");
+            return "Not your turn!";
+        }
         try {
             ChessPiece.PieceType type;
             if (params.length < 3) {
