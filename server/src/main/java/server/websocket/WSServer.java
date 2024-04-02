@@ -25,23 +25,23 @@ public class WSServer {
     }
 
     private void join(JoinObserverCommand command, Session session) {
-        ;
+        //TODO confirm auth, get game from ID, send LoadGame, send Notification of Join
     }
 
     private void observe(JoinObserverCommand command, Session session) {
-        ;
+        //TODO confirm auth, get game from ID, send LoadGame, send Notification of Observer
     }
 
     private void move(MakeMoveCommand command, Session session) {
-        ;
+        //TODO confirm auth, get game from ID, make move and update game, send LoadGame with updated game
     }
 
     private void leave(LeaveCommand command, Session session) {
-        ;
+        //TODO confirm auth, get game from ID, update game state, remove Session from game, send Notification of leaving
     }
 
     private void resign(ResignCommand command, Session session) {
-        ;
+        //TODO confirm auth, get game from ID, change game state, remove Session from game, send Notification of resignation
     }
 
     private static class CommandDeserializer implements JsonDeserializer<UserGameCommand> {
