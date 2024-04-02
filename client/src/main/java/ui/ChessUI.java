@@ -121,13 +121,13 @@ public class ChessUI {
             setLightGreenBG(out);
         } else {
             setWhiteBG(out);
+        }
+        if (pieceString != null) {
             if (isUpperCase(pieceString.charAt(0))) {
                 setRedText(out);
             } else {
                 setBlueText(out);
             }
-        }
-        if (pieceString != null) {
             out.print(" "+pieceString.toUpperCase()+" ");
         } else {
             out.print("   ");
@@ -140,13 +140,13 @@ public class ChessUI {
             setDarkGreenBG(out);
         } else {
             setBlackBG(out);
+        }
+        if (pieceString != null) {
             if (isUpperCase(pieceString.charAt(0))) {
                 setRedText(out);
             } else {
                 setBlueText(out);
             }
-        }
-        if (pieceString != null) {
             out.print(" "+pieceString.toUpperCase()+" ");
         } else {
             out.print("   ");
