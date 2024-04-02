@@ -1,6 +1,10 @@
 package server.websocket;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import webSocketMessages.serverMessages.LoadGameMessage;
+import webSocketMessages.serverMessages.Notification;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +37,34 @@ public class ConnectionManager {
         removeFromUser(authToken);
     }
 
-    public Connection getFromUsers(String authToken) { return userConnections.get(authToken); }
+    public Connection getFromUsers(String authToken) {
+        return userConnections.get(authToken);
+    }
+
+    public void loadNewGame(ChessGame game, int gameID) {
+        Gson gson = new Gson();
+        String gameJson = gson.toJson(game);
+        String message = gson.toJson(new LoadGameMessage(gameJson));
+        for (Connection current : connectionsToGames.get(gameID)) {
+            sendToConnection(current, message);
+        }
+    }
+
+    public void loadNewGame(ChessGame game, String authToken) {
+        Gson gson = new Gson();
+        String gameJson = gson.toJson(game);
+        String message = gson.toJson(new LoadGameMessage(gameJson));
+        sendToConnection(userConnections.get(authToken), message);
+    }
+
+    public void notifyOthers(int gameID, String authToken, Notification notification) {
+        ArrayList<Connection> gameConnections = connectionsToGames.get(gameID);
+        gameConnections.remove(userConnections.get(authToken));
+        String message = new Gson().toJson(notification);
+        for (Connection current : gameConnections) {
+            sendToConnection(current, message);
+        }
+    }
 
     public void sendToConnection(Connection connection, String message) {
         try {
