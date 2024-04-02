@@ -268,8 +268,8 @@ public class ChessClient implements ServerMessageObserver {
                 return "Out of range";
             }
             currentGameID = existingGames[index];
-            currentState = MenuState.MID_GAME;
             ServerFacade.joinGame(authToken, params[0], currentGameID);
+            currentState = MenuState.MID_GAME;
             whitePlayer = params[0].equalsIgnoreCase("white");
         } catch (IOException e) {
             out.print(e.getMessage());
@@ -294,8 +294,8 @@ public class ChessClient implements ServerMessageObserver {
                 return "Out of range";
             }
             currentGameID = existingGames[index];
-            currentState = MenuState.OBSERVING;
             ServerFacade.observeGame(authToken, currentGameID);
+            currentState = MenuState.OBSERVING;
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
@@ -378,11 +378,11 @@ public class ChessClient implements ServerMessageObserver {
     }
 
     private String leaveGame() {
-        currentGameID = 0;
-        currentGame = null;
-        currentState = MenuState.POST_LOGIN;
         try {
             ServerFacade.leaveGame(authToken, currentGameID);
+            currentGameID = 0;
+            currentGame = null;
+            currentState = MenuState.POST_LOGIN;
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Caught Error";
@@ -391,11 +391,11 @@ public class ChessClient implements ServerMessageObserver {
     }
 
     private String resignGame() {
-        currentGameID = 0;
-        currentGame = null;
-        currentState = MenuState.POST_LOGIN;
         try {
             ServerFacade.resignGame(authToken, currentGameID);
+            currentGameID = 0;
+            currentGame = null;
+            currentState = MenuState.POST_LOGIN;
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Caught Error";
