@@ -52,9 +52,6 @@ public class ServerFacade {
     }
 
     public static void observeGame(String authToken, int gameID) throws IOException {
-        String url = urlPort + "game";
-        String body = new Gson().toJson(new JoinGameRequest(null, gameID));
-        HttpCommunicator.doPut(url, body, authToken, EmptyResponse.class);
         websocket.observeGame(authToken, gameID);
     }
 
