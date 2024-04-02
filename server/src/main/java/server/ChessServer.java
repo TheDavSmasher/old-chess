@@ -10,6 +10,8 @@ public class ChessServer {
 
         Spark.staticFiles.location("web");
 
+        Spark.webSocket("/connect", WSServer.class);
+
         Spark.delete("/db", (request, response) -> (new ClearHandler()).handle(request, response));
         Spark.post("/user", (request, response) -> (new RegisterHandler()).handle(request, response));
         Spark.post("/session", (request, response) -> (new LoginHandler()).handle(request, response));
@@ -17,7 +19,6 @@ public class ChessServer {
         Spark.get("/game", (request, response) -> (new ListGameHandler()).handle(request, response));
         Spark.post("/game", (request, response) -> (new CreateGameHandler()).handle(request, response));
         Spark.put("/game", (request, response) -> (new JoinGameHandler()).handle(request, response));
-        Spark.webSocket("/connect", WSServer.class);
 
         Spark.awaitInitialization();
         return Spark.port();
