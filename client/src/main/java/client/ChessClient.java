@@ -275,9 +275,6 @@ public class ChessClient implements ServerMessageObserver {
             out.print(e.getMessage());
             return "Error Caught";
         }
-        //ChessGame testGame = new ChessGame();
-        //String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
-        //ChessUI.printChessBoard(out, board, whitePlayer);
         return "You joined";
     }
 
@@ -303,10 +300,6 @@ public class ChessClient implements ServerMessageObserver {
             out.print(e.getMessage());
             return "Error Caught";
         }
-        //ChessGame testGame = new ChessGame();
-        //String[][] board = ChessUI.getChessBoardAsArray(testGame.getBoard());
-        //ChessUI.printChessBoard(out, board, true);
-
         return "You're now watching";
     }
 
