@@ -19,14 +19,16 @@ public class ChessClient implements ServerMessageObserver {
     private String authToken;
     private int[] existingGames;
     private PrintStream out;
-    private int currentGame;
+    private int currentGameID;
     private boolean whitePlayer;
     private MenuState currentState;
+    private ChessGame currentGame;
 
     public ChessClient() {
         authToken = null;
         existingGames = null;
-        currentGame = 0;
+        currentGameID = 0;
+        currentGame = null;
         whitePlayer = true;
         currentState = MenuState.PRE_LOGIN;
     }
@@ -265,9 +267,9 @@ public class ChessClient implements ServerMessageObserver {
                 out.print("That game does not exist!");
                 return "Out of range";
             }
-            currentGame = existingGames[index];
+            currentGameID = existingGames[index];
             currentState = MenuState.MID_GAME;
-            ServerFacade.joinGame(authToken, params[0], currentGame);
+            ServerFacade.joinGame(authToken, params[0], currentGameID);
             whitePlayer = params[0].equalsIgnoreCase("white");
         } catch (IOException e) {
             out.print(e.getMessage());
@@ -294,9 +296,9 @@ public class ChessClient implements ServerMessageObserver {
                 out.print("That game does not exist!");
                 return "Out of range";
             }
-            currentGame = existingGames[index];
+            currentGameID = existingGames[index];
             currentState = MenuState.OBSERVING;
-            ServerFacade.observeGame(authToken, currentGame);
+            ServerFacade.observeGame(authToken, currentGameID);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
@@ -333,7 +335,9 @@ public class ChessClient implements ServerMessageObserver {
     }
 
     private String redrawBoard() {
-        return "TODO get board and print";
+        String[][] gameBoard = ChessUI.getChessBoardAsArray(currentGame.getBoard());
+        ChessUI.printChessBoard(out, gameBoard, whitePlayer);
+        return "Board Printed";
     }
 
     private String makeMove(String[] params) {
@@ -352,7 +356,7 @@ public class ChessClient implements ServerMessageObserver {
                 type = typeFromString(params[2]);
             }
             ChessMove move = new ChessMove(positionFromString(params[0]), positionFromString(params[1]), type);
-            ServerFacade.makeMove(authToken, currentGame, move);
+            ServerFacade.makeMove(authToken, currentGameID, move);
             return "Move made";
         } catch (IOException e) {
             out.print(e.getMessage());
@@ -366,10 +370,8 @@ public class ChessClient implements ServerMessageObserver {
         }
         try {
             ChessPosition start = positionFromString(params[0]);
-            //TODO get game
-            String[][] gameBoard = ChessUI.getChessBoardAsArray(new ChessBoard());
-            //TODO get moves
-            String[][] moves = ChessUI.getValidMovesInArray(new ArrayList<>());
+            String[][] gameBoard = ChessUI.getChessBoardAsArray(currentGame.getBoard());
+            String[][] moves = ChessUI.getValidMovesInArray((ArrayList<ChessMove>) currentGame.validMoves(start));
             ChessUI.printChessBoard(out, gameBoard, moves, whitePlayer);
             return "Valid Moves shown";
         } catch (IOException e) {
@@ -379,10 +381,11 @@ public class ChessClient implements ServerMessageObserver {
     }
 
     private String leaveGame() {
-        currentGame = 0;
+        currentGameID = 0;
+        currentGame = null;
         currentState = MenuState.POST_LOGIN;
         try {
-            ServerFacade.leaveGame(authToken, currentGame);
+            ServerFacade.leaveGame(authToken, currentGameID);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Caught Error";
@@ -391,10 +394,11 @@ public class ChessClient implements ServerMessageObserver {
     }
 
     private String resignGame() {
-        currentGame = 0;
+        currentGameID = 0;
+        currentGame = null;
         currentState = MenuState.POST_LOGIN;
         try {
-            ServerFacade.resignGame(authToken, currentGame);
+            ServerFacade.resignGame(authToken, currentGameID);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Caught Error";
@@ -453,8 +457,8 @@ public class ChessClient implements ServerMessageObserver {
 
     private void loadGame(LoadGameMessage message) {
         String gameJson = message.getGame();
-        ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
-        ChessUI.printChessBoard(out, ChessUI.getChessBoardAsArray(game.getBoard()), whitePlayer);
+        currentGame = new Gson().fromJson(gameJson, ChessGame.class);
+        ChessUI.printChessBoard(out, ChessUI.getChessBoardAsArray(currentGame.getBoard()), whitePlayer);
         help(true);
     }
 }
