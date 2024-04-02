@@ -1,10 +1,18 @@
 package server.websocket;
 
+import chess.ChessGame;
+import chess.InvalidMoveException;
 import com.google.gson.*;
+import model.dataAccess.AuthData;
+import model.response.result.ServiceException;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import spark.Session;
+import org.eclipse.jetty.websocket.api.Session;
+import service.GameService;
+import service.UserService;
+import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.userCommands.*;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 
 @WebSocket
@@ -16,7 +24,7 @@ public class WSServer {
         Gson gson = builder.create();
         UserGameCommand gameCommand = gson.fromJson(message, UserGameCommand.class);
         switch (gameCommand.getCommandType()){
-            case JOIN_PLAYER -> join((JoinObserverCommand) gameCommand, session);
+            case JOIN_PLAYER -> join((JoinPlayerCommand) gameCommand, session);
             case JOIN_OBSERVER -> observe((JoinObserverCommand) gameCommand, session);
             case MAKE_MOVE -> move((MakeMoveCommand) gameCommand, session);
             case LEAVE -> leave((LeaveCommand) gameCommand, session);
@@ -24,24 +32,95 @@ public class WSServer {
         }
     }
 
-    private void join(JoinObserverCommand command, Session session) {
-        //TODO confirm auth, get game from ID, send LoadGame, send Notification of Join
+    private final ConnectionManager connectionManager = new ConnectionManager();
+
+    private void join(JoinPlayerCommand command, Session session) {
+        try {
+            String username = enter(command.getAuthString(), command.getGameID(), session);
+            Notification notification = new Notification(username + " has joined the game as " + command.getColor() + ".");
+            connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), notification);
+        } catch (ServiceException e) {
+            sendError(session, e.getMessage());
+        }
     }
 
     private void observe(JoinObserverCommand command, Session session) {
-        //TODO confirm auth, get game from ID, send LoadGame, send Notification of Observer
+        try {
+            String username = enter(command.getAuthString(), command.getGameID(), session);
+            Notification notification = new Notification(username + " is now observing the game.");
+            connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), notification);
+        } catch (ServiceException e) {
+            sendError(session, e.getMessage());
+        }
+    }
+
+    private String enter(String authToken, int gameID, Session session) throws ServiceException {
+        AuthData auth = UserService.getUser(authToken);
+        if (auth == null) {
+            throw new ServiceException("You are unauthorized.");
+        }
+        connectionManager.addToGame(gameID, authToken, auth.username(), session);
+        connectionManager.loadNewGame(GameService.getGame(authToken, gameID).game(), authToken);
+        return auth.username();
     }
 
     private void move(MakeMoveCommand command, Session session) {
-        //TODO confirm auth, get game from ID, make move and update game, send LoadGame with updated game
+        try {
+            Connection connection = connectionManager.getFromUsers(command.getAuthString());
+            if (connection == null) {
+                sendError(session, "You are unauthorized");
+                return;
+            }
+            ChessGame game = GameService.getGame(command.getAuthString(), command.getGameID()).game();
+            game.makeMove(command.getMove());
+            String gameJson = new Gson().toJson(game);
+            GameService.updateGameState(command.getAuthString(), command.getGameID(), gameJson);
+            connectionManager.loadNewGame(game, command.getGameID());
+        } catch (ServiceException | InvalidMoveException e) {
+            sendError(session, e.getMessage());
+        }
     }
 
     private void leave(LeaveCommand command, Session session) {
-        //TODO confirm auth, get game from ID, update game state, remove Session from game, send Notification of leaving
+        try {
+            Connection connection = connectionManager.getFromUsers(command.getAuthString());
+            if (connection == null) {
+                sendError(session, "You are unauthorized");
+                return;
+            }
+            GameService.leaveGame(command.getAuthString(), command.getGameID());
+            connectionManager.removeFromGame(command.getGameID(), command.getAuthString());
+            Notification notification = new Notification(connection.username + " has left the game.");
+            connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), notification);
+        } catch (ServiceException e) {
+            sendError(session, e.getMessage());
+        }
     }
 
     private void resign(ResignCommand command, Session session) {
-        //TODO confirm auth, get game from ID, change game state, remove Session from game, send Notification of resignation
+        try {
+            Connection connection = connectionManager.getFromUsers(command.getAuthString());
+            if (connection == null) {
+                sendError(session, "You are unauthorized");
+                return;
+            }
+            GameService.leaveGame(command.getAuthString(), command.getGameID());
+            ChessGame gameResigned = GameService.getGame(command.getAuthString(), command.getGameID()).game();
+            gameResigned.endGame();
+            String gameJson = new Gson().toJson(gameResigned);
+            GameService.updateGameState(command.getAuthString(), command.getGameID(), gameJson);
+            connectionManager.removeFromGame(command.getGameID(), command.getAuthString());
+            Notification notification = new Notification(connection.username + " has resigned the game.");
+            connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), notification);
+        } catch (ServiceException e) {
+            sendError(session, e.getMessage());
+        }
+    }
+
+    private void sendError(Session session, String message) {
+        try {
+            session.getRemote().sendString(message);
+        } catch (IOException ignored) {}
     }
 
     private static class CommandDeserializer implements JsonDeserializer<UserGameCommand> {
