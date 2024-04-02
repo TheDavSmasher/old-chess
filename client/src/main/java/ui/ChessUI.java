@@ -50,6 +50,7 @@ public class ChessUI {
     }
 
     public static void printChessBoard(PrintStream out, String[][] board, String[][] moves, boolean whiteBottom) {
+        out.println();
         printTopHeader(out, whiteBottom);
 
         boolean firstIsWhite = true;
@@ -63,7 +64,6 @@ public class ChessUI {
     }
 
     private static void printTopHeader(PrintStream out, boolean whiteBottom) {
-        out.println();
         String[] columns = { " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
         setGreyBG(out);
         out.print("   ");
