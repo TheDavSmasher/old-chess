@@ -54,18 +54,25 @@ public class GameService {
                 throw new BadRequestException();
             }
             if (request.playerColor() != null) {
-                String color = request.playerColor().toUpperCase();
-                if (!color.equals("WHITE") && !color.equals("BLACK")) {
-                    throw new BadRequestException();
-                }
-                if (color.equals("WHITE") && oldGame.whiteUsername() != null
-                || color.equals("BLACK") && oldGame.blackUsername() != null) {
-                    throw new PreexistingException();
-                }
+                String color = getColor(request, oldGame, auth);
                 gameDAO.updateGamePlayer(request.gameID(), color, auth.username());
             }
         } catch (DataAccessException e) {
             throw new UnexpectedException(e.getMessage());
         }
+    }
+
+    private static String getColor(JoinGameRequest request, GameData oldGame, AuthData auth) throws ServiceException {
+        String color = request.playerColor().toUpperCase();
+        if (!color.equals("WHITE") && !color.equals("BLACK")) {
+            throw new BadRequestException();
+        }
+        if (color.equals("WHITE") && oldGame.whiteUsername() != null    //Trying to take White, White player already taken
+        || color.equals("BLACK") && oldGame.blackUsername() != null     //Trying to take Black, Black player already taken
+        || color.equals("WHITE") && oldGame.blackUsername().equals(auth.username())     //Trying to play against self, client can only hold one player
+        || color.equals("BLACK") && oldGame.whiteUsername().equals(auth.username())) {  //Trying to play against self, client can only hold one player
+            throw new PreexistingException();
+        }
+        return color;
     }
 }
