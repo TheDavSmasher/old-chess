@@ -25,6 +25,10 @@ public class ConnectionManager {
     public void addToGame(int gameID, String authToken, String username, Session session) {
         Connection newConnection = new Connection(username, session);
         ArrayList<Connection> oldConnections = connectionsToGames.get(gameID);
+        if (oldConnections == null) {
+            connectionsToGames.put(gameID, new ArrayList<>());
+            oldConnections = connectionsToGames.get(gameID);
+        }
         oldConnections.add(newConnection);
         connectionsToGames.put(gameID, oldConnections);
         addToUsers(authToken, newConnection);
