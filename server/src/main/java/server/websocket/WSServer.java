@@ -63,9 +63,15 @@ public class WSServer {
         }
         GameData data = GameService.getGame(authToken, gameID);
         if (data == null) throw new ServiceException("Game does not exist.");
-        if (color != null && ((color == ChessGame.TeamColor.WHITE && data.whiteUsername() != null && !data.whiteUsername().equals(auth.username()))
-                            ||color == ChessGame.TeamColor.BLACK && data.blackUsername() != null && !data.blackUsername().equals(auth.username()))) {
-            throw new ServiceException("Color is already taken.");
+        if (color != null){
+            if ((color == ChessGame.TeamColor.WHITE && data.whiteUsername() != null && !data.whiteUsername().equals(auth.username()))
+                    || color == ChessGame.TeamColor.BLACK && data.blackUsername() != null && !data.blackUsername().equals(auth.username())) {
+                throw new ServiceException("Color is already taken.");
+            }
+            if (color == ChessGame.TeamColor.WHITE && data.whiteUsername() == null
+                    || color == ChessGame.TeamColor.BLACK && data.blackUsername() == null) {
+                throw new ServiceException("RSVP the spot before calling this!");
+            }
         }
         connectionManager.addToGame(gameID, authToken, auth.username(), session);
         connectionManager.loadNewGame(data.game(), authToken);
