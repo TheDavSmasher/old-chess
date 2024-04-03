@@ -114,6 +114,10 @@ public class GameService {
         if (!color.equals("WHITE") && !color.equals("BLACK")) {
             throw new BadRequestException();
         }
+        if (color.equals("WHITE") && oldGame.whiteUsername() != null && oldGame.whiteUsername().equals(username)
+        || color.equals("BLACK") && oldGame.blackUsername() != null && oldGame.blackUsername().equals(username)) { //Rejoining game is allowed
+            return color;
+        }
         if (color.equals("WHITE") && oldGame.whiteUsername() != null    //Trying to take White, White player already taken
         || color.equals("BLACK") && oldGame.blackUsername() != null     //Trying to take Black, Black player already taken
         || color.equals("WHITE") && (oldGame.blackUsername() != null && oldGame.blackUsername().equals(username))     //Trying to play against self, client can only hold one player
