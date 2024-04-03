@@ -9,6 +9,7 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
 import service.GameService;
 import service.UserService;
+import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.userCommands.*;
 
@@ -117,7 +118,8 @@ public class WSServer {
 
     private void sendError(Session session, String message) {
         try {
-            session.getRemote().sendString(message);
+            ErrorMessage error = new ErrorMessage(message);
+            session.getRemote().sendString(new Gson().toJson(error));
         } catch (IOException ignored) {}
     }
 }
