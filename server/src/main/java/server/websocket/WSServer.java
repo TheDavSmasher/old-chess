@@ -105,14 +105,18 @@ public class WSServer {
                     positionAsString(move.getStartPosition()) + " to " + positionAsString(move.getEndPosition()) + ".");
             connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), moveNotification);
 
+            String opponent = (game.getTeamTurn() == ChessGame.TeamColor.WHITE) ? gameData.whiteUsername() : gameData.blackUsername();
             if (game.isInCheck(game.getTeamTurn())) {
-                String opponent = (game.getTeamTurn() == ChessGame.TeamColor.WHITE) ? gameData.whiteUsername() : gameData.blackUsername();
                 Notification checkNotification = new Notification(opponent + " is now in check.");
                 connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), checkNotification);
             } else if (game.isInCheckmate(game.getTeamTurn())) {
-                String opponent = (game.getTeamTurn() == ChessGame.TeamColor.WHITE) ? gameData.whiteUsername() : gameData.blackUsername();
                 Notification checkmateNotification = new Notification(opponent + " is now in checkmate.");
-                connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), checkmateNotification);
+                connectionManager.notifyAll(command.getGameID(), checkmateNotification);
+                endGame(command.getGameID(), command.getAuthString(), game, connection.username + " has won.");
+            } else if (game.isInStalemate(game.getTeamTurn())) {
+                Notification stalemateNotification = new Notification(opponent + " is now in stalemate.");
+                connectionManager.notifyAll(command.getGameID(), stalemateNotification);
+                endGame(command.getGameID(), command.getAuthString(), game, "The game is tied.");
             }
 
         } catch (ServiceException | InvalidMoveException e) {
@@ -175,15 +179,19 @@ public class WSServer {
                 sendError(session, "You need to be a player to resign.");
                 return;
             }
-            gameData.game().endGame();
-            String gameJson = new Gson().toJson(gameData.game());
-            GameService.updateGameState(command.getAuthString(), command.getGameID(), gameJson);
-            Notification notification = new Notification(connection.username + " has resigned the game.");
-            connectionManager.notifyAll(command.getGameID(), notification);
+            endGame(command.getGameID(), command.getAuthString(), gameData.game(), connection.username + " has resigned the game.");
             connectionManager.removeFromGame(command.getGameID(), command.getAuthString());
         } catch (ServiceException e) {
             sendError(session, e.getMessage());
         }
+    }
+
+    private void endGame(int gameID, String authToken, ChessGame game, String gameState) throws ServiceException {
+        game.endGame();
+        String gameJson = new Gson().toJson(game);
+        GameService.updateGameState(authToken, gameID, gameJson);
+        Notification gameEnded = new Notification("The game has ended.\n" + gameState);
+        connectionManager.notifyAll(gameID, gameEnded);
     }
 
     private void sendError(Session session, String message) {
