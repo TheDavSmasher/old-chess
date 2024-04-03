@@ -79,14 +79,20 @@ public class WSServer {
                 return;
             }
             ChessGame game = gameData.game();
+            if (userIsPlayer(gameData, connection.username) != game.getTeamTurn()) {
+                sendError(session, "It is not your turn to make a move.");
+                return;
+            }
             game.makeMove(command.getMove());
             String gameJson = new Gson().toJson(game);
             GameService.updateGameState(command.getAuthString(), command.getGameID(), gameJson);
+
             connectionManager.loadNewGame(game, command.getGameID());
             ChessMove move = command.getMove();
             Notification moveNotification = new Notification(connection.username + " has moved piece at " +
                     positionAsString(move.getStartPosition()) + " to " + positionAsString(move.getEndPosition()) + ".");
             connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), moveNotification);
+
             if (game.isInCheck(game.getTeamTurn())) {
                 String opponent = (game.getTeamTurn() == ChessGame.TeamColor.WHITE) ? gameData.whiteUsername() : gameData.blackUsername();
                 Notification checkNotification = new Notification(opponent + " is now in check.");
