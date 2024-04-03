@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.*;
 import model.dataAccess.AuthData;
+import model.dataAccess.GameData;
 import model.response.result.ServiceException;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
@@ -104,9 +105,13 @@ public class WSServer {
                 return;
             }
             GameService.leaveGame(command.getAuthString(), command.getGameID());
-            ChessGame gameResigned = GameService.getGame(command.getAuthString(), command.getGameID()).game();
-            gameResigned.endGame();
-            String gameJson = new Gson().toJson(gameResigned);
+            GameData gameData = GameService.getGame(command.getAuthString(), command.getGameID());
+            if (!gameData.game().gameInPlay()) {
+                sendError(session, "Game is already finished. You cannot resign anymore.");
+                return;
+            }
+            gameData.game().endGame();
+            String gameJson = new Gson().toJson(gameData.game());
             GameService.updateGameState(command.getAuthString(), command.getGameID(), gameJson);
             connectionManager.removeFromGame(command.getGameID(), command.getAuthString());
             Notification notification = new Notification(connection.username + " has resigned the game.");
