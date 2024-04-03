@@ -38,7 +38,7 @@ public class WSServer {
 
     private void join(JoinPlayerCommand command, Session session) {
         try {
-            String username = enter(command.getAuthString(), command.getGameID(), session);
+            String username = enter(command.getAuthString(), command.getGameID(), command.getColor(), session);
             Notification notification = new Notification(username + " has joined the game as " + command.getColor() + ".");
             connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), notification);
         } catch (ServiceException e) {
@@ -48,7 +48,7 @@ public class WSServer {
 
     private void observe(JoinObserverCommand command, Session session) {
         try {
-            String username = enter(command.getAuthString(), command.getGameID(), session);
+            String username = enter(command.getAuthString(), command.getGameID(), null,session);
             Notification notification = new Notification(username + " is now observing the game.");
             connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), notification);
         } catch (ServiceException e) {
@@ -56,13 +56,17 @@ public class WSServer {
         }
     }
 
-    private String enter(String authToken, int gameID, Session session) throws ServiceException {
+    private String enter(String authToken, int gameID, ChessGame.TeamColor color, Session session) throws ServiceException {
         AuthData auth = UserService.getUser(authToken);
         if (auth == null) {
             throw new ServiceException("You are unauthorized.");
         }
         GameData data = GameService.getGame(authToken, gameID);
         if (data == null) throw new ServiceException("Game does not exist.");
+        if (color != null && (color == ChessGame.TeamColor.WHITE && data.whiteUsername() != null
+                            ||color == ChessGame.TeamColor.BLACK && data.blackUsername() != null)) {
+            throw new ServiceException("Color is already taken.");
+        }
         connectionManager.addToGame(gameID, authToken, auth.username(), session);
         connectionManager.loadNewGame(data.game(), authToken);
         return auth.username();
