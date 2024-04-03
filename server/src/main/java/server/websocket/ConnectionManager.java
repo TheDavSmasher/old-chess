@@ -63,11 +63,19 @@ public class ConnectionManager {
     }
 
     public void notifyOthers(int gameID, String authToken, Notification notification) {
+        ArrayList<Connection> closed = new ArrayList<>();
         ArrayList<Connection> gameConnections = connectionsToGames.get(gameID);
         String message = new Gson().toJson(notification);
         for (Connection current : gameConnections) {
-            if (current == userConnections.get(authToken)) continue;
-            sendToConnection(current, message);
+            if (current.session.isOpen()) {
+                if (current == userConnections.get(authToken)) continue;
+                sendToConnection(current, message);
+            } else {
+                closed.add(current);
+            }
+        }
+        for (Connection close : closed) {
+            gameConnections.remove(close);
         }
     }
 
