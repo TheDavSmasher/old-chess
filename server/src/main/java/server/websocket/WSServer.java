@@ -1,6 +1,8 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.*;
 import model.dataAccess.AuthData;
@@ -71,14 +73,55 @@ public class WSServer {
                 sendError(session, "You are unauthorized");
                 return;
             }
-            ChessGame game = GameService.getGame(command.getAuthString(), command.getGameID()).game();
+            GameData gameData = GameService.getGame(command.getAuthString(), command.getGameID());
+            if (userIsPlayer(gameData, connection.username) == null) {
+                sendError(session, "You need to be a player to make a move");
+                return;
+            }
+            ChessGame game = gameData.game();
             game.makeMove(command.getMove());
             String gameJson = new Gson().toJson(game);
             GameService.updateGameState(command.getAuthString(), command.getGameID(), gameJson);
             connectionManager.loadNewGame(game, command.getGameID());
+            ChessMove move = command.getMove();
+            Notification moveNotification = new Notification(connection.username + " has moved piece at " +
+                    positionAsString(move.getStartPosition()) + " to " + positionAsString(move.getEndPosition()) + ".");
+            connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), moveNotification);
+            if (game.isInCheck(game.getTeamTurn())) {
+                String opponent = (game.getTeamTurn() == ChessGame.TeamColor.WHITE) ? gameData.whiteUsername() : gameData.blackUsername();
+                Notification checkNotification = new Notification(opponent + " is now in check.");
+                connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), checkNotification);
+            } else if (game.isInCheckmate(game.getTeamTurn())) {
+                String opponent = (game.getTeamTurn() == ChessGame.TeamColor.WHITE) ? gameData.whiteUsername() : gameData.blackUsername();
+                Notification checkmateNotification = new Notification(opponent + " is now in checkmate.");
+                connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), checkmateNotification);
+            }
+
         } catch (ServiceException | InvalidMoveException e) {
             sendError(session, e.getMessage());
         }
+    }
+
+    private ChessGame.TeamColor userIsPlayer(GameData data, String username) {
+        if (data.whiteUsername() != null && data.whiteUsername().equals(username)) return ChessGame.TeamColor.WHITE;
+        if (data.blackUsername() != null && data.blackUsername().equals(username)) return ChessGame.TeamColor.BLACK;
+        return null;
+    }
+
+    private String positionAsString(ChessPosition position) {
+        String end = "";
+        switch (position.getColumn()) {
+            case 1 -> end += "A";
+            case 2 -> end += "B";
+            case 3 -> end += "C";
+            case 4 -> end += "D";
+            case 5 -> end += "E";
+            case 6 -> end += "F";
+            case 7 -> end += "G";
+            case 8 -> end += "H";
+        }
+        end += position.getRow();
+        return end;
     }
 
     private void leave(LeaveCommand command, Session session) {
@@ -108,6 +151,10 @@ public class WSServer {
             GameData gameData = GameService.getGame(command.getAuthString(), command.getGameID());
             if (!gameData.game().gameInPlay()) {
                 sendError(session, "Game is already finished. You cannot resign anymore.");
+                return;
+            }
+            if (userIsPlayer(gameData, connection.username) == null) {
+                sendError(session, "You need to be a player to resign.");
                 return;
             }
             gameData.game().endGame();
