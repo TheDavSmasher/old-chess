@@ -52,6 +52,12 @@ public class ServerFacade {
     }
 
     public static void observeGame(String authToken, int gameID) throws IOException {
+        String url = urlPort + "game";
+        String body = new Gson().toJson(new JoinGameRequest(null, gameID));
+        HttpCommunicator.doPut(url, body, authToken, EmptyResponse.class);
+    }
+
+    public static void observeGameWS(String authToken, int gameID) throws IOException {
         websocket.observeGame(authToken, gameID);
     }
 
@@ -59,6 +65,9 @@ public class ServerFacade {
         String url = urlPort + "game";
         String body = new Gson().toJson(new JoinGameRequest(color, gameID));
         HttpCommunicator.doPut(url, body, authToken, EmptyResponse.class);
+    }
+
+    public static void joinGameWS(String authToken, String color, int gameID) throws IOException {
         websocket.joinGame(authToken, gameID, color);
     }
 

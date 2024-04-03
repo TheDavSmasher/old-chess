@@ -279,6 +279,7 @@ public class ChessClient implements ServerMessageObserver {
             }
             currentGameID = existingGames[index];
             ServerFacade.joinGame(authToken, params[0], currentGameID);
+            ServerFacade.joinGameWS(authToken, params[0], currentGameID);
             currentState = MenuState.MID_GAME;
             whitePlayer = params[0].equalsIgnoreCase("white");
         } catch (IOException e) {
@@ -308,6 +309,7 @@ public class ChessClient implements ServerMessageObserver {
             }
             currentGameID = existingGames[index];
             ServerFacade.observeGame(authToken, currentGameID);
+            ServerFacade.observeGameWS(authToken, currentGameID);
             currentState = MenuState.OBSERVING;
         } catch (IOException e) {
             out.print(e.getMessage());
