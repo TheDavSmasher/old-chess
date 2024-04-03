@@ -79,6 +79,23 @@ public class ConnectionManager {
         }
     }
 
+    public void notifyAll(int gameID, Notification notification) {
+        ArrayList<Connection> closed = new ArrayList<>();
+        ArrayList<Connection> gameConnections = connectionsToGames.get(gameID);
+        String message = new Gson().toJson(notification);
+        for (Connection current : gameConnections) {
+            if (current.session.isOpen()) {
+                sendToConnection(current, message);
+            } else {
+                closed.add(current);
+            }
+        }
+        for (Connection close : closed) {
+            gameConnections.remove(close);
+        }
+
+    }
+
     public void sendToConnection(Connection connection, String message) {
         try {
             connection.send(message);

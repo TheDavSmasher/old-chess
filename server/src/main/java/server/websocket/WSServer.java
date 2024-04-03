@@ -160,9 +160,9 @@ public class WSServer {
             gameData.game().endGame();
             String gameJson = new Gson().toJson(gameData.game());
             GameService.updateGameState(command.getAuthString(), command.getGameID(), gameJson);
-            connectionManager.removeFromGame(command.getGameID(), command.getAuthString());
             Notification notification = new Notification(connection.username + " has resigned the game.");
-            connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), notification);
+            connectionManager.notifyAll(command.getGameID(), notification);
+            connectionManager.removeFromGame(command.getGameID(), command.getAuthString());
         } catch (ServiceException e) {
             sendError(session, e.getMessage());
         }
