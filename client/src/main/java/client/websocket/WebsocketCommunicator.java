@@ -3,7 +3,7 @@ package client.websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.*;
-import jakarta.websocket.*;
+import javax.websocket.*;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.Notification;
@@ -11,7 +11,6 @@ import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 
 public class WebsocketCommunicator extends Endpoint {
