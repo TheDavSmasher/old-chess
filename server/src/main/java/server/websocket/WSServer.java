@@ -61,9 +61,9 @@ public class WSServer {
         if (auth == null) {
             throw new ServiceException("You are unauthorized.");
         }
-        connectionManager.addToGame(gameID, authToken, auth.username(), session);
         GameData data = GameService.getGame(authToken, gameID);
         if (data == null) throw new ServiceException("Game does not exist.");
+        connectionManager.addToGame(gameID, authToken, auth.username(), session);
         connectionManager.loadNewGame(data.game(), authToken);
         return auth.username();
     }
