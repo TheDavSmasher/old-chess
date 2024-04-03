@@ -4,7 +4,7 @@ import client.ServerFacade;
 import model.dataAccess.GameData;
 import model.response.CreateGameResponse;
 import org.junit.jupiter.api.*;
-import server.ChessServer;
+import server.Server;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class ServerFacadeTests {
 
-    private static ChessServer server;
+    private static Server server;
     private final String username = "davhig";
     private final String password = "passTest";
     private final String email = "davhig@gmeia.com";
@@ -23,7 +23,7 @@ public class ServerFacadeTests {
 
     @BeforeAll
     public static void init() {
-        server = new ChessServer();
+        server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         ServerFacade.setPort(port);

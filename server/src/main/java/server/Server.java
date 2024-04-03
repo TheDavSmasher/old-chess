@@ -3,7 +3,7 @@ package server;
 import server.websocket.WSServer;
 import spark.*;
 
-public class ChessServer {
+public class Server {
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

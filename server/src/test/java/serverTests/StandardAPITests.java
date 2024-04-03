@@ -5,7 +5,7 @@ import org.junit.jupiter.api.*;
 import passoffTests.obfuscatedTestClasses.TestServerFacade;
 import passoffTests.testClasses.TestException;
 import passoffTests.testClasses.TestModels;
-import server.ChessServer;
+import server.Server;
 
 import java.net.HttpURLConnection;
 import java.util.*;
@@ -23,7 +23,7 @@ public class StandardAPITests {
     private static TestModels.TestCreateRequest createRequest;
 
     private static TestServerFacade serverFacade;
-    private static ChessServer server;
+    private static Server server;
 
     private String existingAuth;
 
@@ -36,7 +36,7 @@ public class StandardAPITests {
 
     @BeforeAll
     public static void init() {
-        server = new ChessServer();
+        server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
 
