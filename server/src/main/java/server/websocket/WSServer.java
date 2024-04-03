@@ -105,10 +105,7 @@ public class WSServer {
             connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), moveNotification);
 
             String opponent = (game.getTeamTurn() == ChessGame.TeamColor.WHITE) ? gameData.whiteUsername() : gameData.blackUsername();
-            if (game.isInCheck(game.getTeamTurn())) {
-                Notification checkNotification = new Notification(opponent + " is now in check.");
-                connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), checkNotification);
-            } else if (game.isInCheckmate(game.getTeamTurn())) {
+            if (game.isInCheckmate(game.getTeamTurn())) {
                 Notification checkmateNotification = new Notification(opponent + " is now in checkmate.");
                 connectionManager.notifyAll(command.getGameID(), checkmateNotification);
                 endGame(command.getGameID(), command.getAuthString(), game, connection.username + " has won.");
@@ -116,6 +113,9 @@ public class WSServer {
                 Notification stalemateNotification = new Notification(opponent + " is now in stalemate.");
                 connectionManager.notifyAll(command.getGameID(), stalemateNotification);
                 endGame(command.getGameID(), command.getAuthString(), game, "The game is tied.");
+            } else if (game.isInCheck(game.getTeamTurn())) {
+                Notification checkNotification = new Notification(opponent + " is now in check.");
+                connectionManager.notifyOthers(command.getGameID(), command.getAuthString(), checkNotification);
             }
         } catch (ServiceException | InvalidMoveException e) {
             sendError(session, e.getMessage());
