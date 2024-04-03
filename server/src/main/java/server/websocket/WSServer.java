@@ -63,14 +63,13 @@ public class WSServer {
         }
         GameData data = GameService.getGame(authToken, gameID);
         if (data == null) throw new ServiceException("Game does not exist.");
-        if (color != null){
-            if ((color == ChessGame.TeamColor.WHITE && data.whiteUsername() != null && !data.whiteUsername().equals(auth.username()))
-                    || color == ChessGame.TeamColor.BLACK && data.blackUsername() != null && !data.blackUsername().equals(auth.username())) {
-                throw new ServiceException("Color is already taken.");
-            }
-            if (color == ChessGame.TeamColor.WHITE && data.whiteUsername() == null
-                    || color == ChessGame.TeamColor.BLACK && data.blackUsername() == null) {
-                throw new ServiceException("RSVP the spot before calling this!");
+        if (color != null) {
+            if (color == ChessGame.TeamColor.WHITE) {
+                if (data.whiteUsername() == null) throw new ServiceException("RSVP the spot before calling this!");
+                if (!data.whiteUsername().equals(auth.username())) throw new ServiceException("Color is already taken.");
+            } else {
+                if (data.blackUsername() == null) throw new ServiceException("RSVP the spot before calling this!");
+                if (!data.blackUsername().equals(auth.username())) throw new ServiceException("Color is already taken.");
             }
         }
         connectionManager.addToGame(gameID, authToken, auth.username(), session);
@@ -118,7 +117,6 @@ public class WSServer {
                 connectionManager.notifyAll(command.getGameID(), stalemateNotification);
                 endGame(command.getGameID(), command.getAuthString(), game, "The game is tied.");
             }
-
         } catch (ServiceException | InvalidMoveException e) {
             sendError(session, e.getMessage());
         }
