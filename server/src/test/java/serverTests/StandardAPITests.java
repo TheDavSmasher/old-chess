@@ -1,4 +1,4 @@
-package passoffTests.serverTests;
+package serverTests;
 
 import chess.ChessGame;
 import org.junit.jupiter.api.*;
@@ -8,10 +8,7 @@ import passoffTests.testClasses.TestModels;
 import server.ChessServer;
 
 import java.net.HttpURLConnection;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Locale;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

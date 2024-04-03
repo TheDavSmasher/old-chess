@@ -119,9 +119,7 @@ public class GameService {
             return color;
         }
         if (color.equals("WHITE") && oldGame.whiteUsername() != null    //Trying to take White, White player already taken
-        || color.equals("BLACK") && oldGame.blackUsername() != null     //Trying to take Black, Black player already taken
-        || color.equals("WHITE") && (oldGame.blackUsername() != null && oldGame.blackUsername().equals(username))     //Trying to play against self, client can only hold one player
-        || color.equals("BLACK") && (oldGame.whiteUsername() != null && oldGame.whiteUsername().equals(username))) {  //Trying to play against self, client can only hold one player
+        || color.equals("BLACK") && oldGame.blackUsername() != null) {     //Trying to take Black, Black player already taken
             throw new PreexistingException();
         }
         return color;
