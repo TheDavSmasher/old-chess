@@ -281,7 +281,6 @@ public class ChessClient implements ServerMessageObserver {
             ServerFacade.joinGame(authToken, params[0], currentGameID);
             currentState = MenuState.MID_GAME;
             whitePlayer = params[0].equalsIgnoreCase("white");
-            help(true);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
@@ -310,7 +309,6 @@ public class ChessClient implements ServerMessageObserver {
             currentGameID = existingGames[index];
             ServerFacade.observeGame(authToken, currentGameID);
             currentState = MenuState.OBSERVING;
-            help(true);
         } catch (IOException e) {
             out.print(e.getMessage());
             return "Error Caught";
