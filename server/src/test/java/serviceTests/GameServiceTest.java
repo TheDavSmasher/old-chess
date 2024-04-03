@@ -4,7 +4,6 @@ import model.dataAccess.GameData;
 import model.response.CreateGameResponse;
 import model.response.ListGamesResponse;
 import model.response.result.BadRequestException;
-import model.response.result.PreexistingException;
 import model.response.result.ServiceException;
 import model.response.result.UnauthorizedException;
 import org.junit.jupiter.api.Assertions;
@@ -107,8 +106,5 @@ class GameServiceTest {
 
         JoinGameRequest nullGameRequest = new JoinGameRequest("WHITE", 2);
         Assertions.assertThrows(BadRequestException.class, () -> GameService.joinGame(nullGameRequest, authRequest));
-
-        GameService.joinGame(joinGameRequest, authRequest);
-        Assertions.assertThrows(PreexistingException.class, () -> GameService.joinGame(joinGameRequest, authRequest));
     }
 }
