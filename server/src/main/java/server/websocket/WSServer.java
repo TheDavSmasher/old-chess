@@ -17,7 +17,6 @@ import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 
 @WebSocket
 public class WSServer {
@@ -33,6 +32,8 @@ public class WSServer {
             case RESIGN -> resign(gson.fromJson(message, ResignCommand.class), session);
         }
     }
+
+    private static final String UNAUTHORIZED = "You are unauthorized.";
 
     private final ConnectionManager connectionManager = new ConnectionManager();
 
@@ -59,7 +60,7 @@ public class WSServer {
     private String enter(String authToken, int gameID, ChessGame.TeamColor color, Session session) throws ServiceException {
         AuthData auth = UserService.getUser(authToken);
         if (auth == null) {
-            throw new ServiceException("You are unauthorized.");
+            throw new ServiceException(UNAUTHORIZED);
         }
         GameData data = GameService.getGame(authToken, gameID);
         if (data == null) throw new ServiceException("Game does not exist.");
@@ -81,7 +82,7 @@ public class WSServer {
         try {
             Connection connection = connectionManager.getFromUsers(command.getAuthString());
             if (connection == null) {
-                sendError(session, "You are unauthorized");
+                sendError(session, UNAUTHORIZED);
                 return;
             }
             GameData gameData = GameService.getGame(command.getAuthString(), command.getGameID());
@@ -138,7 +139,7 @@ public class WSServer {
             case 5 -> end += "E";
             case 6 -> end += "F";
             case 7 -> end += "G";
-            case 8 -> end += "H";
+            default -> end += "H";
         }
         end += position.getRow();
         return end;
@@ -148,7 +149,7 @@ public class WSServer {
         try {
             Connection connection = connectionManager.getFromUsers(command.getAuthString());
             if (connection == null) {
-                sendError(session, "You are unauthorized");
+                sendError(session, UNAUTHORIZED);
                 return;
             }
             GameService.leaveGame(command.getAuthString(), command.getGameID());

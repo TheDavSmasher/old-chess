@@ -17,6 +17,7 @@ public class WebsocketCommunicator extends Endpoint {
     private final Session session;
     private final ServerMessageObserver observer;
 
+    @SuppressWarnings("Convert2Lambda")
     public WebsocketCommunicator(String url, ServerMessageObserver messageObserver) throws IOException {
         try {
             observer = messageObserver;
@@ -49,6 +50,7 @@ public class WebsocketCommunicator extends Endpoint {
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
+        //Method needed to call, but no functionality is required
     }
 
     public void joinGame(String authToken, int gameID, String color) throws IOException {
