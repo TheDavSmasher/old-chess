@@ -13,3 +13,5 @@ p
 -client/src/main/java/client/ServerFacade.java,5\b\5bd64cfd26161b763663e9d940febeb7f9d2d1ad
 a
 1client/src/main/java/client/HttpCommunicator.java,e\0\e067c7afbd3a9e2ccb9569e60a033e62c182f134
+_
+/server/src/main/java/dataAccess/SQLUserDAO.java,2\4\2499a4063d884c5c0a3607a0afb428f1db486bfa
