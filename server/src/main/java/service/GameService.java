@@ -53,10 +53,11 @@ public class GameService {
             if (request.gameID() <= 0 || oldGame == null) {
                 throw new BadRequestException();
             }
-            if (request.playerColor() != null) {
-                String color = getColor(request.playerColor(), oldGame, auth.username());
-                gameDAO.updateGamePlayer(request.gameID(), color, auth.username());
+            if (request.playerColor() == null) {
+                throw new BadRequestException();
             }
+            String color = getColor(request.playerColor(), oldGame, auth.username());
+            gameDAO.updateGamePlayer(request.gameID(), color, auth.username());
         } catch (DataAccessException e) {
             throw new UnexpectedException(e.getMessage());
         }

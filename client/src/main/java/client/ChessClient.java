@@ -308,7 +308,6 @@ public class ChessClient implements ServerMessageObserver {
                 return "Out of range";
             }
             currentGameID = existingGames[index];
-            ServerFacade.observeGame(authToken, currentGameID);
             ServerFacade.observeGameWS(authToken, currentGameID);
             currentState = MenuState.OBSERVING;
         } catch (IOException e) {
