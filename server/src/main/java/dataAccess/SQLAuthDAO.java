@@ -79,7 +79,7 @@ public class SQLAuthDAO implements AuthDAO {
         }
     }
 
-    static public AuthDAO getInstance() throws DataAccessException {
+    public static AuthDAO getInstance() throws DataAccessException {
         if (instance == null) {
             instance = new SQLAuthDAO();
         }

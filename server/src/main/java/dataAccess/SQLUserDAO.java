@@ -75,7 +75,7 @@ public class SQLUserDAO implements UserDAO {
         }
     }
 
-    static public UserDAO getInstance() throws DataAccessException {
+    public static UserDAO getInstance() throws DataAccessException {
         if (instance == null) {
             instance = new SQLUserDAO();
         }
