@@ -53,23 +53,14 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        switch (type) {
-            case BISHOP:
-                return getDiagonals(board, myPosition);
-            case ROOK:
-                return getCross(board, myPosition);
-            case QUEEN:
-                Collection<ChessMove> queenMoves = getDiagonals(board, myPosition);
-                queenMoves.addAll(getCross(board, myPosition));
-                return queenMoves;
-            case KING:
-                return getKing(board, myPosition);
-            case KNIGHT:
-                return getKnight(board, myPosition);
-            case PAWN:
-                return getPawn(board, myPosition);
-        }
-        return null;
+        return switch (type) {
+            case BISHOP -> getDiagonals(board, myPosition);
+            case ROOK -> getCross(board, myPosition);
+            case QUEEN -> getQueen(board, myPosition);
+            case KING -> getKing(board, myPosition);
+            case KNIGHT -> getKnight(board, myPosition);
+            case PAWN -> getPawn(board, myPosition);
+        };
     }
 
     @Override
@@ -99,13 +90,10 @@ public class ChessPiece {
         return s;
     }
 
-    private Collection<ChessMove> getAllPromotionMoves(ChessPosition start, ChessPosition end) {
-        Collection<ChessMove> allMoves = new ArrayList<>();
-        allMoves.add(new ChessMove(start, end, PieceType.QUEEN));
-        allMoves.add(new ChessMove(start, end, PieceType.ROOK));
-        allMoves.add(new ChessMove(start, end, PieceType.BISHOP));
-        allMoves.add(new ChessMove(start, end, PieceType.KNIGHT));
-        return allMoves;
+    private Collection<ChessMove> getQueen(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> queenMoves = getDiagonals(board, myPosition);
+        queenMoves.addAll(getCross(board, myPosition));
+        return queenMoves;
     }
 
     private Collection<ChessMove> getPawn(ChessBoard board, ChessPosition start) { //Fail: 10, 11
