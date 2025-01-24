@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -86,8 +87,7 @@ public class ChessPiece {
             case PAWN -> s = "p";
             case QUEEN -> s = "q";
         }
-        if (color == ChessGame.TeamColor.WHITE) s = s.toUpperCase();
-        return s;
+        return (color == ChessGame.TeamColor.WHITE)? s.toUpperCase() : s;
     }
 
     private Collection<ChessMove> getQueen(ChessBoard board, ChessPosition myPosition) {
@@ -107,22 +107,13 @@ public class ChessPiece {
         if (atTemp == null) {
             addPawnPromotionMoves(endMoves, start, temp);
 
-                //Special Case: Initial Move up to 2 forward
-                temp = new ChessPosition(start.getRow() + (2 * pieceDirection), start.getColumn());
-                if (start.getRow() == (color == ChessGame.TeamColor.BLACK ? 7 : 2)) {
-                    atTemp = board.getPiece(temp);
-                    if (atTemp == null) {
-                        endMoves.add(new ChessMove(start, temp, null));
-                    }
-                }
-            }
-        }
             //Special Case: Initial Move up to 2 forward
             temp = new ChessPosition(start.getRow() + (2 * pieceDirection), start.getColumn());
             if (start.getRow() == (color == ChessGame.TeamColor.BLACK ? 7 : 2) && board.getPiece(temp) == null) {
                 endMoves.add(new ChessMove(start, temp, null));
             }
         }
+
         //Eating
         for (int i = -1; i < 2; i += 2) {
             temp = new ChessPosition(start.getRow() + pieceDirection, start.getColumn() + i);
