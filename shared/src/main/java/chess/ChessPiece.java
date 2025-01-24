@@ -186,7 +186,7 @@ public class ChessPiece {
     private Collection<ChessMove> addMoveTemps(ChessBoard board, ChessPosition start, int[][] offsets) {
         Collection<ChessMove> endMoves = new ArrayList<>();
         for (int[] offset : offsets) {
-            ChessPosition temp = new ChessPosition(offset[0], offset[1]);
+            ChessPosition temp = new ChessPosition(start.getRow() + offset[0], start.getColumn() + offset[1]);
             ChessPiece atTemp = board.getPiece(temp);
             if (atTemp == null || (atTemp.color != color)) {
                 endMoves.add(new ChessMove(start, temp, null));
