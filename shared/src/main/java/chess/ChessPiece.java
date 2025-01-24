@@ -99,18 +99,13 @@ public class ChessPiece {
     private Collection<ChessMove> getPawn(ChessBoard board, ChessPosition start) { //Fail: 10, 11
         Collection<ChessMove> endMoves = new ArrayList<ChessMove>();
         int pieceDirection = (color == ChessGame.TeamColor.BLACK ? -1 : 1);
-        int promotionRow = (color == ChessGame.TeamColor.BLACK ? 1 : 8);
         ChessPiece atTemp;
         //Move Forward
         ChessPosition temp = new ChessPosition(start.getRow() + pieceDirection, start.getColumn());
-        if (!temp.outOfBounds()) {
-            atTemp = board.getPiece(temp);
-            if (atTemp == null) {
-                if (temp.getRow() == promotionRow) {
-                    endMoves.addAll(getAllPromotionMoves(start, temp));
-                } else {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
+
+        atTemp = board.getPiece(temp);
+        if (atTemp == null) {
+            addPawnPromotionMoves(endMoves, start, temp);
 
                 //Special Case: Initial Move up to 2 forward
                 temp = new ChessPosition(start.getRow() + (2 * pieceDirection), start.getColumn());
@@ -122,109 +117,88 @@ public class ChessPiece {
                 }
             }
         }
+            //Special Case: Initial Move up to 2 forward
+            temp = new ChessPosition(start.getRow() + (2 * pieceDirection), start.getColumn());
+            if (start.getRow() == (color == ChessGame.TeamColor.BLACK ? 7 : 2) && board.getPiece(temp) == null) {
+                endMoves.add(new ChessMove(start, temp, null));
+            }
+        }
         //Eating
-        ChessPosition[] tempList = {
-                new ChessPosition(start.getRow() + pieceDirection, start.getColumn() - 1),
-                new ChessPosition(start.getRow() + pieceDirection, start.getColumn() + 1)
-        };
-        for (ChessPosition tempPos : tempList) {
-            if (!tempPos.outOfBounds()) {
-                atTemp = board.getPiece(tempPos);
-                if (atTemp != null && atTemp.color != color) {
-                    if (tempPos.getRow() == promotionRow) {
-                        endMoves.addAll(getAllPromotionMoves(start, tempPos));
-                    } else {
-                        endMoves.add(new ChessMove(start, tempPos, null));
-                    }
-                }
+        for (int i = -1; i < 2; i += 2) {
+            temp = new ChessPosition(start.getRow() + pieceDirection, start.getColumn() + i);
+            atTemp = board.getPiece(temp);
+            if (atTemp != null && atTemp.color != color) {
+                addPawnPromotionMoves(endMoves, start, temp);
             }
         }
         return endMoves;
     }
 
+    private void addPawnPromotionMoves(Collection<ChessMove> moves, ChessPosition start, ChessPosition end) {
+        if (end.getRow() == (color == ChessGame.TeamColor.BLACK ? 1 : 8)) {
+            Collections.addAll(moves, new ChessMove(start, end, PieceType.QUEEN), new ChessMove(start, end, PieceType.ROOK), new ChessMove(start, end, PieceType.BISHOP), new ChessMove(start, end, PieceType.KNIGHT));
+        } else {
+            moves.add(new ChessMove(start, end, null));
+        }
+    }
+
     private Collection<ChessMove> getCross(ChessBoard board, ChessPosition start) {
-        //Right
-        int moveLimit = 8 - start.getColumn();
-        Collection<ChessMove> endMoves = new ArrayList<>(addMoveList(board, start, moveLimit, 0, +1));
-        //Left
-        moveLimit = start.getColumn() - 1;
-        endMoves.addAll(addMoveList(board, start, moveLimit, 0, -1));
-        //Down
-        moveLimit = 8 - start.getRow();
-        endMoves.addAll(addMoveList(board, start, moveLimit, +1, 0));
-        //Up
-        moveLimit = start.getRow() - 1;
-        endMoves.addAll(addMoveList(board, start, moveLimit, -1, 0));
+        Collection<ChessMove> endMoves = new ArrayList<>();
+        endMoves.addAll(addMoveList(board, start, 8 - start.getColumn(), 0, +1));
+        endMoves.addAll(addMoveList(board, start, start.getColumn() - 1, 0, -1));
+        endMoves.addAll(addMoveList(board, start, 8 - start.getRow(), +1, 0));
+        endMoves.addAll(addMoveList(board, start, start.getRow() - 1, -1, 0));
         return endMoves;
     }
 
     private Collection<ChessMove> getDiagonals(ChessBoard board, ChessPosition start) {
-        //Down Right
-        int moveLimit = 8 - Math.max(start.getRow(), start.getColumn());
-        Collection<ChessMove> endMoves = new ArrayList<>(addMoveList(board, start, moveLimit, +1, +1));
-        //Down Left
-        moveLimit = 8 - Math.max(start.getRow(), 9 - start.getColumn());
-        endMoves.addAll(addMoveList(board, start, moveLimit, +1, -1));
-        //Up Right
-        moveLimit = 8 - Math.max(9 - start.getRow(), start.getColumn());
-        endMoves.addAll(addMoveList(board, start, moveLimit, -1, +1));
-        //Up Left
-        moveLimit = 8 - Math.max(9 - start.getRow(), 9 - start.getColumn());
-        endMoves.addAll(addMoveList(board, start, moveLimit, -1, -1));
+        int[] limits = {
+            8 - Math.max(start.getRow(), start.getColumn()),
+            8 - Math.max(start.getRow(), 9 - start.getColumn()),
+            8 - Math.max(9 - start.getRow(), start.getColumn()),
+            8 - Math.max(9 - start.getRow(), 9 - start.getColumn())
+        };
+        Collection<ChessMove> endMoves = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            endMoves.addAll(addMoveList(board, start, limits[i], (i < 2 ? +1 : -1), (i % 2 == 0 ? +1 : -1)));
+        }
         return endMoves;
     }
 
     private Collection<ChessMove> getKing(ChessBoard board, ChessPosition start) {
-        ChessPosition[] tempList = {
-                new ChessPosition(start.getRow() + 1, start.getColumn() + 1),
-                new ChessPosition(start.getRow(), start.getColumn() + 1),
-                new ChessPosition(start.getRow() - 1, start.getColumn() + 1),
-                new ChessPosition(start.getRow() - 1, start.getColumn()),
-                new ChessPosition(start.getRow() - 1, start.getColumn() - 1),
-                new ChessPosition(start.getRow(), start.getColumn() - 1),
-                new ChessPosition(start.getRow() + 1, start.getColumn() - 1),
-                new ChessPosition(start.getRow() + 1, start.getColumn())
+        int[][] offsets = {
+            {0, +1}, {0, -1}, {+1, 0}, {-1, 0}, {+1, +1}, {+1, -1}, {-1, -1}, {-1, +1}
         };
-        return new ArrayList<>(addMoveTemps(board, start, tempList));
+        return new ArrayList<>(addMoveTemps(board, start, offsets));
     }
 
     private Collection<ChessMove> getKnight(ChessBoard board, ChessPosition start) {
-        ChessPosition[] tempList = {
-                new ChessPosition(start.getRow() + 2, start.getColumn() + 1),
-                new ChessPosition(start.getRow() + 1, start.getColumn() + 2),
-                new ChessPosition(start.getRow() - 1, start.getColumn() + 2),
-                new ChessPosition(start.getRow() - 2, start.getColumn() + 1),
-                new ChessPosition(start.getRow() - 2, start.getColumn() - 1),
-                new ChessPosition(start.getRow() - 1, start.getColumn() - 2),
-                new ChessPosition(start.getRow() + 1, start.getColumn() - 2),
-                new ChessPosition(start.getRow() + 2, start.getColumn() - 1)
+        int[][] offsets = {
+            {+2, +1}, {+1, +2}, {-2, +1}, {-1, +2}, {-2, -1}, {-1, -2}, {+2, -1}, {+1, -2}
         };
-        return new ArrayList<>(addMoveTemps(board, start, tempList));
+        return new ArrayList<>(addMoveTemps(board, start, offsets));
     }
 
     private Collection<ChessMove> addMoveList(ChessBoard board, ChessPosition start, int limit, int rowMod, int colMod) {
         Collection<ChessMove> endMoves = new ArrayList<>();
         for (int i = 1; i <= limit; i++) {
             ChessPosition temp = new ChessPosition(start.getRow() + (i * rowMod), start.getColumn() + (i * colMod));
-            if (!temp.outOfBounds()) {
-                ChessPiece atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
-                if (atTemp != null) { break; }
+            ChessPiece atTemp = board.getPiece(temp);
+            if (atTemp == null || (atTemp.color != color)) {
+                endMoves.add(new ChessMove(start, temp, null));
             }
+            if (atTemp != null) { break; }
         }
         return endMoves;
     }
 
-    private Collection<ChessMove> addMoveTemps(ChessBoard board, ChessPosition start, ChessPosition[] tempList) {
+    private Collection<ChessMove> addMoveTemps(ChessBoard board, ChessPosition start, int[][] offsets) {
         Collection<ChessMove> endMoves = new ArrayList<>();
-        for (ChessPosition temp : tempList) {
-            if (!temp.outOfBounds()) {
-                ChessPiece atTemp = board.getPiece(temp);
-                if (atTemp == null || (atTemp.color != color)) {
-                    endMoves.add(new ChessMove(start, temp, null));
-                }
+        for (int[] offset : offsets) {
+            ChessPosition temp = new ChessPosition(offset[0], offset[1]);
+            ChessPiece atTemp = board.getPiece(temp);
+            if (atTemp == null || (atTemp.color != color)) {
+                endMoves.add(new ChessMove(start, temp, null));
             }
         }
         return endMoves;
