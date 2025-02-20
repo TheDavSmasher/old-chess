@@ -58,7 +58,7 @@ public class ChessClient implements ServerMessageObserver {
             }
             case POST_LOGIN -> {
                 return switch (command) {
-                    case 1 -> listGames(out);
+                    case 1 -> listGames();
                     case 2 -> createGame(params);
                     case 3 -> joinGame(params);
                     case 4 -> observeGame(params);
@@ -226,7 +226,7 @@ public class ChessClient implements ServerMessageObserver {
         return "Welcome back";
     }
 
-    private String listGames(PrintStream out) {
+    private String listGames() {
         ArrayList<GameData> allGames;
         try {
             allGames = ServerFacade.listGames(authToken);
