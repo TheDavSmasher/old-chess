@@ -11,21 +11,11 @@ import spark.Response;
 import spark.Spark;
 
 public class LoginHandler extends ObjectSerializer {
-
     @Override
-    public String handle(Request request, Response response) {
+    public String serviceHandle(Request request) throws ServiceException {
         Gson gson = new Gson();
-        response.type("application/json");
         UserEnterRequest loginRequest = gson.fromJson(request.body(), UserEnterRequest.class);
-        UserEnterResponse loginResponse = null;
-        try {
-            loginResponse = UserService.login(loginRequest);
-        } catch (UnauthorizedException e) {
-            Spark.halt(401, "{ \"message\": \"Error: unauthorized\" }");
-        } catch (ServiceException e) {
-            Spark.halt(500, "{ \"message\": \"Error: " + e.getMessage() + "\" }");
-        }
-        response.status(200);
+        UserEnterResponse loginResponse = UserService.login(loginRequest);
         return gson.toJson(loginResponse);
     }
 }

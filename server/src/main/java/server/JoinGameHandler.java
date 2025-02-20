@@ -14,23 +14,10 @@ import spark.Spark;
 
 public class JoinGameHandler extends ObjectSerializer {
     @Override
-    public String handle(Request request, Response response) {
-        Gson gson = new Gson();
-        response.type("application/json");
-        JoinGameRequest joinRequest = gson.fromJson(request.body(), JoinGameRequest.class);
+    public String serviceHandle(Request request) throws ServiceException {
+        JoinGameRequest joinRequest = new Gson().fromJson(request.body(), JoinGameRequest.class);
         AuthRequest authRequest = new AuthRequest(getAuthToken(request));
-        try {
-            GameService.joinGame(joinRequest, authRequest);
-        } catch (BadRequestException e) {
-            Spark.halt(400, "{ \"message\": \"Error: bad request\" }");
-        } catch (UnauthorizedException e) {
-            Spark.halt(401, "{ \"message\": \"Error: unauthorized\" }");
-        } catch (PreexistingException e) {
-            Spark.halt(403, "{ \"message\": \"Error: already taken\" }");
-        } catch (ServiceException e) {
-            Spark.halt(500, "{ \"message\": \"Error: " + e.getMessage() + "\" }");
-        }
-        response.status(200);
+        GameService.joinGame(joinRequest, authRequest);
         return "{}";
     }
 }
