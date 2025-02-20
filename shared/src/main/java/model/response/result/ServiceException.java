@@ -1,8 +1,13 @@
 package model.response.result;
 
-public class ServiceException extends Exception {
+public abstract class ServiceException extends Exception {
+    public ServiceException(String message) {
+        super(message);
+    }
 
-    public ServiceException() {}
+    public String handlerJson() {
+        return "{ \"message\": \"Error: " + getMessage() + "\" }";
+    }
 
-    public ServiceException(String message) {super(message);}
+    public abstract int getStatusCode();
 }
