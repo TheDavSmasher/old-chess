@@ -5,6 +5,8 @@ import model.response.result.ServiceException;
 import model.response.result.UnexpectedException;
 
 public class Service {
+    public static final boolean UseSQL = true;
+
     public static <T> T tryCatch(ServiceCall<T> call) throws ServiceException {
         try {
             return call.method();
