@@ -6,9 +6,9 @@ import model.request.UserEnterRequest;
 import model.response.UserEnterResponse;
 import model.response.result.*;
 
-public class UserService {
+public class UserService extends Service {
     public static UserEnterResponse register(UserEnterRequest request) throws ServiceException {
-        try {
+        return tryCatch(() -> {
             UserDAO userDAO = SQLUserDAO.getInstance();
 
             if (request.username() == null || request.password() == null || request.email() == null ||
@@ -20,13 +20,11 @@ public class UserService {
             }
             userDAO.createUser(request.username(), request.password(), request.email());
             return UserService.login(request);
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 
     public static UserEnterResponse login(UserEnterRequest request) throws ServiceException {
-        try {
+        return tryCatch(() -> {
             UserDAO userDAO = SQLUserDAO.getInstance();
             AuthDAO authDAO = SQLAuthDAO.getInstance();
 
@@ -35,29 +33,23 @@ public class UserService {
             }
             AuthData newAuth = authDAO.createAuth(request.username());
             return new UserEnterResponse(newAuth.username(), newAuth.authToken());
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 
     public static void logout(String authToken) throws ServiceException {
-        try {
+        tryCatch(() -> {
             if (UserService.getUser(authToken) == null) {
                 throw new UnauthorizedException();
             }
             AuthDAO authDAO = SQLAuthDAO.getInstance();
             authDAO.deleteAuth(authToken);
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 
-    public static AuthData getUser(String authToken) throws UnexpectedException {
-        try {
+    public static AuthData getUser(String authToken) throws ServiceException {
+        return tryCatch(() -> {
             AuthDAO authDAO = SQLAuthDAO.getInstance();
             return authDAO.getAuth(authToken);
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 }

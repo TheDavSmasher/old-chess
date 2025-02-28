@@ -1,6 +1,5 @@
 package service;
 
-import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import dataAccess.SQLGameDAO;
 import model.dataAccess.AuthData;
@@ -11,21 +10,19 @@ import model.response.CreateGameResponse;
 import model.response.ListGamesResponse;
 import model.response.result.*;
 
-public class GameService {
+public class GameService extends Service {
     public static ListGamesResponse getAllGames(String authToken) throws ServiceException {
-        try {
+        return tryCatch(() -> {
             if (UserService.getUser(authToken) == null) {
                 throw new UnauthorizedException();
             }
             GameDAO gameDAO = SQLGameDAO.getInstance();
             return new ListGamesResponse(gameDAO.listGames());
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 
     public static CreateGameResponse createGame(CreateGameRequest request, String authToken) throws ServiceException {
-        try {
+        return tryCatch(() -> {
             if (UserService.getUser(authToken) == null) {
                 throw new UnauthorizedException();
             }
@@ -36,13 +33,11 @@ public class GameService {
             }
             GameData newGame = gameDAO.createGame(request.gameName());
             return new CreateGameResponse(newGame.gameID());
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 
     public static void joinGame(JoinGameRequest request, String authToken) throws ServiceException {
-        try {
+        tryCatch(() -> {
             AuthData auth = UserService.getUser(authToken);
             if (auth == null) {
                 throw new UnauthorizedException();
@@ -57,26 +52,22 @@ public class GameService {
             }
             String color = getColor(request.playerColor(), oldGame, auth.username());
             gameDAO.updateGamePlayer(request.gameID(), color, auth.username());
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 
     public static GameData getGame(String authToken, int gameID) throws ServiceException {
-        try {
+        return tryCatch(() -> {
             AuthData auth = UserService.getUser(authToken);
             if (auth == null) {
                 throw new UnauthorizedException();
             }
             GameDAO gameDAO = SQLGameDAO.getInstance();
             return gameDAO.getGame(gameID);
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 
     public static void leaveGame(String authToken, int gameID) throws ServiceException {
-        try {
+        tryCatch(() -> {
             AuthData auth = UserService.getUser(authToken);
             if (auth == null) {
                 throw new UnauthorizedException();
@@ -91,22 +82,18 @@ public class GameService {
             } else if (oldGame.blackUsername().equals(auth.username())) {
                 gameDAO.updateGamePlayer(gameID, "BLACK", auth.username());
             }
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 
     public static void updateGameState(String authToken, int gameID, String gameJson) throws ServiceException {
-        try {
+        tryCatch(() -> {
             AuthData auth = UserService.getUser(authToken);
             if (auth == null) {
                 throw new UnauthorizedException();
             }
             GameDAO gameDAO = SQLGameDAO.getInstance();
             gameDAO.updateGameBoard(gameID, gameJson);
-        } catch (DataAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        });
     }
 
     private static String getColor(String playerColor, GameData oldGame, String username) throws ServiceException {
