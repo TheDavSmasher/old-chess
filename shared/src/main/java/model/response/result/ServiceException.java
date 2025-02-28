@@ -1,6 +1,6 @@
 package model.response.result;
 
-public abstract class ServiceException extends Exception {
+public class ServiceException extends Exception {
     public ServiceException(String message) {
         super(message);
     }
@@ -9,5 +9,7 @@ public abstract class ServiceException extends Exception {
         return "{ \"message\": \"Error: " + getMessage() + "\" }";
     }
 
-    public abstract int getStatusCode();
+    public int getStatusCode() {
+        return 500;
+    }
 }
