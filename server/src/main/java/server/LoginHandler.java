@@ -9,8 +9,8 @@ import spark.Request;
 public class LoginHandler extends ObjectSerializer {
     @Override
     public String serviceHandle(Request request) throws ServiceException {
-        UserEnterRequest loginRequest = gson.fromJson(request.body(), UserEnterRequest.class);
+        UserEnterRequest loginRequest = deserialize(request, UserEnterRequest.class);
         UserEnterResponse loginResponse = UserService.login(loginRequest);
-        return gson.toJson(loginResponse);
+        return serialize(loginResponse);
     }
 }

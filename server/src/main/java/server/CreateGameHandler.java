@@ -9,8 +9,8 @@ import spark.Request;
 public class CreateGameHandler extends ObjectSerializer {
     @Override
     public String serviceHandle(Request request) throws ServiceException {
-        CreateGameRequest createRequest = gson.fromJson(request.body(), CreateGameRequest.class);
+        CreateGameRequest createRequest = deserialize(request, CreateGameRequest.class);
         CreateGameResponse createResponse = GameService.createGame(createRequest, getAuthToken(request));
-        return gson.toJson(createResponse);
+        return serialize(createResponse);
     }
 }

@@ -5,7 +5,7 @@ import model.response.result.ServiceException;
 import spark.*;
 
 public abstract class ObjectSerializer implements Route {
-    protected Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public String handle(Request request, Response response) {
         response.type("application/json");
@@ -19,9 +19,17 @@ public abstract class ObjectSerializer implements Route {
         return result;
     }
 
-    public abstract String serviceHandle(Request request) throws ServiceException;
+    protected abstract String serviceHandle(Request request) throws ServiceException;
 
-    public String getAuthToken(Request request) {
+    protected <T> T deserialize(Request request, Class<T> type) {
+        return gson.fromJson(request.body(), type);
+    }
+
+    protected String serialize(Object object) {
+        return gson.toJson(object);
+    }
+
+    protected String getAuthToken(Request request) {
         return request.headers("authorization");
     }
 }
