@@ -165,7 +165,7 @@ public class WSServer {
         try {
             Connection connection = connectionManager.getFromUsers(command.getAuthString());
             if (connection == null) {
-                sendError(session, "You are unauthorized");
+                sendError(session, UNAUTHORIZED);
                 return;
             }
             GameService.leaveGame(command.getAuthString(), command.getGameID());
