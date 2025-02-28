@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.AppService;
 import service.UserService;
-import model.request.AuthRequest;
 import model.request.UserEnterRequest;
 
 class UserServiceTest {
@@ -22,7 +21,7 @@ class UserServiceTest {
     String wrongUsername = "dabhig23";
     String wrongPassword = "shall-not-pass";
     UserEnterRequest enterRequest = new UserEnterRequest(username, password, email);
-    AuthRequest authRequest;
+    String authToken;
 
     @BeforeEach
     public void setUp() throws ServiceException {
@@ -76,21 +75,21 @@ class UserServiceTest {
 
     @Test
     public void logoutTest() throws ServiceException {
-        authRequest = new AuthRequest(UserService.register(enterRequest).authToken());
-        Assertions.assertDoesNotThrow(() -> UserService.logout(authRequest));
+        authToken = UserService.register(enterRequest).authToken();
+        Assertions.assertDoesNotThrow(() -> UserService.logout(authToken));
 
-        authRequest = new AuthRequest(UserService.login(enterRequest).authToken());
-        Assertions.assertDoesNotThrow(() -> UserService.logout(authRequest));
+        authToken = UserService.login(enterRequest).authToken();
+        Assertions.assertDoesNotThrow(() -> UserService.logout(authToken));
     }
 
     @Test
     public void logoutFail() throws ServiceException {
-        authRequest = new AuthRequest("not-an-auth-token");
-        Assertions.assertThrows(UnauthorizedException.class, () -> UserService.logout(authRequest));
+        authToken = "not-an-auth-token";
+        Assertions.assertThrows(UnauthorizedException.class, () -> UserService.logout(authToken));
 
-        authRequest = new AuthRequest(UserService.register(enterRequest).authToken());
-        UserService.logout(authRequest);
-        Assertions.assertThrows(UnauthorizedException.class, () -> UserService.logout(authRequest));
+        authToken = UserService.register(enterRequest).authToken();
+        UserService.logout(authToken);
+        Assertions.assertThrows(UnauthorizedException.class, () -> UserService.logout(authToken));
     }
 
     @Test

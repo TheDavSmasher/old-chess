@@ -5,7 +5,6 @@ import dataAccess.GameDAO;
 import dataAccess.SQLGameDAO;
 import model.dataAccess.AuthData;
 import model.dataAccess.GameData;
-import model.request.AuthRequest;
 import model.request.CreateGameRequest;
 import model.request.JoinGameRequest;
 import model.response.CreateGameResponse;
@@ -13,9 +12,9 @@ import model.response.ListGamesResponse;
 import model.response.result.*;
 
 public class GameService {
-    public static ListGamesResponse getAllGames(AuthRequest auth) throws ServiceException {
+    public static ListGamesResponse getAllGames(String authToken) throws ServiceException {
         try {
-            if (UserService.getUser(auth.authToken()) == null) {
+            if (UserService.getUser(authToken) == null) {
                 throw new UnauthorizedException();
             }
             GameDAO gameDAO = SQLGameDAO.getInstance();
@@ -25,9 +24,9 @@ public class GameService {
         }
     }
 
-    public static CreateGameResponse createGame(CreateGameRequest request, AuthRequest auth) throws ServiceException {
+    public static CreateGameResponse createGame(CreateGameRequest request, String authToken) throws ServiceException {
         try {
-            if (UserService.getUser(auth.authToken()) == null) {
+            if (UserService.getUser(authToken) == null) {
                 throw new UnauthorizedException();
             }
             GameDAO gameDAO = SQLGameDAO.getInstance();
@@ -42,9 +41,9 @@ public class GameService {
         }
     }
 
-    public static void joinGame(JoinGameRequest request, AuthRequest authRequest) throws ServiceException {
+    public static void joinGame(JoinGameRequest request, String authToken) throws ServiceException {
         try {
-            AuthData auth = UserService.getUser(authRequest.authToken());
+            AuthData auth = UserService.getUser(authToken);
             if (auth == null) {
                 throw new UnauthorizedException();
             }

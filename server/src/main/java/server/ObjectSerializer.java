@@ -1,9 +1,12 @@
 package server;
 
+import com.google.gson.Gson;
 import model.response.result.ServiceException;
 import spark.*;
 
 public abstract class ObjectSerializer implements Route {
+    protected Gson gson = new Gson();
+
     public String handle(Request request, Response response) {
         response.type("application/json");
         String result = null;

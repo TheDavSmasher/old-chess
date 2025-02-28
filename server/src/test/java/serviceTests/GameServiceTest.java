@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import service.AppService;
 import service.GameService;
 import service.UserService;
-import model.request.AuthRequest;
 import model.request.CreateGameRequest;
 import model.request.JoinGameRequest;
 import model.request.UserEnterRequest;
@@ -22,64 +21,59 @@ import java.util.ArrayList;
 class GameServiceTest {
 
     String authToken;
-    AuthRequest authRequest;
     String wrongAuthToken = "not-an-auth-token";
-    AuthRequest wrongAuthRequest;
 
     @BeforeEach
     public void setUp() throws ServiceException {
         AppService.clearData();
         authToken = UserService.register(new UserEnterRequest("davhig22", "pass123", "davhig22@byu.edu")).authToken();
-        authRequest = new AuthRequest(authToken);
     }
 
     @Test
     public void listGamesTest() throws ServiceException {
         ListGamesResponse expected = new ListGamesResponse(new ArrayList<>());
-        Assertions.assertEquals(expected, GameService.getAllGames(authRequest));
+        Assertions.assertEquals(expected, GameService.getAllGames(authToken));
 
         ArrayList<GameData> gamesList = new ArrayList<>();
         gamesList.add(new GameData(1, null, null, "game_1", null));
         expected = new ListGamesResponse(gamesList);
-        GameService.createGame(new CreateGameRequest("game_1"), authRequest);
-        Assertions.assertEquals(expected, GameService.getAllGames(authRequest));
+        GameService.createGame(new CreateGameRequest("game_1"), authToken);
+        Assertions.assertEquals(expected, GameService.getAllGames(authToken));
 
         gamesList.add(new GameData(2, null, null, "game_2", null));
         gamesList.add(new GameData(3, null, null, "game_3", null));
         expected = new ListGamesResponse(gamesList);
-        GameService.createGame(new CreateGameRequest("game_2"), authRequest);
-        GameService.createGame(new CreateGameRequest("game_3"), authRequest);
+        GameService.createGame(new CreateGameRequest("game_2"), authToken);
+        GameService.createGame(new CreateGameRequest("game_3"), authToken);
         //FIXME test without ordering being an issue
-        Assertions.assertEquals(expected, GameService.getAllGames(authRequest));
+        Assertions.assertEquals(expected, GameService.getAllGames(authToken));
     }
 
     @Test
-    public void listGamesFail() throws ServiceException {
-        wrongAuthRequest = new AuthRequest(wrongAuthToken);
-        Assertions.assertThrows(UnauthorizedException.class, () -> GameService.getAllGames(wrongAuthRequest));
+    public void listGamesFail() {
+        Assertions.assertThrows(UnauthorizedException.class, () -> GameService.getAllGames(wrongAuthToken));
     }
 
     @Test
     public void createGameTest() throws ServiceException {
         CreateGameRequest createGameRequest = new CreateGameRequest("gameName");
-        Assertions.assertEquals(new CreateGameResponse(1), GameService.createGame(createGameRequest, authRequest));
+        Assertions.assertEquals(new CreateGameResponse(1), GameService.createGame(createGameRequest, authToken));
 
         createGameRequest = new CreateGameRequest("gameName");
-        Assertions.assertEquals(new CreateGameResponse(2), GameService.createGame(createGameRequest, authRequest));
+        Assertions.assertEquals(new CreateGameResponse(2), GameService.createGame(createGameRequest, authToken));
     }
 
     @Test
-    public void createGameFail() throws ServiceException {
+    public void createGameFail() {
         CreateGameRequest createGameRequest = new CreateGameRequest("gameName");
 
-        wrongAuthRequest = new AuthRequest(wrongAuthToken);
-        Assertions.assertThrows(UnauthorizedException.class, () -> GameService.createGame(createGameRequest, wrongAuthRequest));
+        Assertions.assertThrows(UnauthorizedException.class, () -> GameService.createGame(createGameRequest, wrongAuthToken));
 
         CreateGameRequest nullRequest = new CreateGameRequest(null);
-        Assertions.assertThrows(BadRequestException.class, () -> GameService.createGame(nullRequest, authRequest));
+        Assertions.assertThrows(BadRequestException.class, () -> GameService.createGame(nullRequest, authToken));
 
         CreateGameRequest badRequest = new CreateGameRequest("");
-        Assertions.assertThrows(BadRequestException.class, () -> GameService.createGame(badRequest, authRequest));
+        Assertions.assertThrows(BadRequestException.class, () -> GameService.createGame(badRequest, authToken));
     }
 
     @Test
@@ -87,24 +81,23 @@ class GameServiceTest {
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 1);
         JoinGameRequest observerRequest = new JoinGameRequest(null, 1);
 
-        GameService.createGame(new CreateGameRequest("gameName"), authRequest);
+        GameService.createGame(new CreateGameRequest("gameName"), authToken);
 
-        Assertions.assertDoesNotThrow(() -> GameService.joinGame(joinGameRequest, authRequest));
-        Assertions.assertDoesNotThrow(() -> GameService.joinGame(observerRequest, authRequest));
+        Assertions.assertDoesNotThrow(() -> GameService.joinGame(joinGameRequest, authToken));
+        Assertions.assertDoesNotThrow(() -> GameService.joinGame(observerRequest, authToken));
     }
 
     @Test
     public void joinGameFail() throws ServiceException {
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 1);
 
-        GameService.createGame(new CreateGameRequest("gameName"), authRequest);
-        wrongAuthRequest = new AuthRequest(wrongAuthToken);
-        Assertions.assertThrows(UnauthorizedException.class, () -> GameService.joinGame(joinGameRequest, wrongAuthRequest));
+        GameService.createGame(new CreateGameRequest("gameName"), authToken);
+        Assertions.assertThrows(UnauthorizedException.class, () -> GameService.joinGame(joinGameRequest, wrongAuthToken));
 
         JoinGameRequest badColorRequest = new JoinGameRequest("yellow", 1);
-        Assertions.assertThrows(BadRequestException.class, () -> GameService.joinGame(badColorRequest, authRequest));
+        Assertions.assertThrows(BadRequestException.class, () -> GameService.joinGame(badColorRequest, authToken));
 
         JoinGameRequest nullGameRequest = new JoinGameRequest("WHITE", 2);
-        Assertions.assertThrows(BadRequestException.class, () -> GameService.joinGame(nullGameRequest, authRequest));
+        Assertions.assertThrows(BadRequestException.class, () -> GameService.joinGame(nullGameRequest, authToken));
     }
 }

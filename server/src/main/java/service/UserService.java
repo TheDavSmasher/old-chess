@@ -2,7 +2,6 @@ package service;
 
 import dataAccess.*;
 import model.dataAccess.AuthData;
-import model.request.AuthRequest;
 import model.request.UserEnterRequest;
 import model.response.UserEnterResponse;
 import model.response.result.*;
@@ -41,13 +40,13 @@ public class UserService {
         }
     }
 
-    public static void logout(AuthRequest request) throws ServiceException {
+    public static void logout(String authToken) throws ServiceException {
         try {
-            if (UserService.getUser(request.authToken()) == null) {
+            if (UserService.getUser(authToken) == null) {
                 throw new UnauthorizedException();
             }
             AuthDAO authDAO = SQLAuthDAO.getInstance();
-            authDAO.deleteAuth(request.authToken());
+            authDAO.deleteAuth(authToken);
         } catch (DataAccessException e) {
             throw new UnexpectedException(e.getMessage());
         }
