@@ -10,4 +10,10 @@ public interface GameDAO {
     void updateGamePlayer(int gameID, String color, String username) throws DataAccessException;
     void updateGameBoard(int gameID, String gameJson) throws DataAccessException;
     void clear() throws DataAccessException;
+    static GameDAO getInstance(boolean useSQL) throws DataAccessException {
+        if (useSQL) {
+            return SQLGameDAO.getInstance();
+        }
+        return MemoryGameDAO.getInstance();
+    }
 }

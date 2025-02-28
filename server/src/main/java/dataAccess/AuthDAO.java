@@ -7,4 +7,10 @@ public interface AuthDAO {
     AuthData createAuth(String username) throws DataAccessException;
     void deleteAuth(String token) throws DataAccessException;
     void clear() throws DataAccessException;
+    static AuthDAO getInstance(boolean useSQL) throws DataAccessException {
+        if (useSQL) {
+            return SQLAuthDAO.getInstance();
+        }
+        return MemoryAuthDAO.getInstance();
+    }
 }
