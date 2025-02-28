@@ -6,9 +6,9 @@ import model.response.result.ServiceException;
 public class AppService extends Service {
     public static void clearData() throws ServiceException {
         tryCatch(() -> {
-            AuthDAO.getInstance(true).clear();
-            UserDAO.getInstance(true).clear();
-            GameDAO.getInstance(true).clear();
+            AuthDAO.getInstance().clear();
+            UserDAO.getInstance().clear();
+            GameDAO.getInstance().clear();
         });
     }
 }

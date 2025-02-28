@@ -9,7 +9,7 @@ import model.response.result.*;
 public class UserService extends Service {
     public static UserEnterResponse register(UserEnterRequest request) throws ServiceException {
         return tryCatch(() -> {
-            UserDAO userDAO = SQLUserDAO.getInstance();
+            UserDAO userDAO = UserDAO.getInstance();
 
             if (request.username() == null || request.password() == null || request.email() == null ||
                     request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()) {
@@ -25,8 +25,8 @@ public class UserService extends Service {
 
     public static UserEnterResponse login(UserEnterRequest request) throws ServiceException {
         return tryCatch(() -> {
-            UserDAO userDAO = SQLUserDAO.getInstance();
-            AuthDAO authDAO = SQLAuthDAO.getInstance();
+            UserDAO userDAO = UserDAO.getInstance();
+            AuthDAO authDAO = AuthDAO.getInstance();
 
             if (userDAO.getUser(request.username(), request.password()) == null) {
                 throw new UnauthorizedException();
@@ -41,14 +41,14 @@ public class UserService extends Service {
             if (UserService.getUser(authToken) == null) {
                 throw new UnauthorizedException();
             }
-            AuthDAO authDAO = SQLAuthDAO.getInstance();
+            AuthDAO authDAO = AuthDAO.getInstance();
             authDAO.deleteAuth(authToken);
         });
     }
 
     public static AuthData getUser(String authToken) throws ServiceException {
         return tryCatch(() -> {
-            AuthDAO authDAO = SQLAuthDAO.getInstance();
+            AuthDAO authDAO = AuthDAO.getInstance();
             return authDAO.getAuth(authToken);
         });
     }

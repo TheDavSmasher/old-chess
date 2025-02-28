@@ -1,7 +1,6 @@
 package service;
 
 import dataAccess.GameDAO;
-import dataAccess.SQLGameDAO;
 import model.dataAccess.AuthData;
 import model.dataAccess.GameData;
 import model.request.CreateGameRequest;
@@ -16,7 +15,7 @@ public class GameService extends Service {
             if (UserService.getUser(authToken) == null) {
                 throw new UnauthorizedException();
             }
-            GameDAO gameDAO = SQLGameDAO.getInstance();
+            GameDAO gameDAO = GameDAO.getInstance();
             return new ListGamesResponse(gameDAO.listGames());
         });
     }
@@ -26,7 +25,7 @@ public class GameService extends Service {
             if (UserService.getUser(authToken) == null) {
                 throw new UnauthorizedException();
             }
-            GameDAO gameDAO = SQLGameDAO.getInstance();
+            GameDAO gameDAO = GameDAO.getInstance();
 
             if (request.gameName() == null || request.gameName().isEmpty()) {
                 throw new BadRequestException();
@@ -42,7 +41,7 @@ public class GameService extends Service {
             if (auth == null) {
                 throw new UnauthorizedException();
             }
-            GameDAO gameDAO = SQLGameDAO.getInstance();
+            GameDAO gameDAO = GameDAO.getInstance();
             GameData oldGame = gameDAO.getGame(request.gameID());
             if (request.gameID() <= 0 || oldGame == null) {
                 throw new BadRequestException();
@@ -61,7 +60,7 @@ public class GameService extends Service {
             if (auth == null) {
                 throw new UnauthorizedException();
             }
-            GameDAO gameDAO = SQLGameDAO.getInstance();
+            GameDAO gameDAO = GameDAO.getInstance();
             return gameDAO.getGame(gameID);
         });
     }
@@ -72,7 +71,7 @@ public class GameService extends Service {
             if (auth == null) {
                 throw new UnauthorizedException();
             }
-            GameDAO gameDAO = SQLGameDAO.getInstance();
+            GameDAO gameDAO = GameDAO.getInstance();
             GameData oldGame = gameDAO.getGame(gameID);
             if (gameID <= 0 || oldGame == null) {
                 throw new BadRequestException();
@@ -91,7 +90,7 @@ public class GameService extends Service {
             if (auth == null) {
                 throw new UnauthorizedException();
             }
-            GameDAO gameDAO = SQLGameDAO.getInstance();
+            GameDAO gameDAO = GameDAO.getInstance();
             gameDAO.updateGameBoard(gameID, gameJson);
         });
     }
