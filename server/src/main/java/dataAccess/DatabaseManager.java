@@ -114,11 +114,9 @@ public class DatabaseManager {
             }
             connection.commit();
         } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException ignored) {}
-            }
+            try {
+                connection.rollback();
+            } catch (SQLException ignored) {}
             throw new DataAccessException(e.getMessage());
         }
     }
