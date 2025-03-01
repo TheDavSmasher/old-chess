@@ -26,6 +26,7 @@
           <option value="client" />
           <option value="client" />
           <option value="client" />
+          <option value="server" />
         </list>
       </option>
       <option name="ignoredPackages">
@@ -51,6 +52,7 @@
           <option value="org.eclipse.jetty:jetty-xml:9.4.31.v20200723" />
           <option value="org.springframework.security:spring-security-core:6.2.1" />
           <option value="org.springframework:spring-core:6.1.2" />
+          <option value="mysql:mysql-connector-java:8.0.30" />
         </list>
       </option>
       <option name="ignoredReasons">
@@ -59,6 +61,7 @@
           <option value="Other" />
           <option value="Other" />
           <option value="Other" />
+          <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />
           <option value="Not exploitable" />

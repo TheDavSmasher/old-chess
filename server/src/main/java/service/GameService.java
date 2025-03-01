@@ -6,6 +6,7 @@ import model.dataAccess.GameData;
 import model.request.CreateGameRequest;
 import model.request.JoinGameRequest;
 import model.response.CreateGameResponse;
+import model.response.EmptyResponse;
 import model.response.ListGamesResponse;
 import model.response.result.*;
 
@@ -35,8 +36,8 @@ public class GameService extends Service {
         });
     }
 
-    public static void joinGame(JoinGameRequest request, String authToken) throws ServiceException {
-        tryCatch(() -> {
+    public static EmptyResponse joinGame(JoinGameRequest request, String authToken) throws ServiceException {
+        return tryCatch(() -> {
             AuthData auth = UserService.getUser(authToken);
             if (auth == null) {
                 throw new UnauthorizedException();
@@ -51,6 +52,7 @@ public class GameService extends Service {
             }
             String color = getColor(request.playerColor(), oldGame, auth.username());
             gameDAO.updateGamePlayer(request.gameID(), color, auth.username());
+            return new EmptyResponse();
         });
     }
 
@@ -65,6 +67,7 @@ public class GameService extends Service {
         });
     }
 
+    //WebSocket
     public static void leaveGame(String authToken, int gameID) throws ServiceException {
         tryCatch(() -> {
             AuthData auth = UserService.getUser(authToken);
