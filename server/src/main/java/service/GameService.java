@@ -48,7 +48,7 @@ public class GameService extends Service {
 
     public static GameData getGame(String authToken, int gameID) throws ServiceException {
         return tryCatch(() -> {
-            AuthData auth = UserService.validateAuth(authToken);
+            UserService.validateAuth(authToken);
             GameDAO gameDAO = GameDAO.getInstance();
             return gameDAO.getGame(gameID);
         });
