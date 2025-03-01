@@ -7,7 +7,7 @@ import model.response.result.UnexpectedException;
 public class Service {
     public static final boolean UseSQL = true;
 
-    public static <T> T tryCatch(ServiceCall<T> call) throws ServiceException {
+    public static <T> T tryCatch(EndpointCall<T> call) throws ServiceException {
         try {
             return call.method();
         } catch (DataAccessException e) {
@@ -16,7 +16,7 @@ public class Service {
 
     }
 
-    public static void tryCatch(EmptyCall call) throws ServiceException {
+    public static void tryCatch(WebSocketCall call) throws ServiceException {
         try {
             call.method();
         } catch (DataAccessException e) {
