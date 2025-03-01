@@ -81,17 +81,17 @@ public class GameService extends Service {
 
     private static String getColor(String playerColor, GameData oldGame, String username) throws ServiceException {
         String color = playerColor.toUpperCase();
-        if (!color.equals("WHITE") && !color.equals("BLACK")) {
-            throw new BadRequestException();
-        }
-        if (color.equals("WHITE") && oldGame.whiteUsername() != null && oldGame.whiteUsername().equals(username)
-        || color.equals("BLACK") && oldGame.blackUsername() != null && oldGame.blackUsername().equals(username)) { //Rejoining game is allowed
+
+        String gameUser = switch (color) {
+            case "WHITE" -> oldGame.whiteUsername();
+            case "BLACK" -> oldGame.blackUsername();
+            default -> throw new BadRequestException();
+        };
+
+        if (gameUser == null || gameUser.equals(username)) {
             return color;
         }
-        if (color.equals("WHITE") && oldGame.whiteUsername() != null    //Trying to take White, White player already taken
-        || color.equals("BLACK") && oldGame.blackUsername() != null) {     //Trying to take Black, Black player already taken
-            throw new PreexistingException();
-        }
-        return color;
+
+        throw new PreexistingException();
     }
 }
