@@ -1,7 +1,6 @@
 package server.handler;
 
 import model.response.result.ServiceException;
-import server.ObjectSerializer;
 import spark.Request;
 
 import java.lang.reflect.ParameterizedType;

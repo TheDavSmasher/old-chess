@@ -1,6 +1,5 @@
-package server;
+package server.handler;
 
-import server.handler.ResponseDeserializer;
 import service.GameService;
 import model.request.CreateGameRequest;
 import model.response.CreateGameResponse;

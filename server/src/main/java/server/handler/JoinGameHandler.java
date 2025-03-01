@@ -1,8 +1,7 @@
-package server;
+package server.handler;
 
 import service.GameService;
 import model.response.EmptyResponse;
-import server.handler.ResponseDeserializer;
 import model.request.JoinGameRequest;
 import model.response.result.ServiceException;
 

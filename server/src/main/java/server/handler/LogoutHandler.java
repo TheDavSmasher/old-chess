@@ -1,4 +1,4 @@
-package server;
+package server.handler;
 
 import model.response.EmptyResponse;
 import service.UserService;

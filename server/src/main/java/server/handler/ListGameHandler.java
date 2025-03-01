@@ -1,4 +1,4 @@
-package server;
+package server.handler;
 
 import service.GameService;
 import model.response.ListGamesResponse;
