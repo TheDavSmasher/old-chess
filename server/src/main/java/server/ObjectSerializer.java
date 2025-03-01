@@ -4,14 +4,15 @@ import com.google.gson.Gson;
 import model.response.result.ServiceException;
 import spark.*;
 
-public abstract class ObjectSerializer implements Route {
-    private final Gson gson = new Gson();
+public abstract class ObjectSerializer<T> implements Route {
+    protected final Gson gson = new Gson();
 
     public String handle(Request request, Response response) {
         response.type("application/json");
         String result = null;
         try {
-            result = serviceHandle(request);
+            T serviceResponse = serviceHandle(request);
+            result = serialize(serviceResponse);
         } catch (ServiceException e) {
             Spark.halt(e.getStatusCode(), e.handlerJson());
         }
@@ -19,11 +20,7 @@ public abstract class ObjectSerializer implements Route {
         return result;
     }
 
-    protected abstract String serviceHandle(Request request) throws ServiceException;
-
-    protected <T> T deserialize(Request request, Class<T> type) {
-        return gson.fromJson(request.body(), type);
-    }
+    protected abstract T serviceHandle(Request request) throws ServiceException;
 
     protected String serialize(Object object) {
         return gson.toJson(object);
