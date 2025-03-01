@@ -7,7 +7,7 @@ import model.response.result.ServiceException;
 
 public class CreateGameHandler extends RequestDeserializer<CreateGameRequest, CreateGameResponse> {
     @Override
-    protected CreateGameResponse serviceCall(CreateGameRequest serviceRequest, String authToken) throws ServiceException {
-        return GameService.createGame(serviceRequest, authToken);
+    protected CreateGameResponse serviceCall(CreateGameRequest createGameRequest, String authToken) throws ServiceException {
+        return GameService.createGame(createGameRequest, authToken);
     }
 }

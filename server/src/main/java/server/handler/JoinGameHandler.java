@@ -7,7 +7,7 @@ import model.response.result.ServiceException;
 
 public class JoinGameHandler extends RequestDeserializer<JoinGameRequest, EmptyResponse> {
     @Override
-    protected EmptyResponse serviceCall(JoinGameRequest serviceRequest, String authToken) throws ServiceException {
-        return GameService.joinGame(serviceRequest, authToken);
+    protected EmptyResponse serviceCall(JoinGameRequest joinGameRequest, String authToken) throws ServiceException {
+        return GameService.joinGame(joinGameRequest, authToken);
     }
 }

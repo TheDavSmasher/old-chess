@@ -12,7 +12,7 @@ public class UserEnterHandler extends RequestDeserializer<UserEnterRequest, User
     }
 
     @Override
-    protected UserEnterResponse serviceCall(UserEnterRequest serviceRequest, String authToken) throws ServiceException {
-        return userEnter.handleEnter(serviceRequest);
+    protected UserEnterResponse serviceCall(UserEnterRequest userEnterRequest, String ignored) throws ServiceException {
+        return userEnter.handleEnter(userEnterRequest);
     }
 }
