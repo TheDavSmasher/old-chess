@@ -35,13 +35,13 @@ class GameServiceTest {
         Assertions.assertEquals(expected, GameService.getAllGames(authToken));
 
         ArrayList<GameData> gamesList = new ArrayList<>();
-        gamesList.add(new GameData(1, null, null, "game_1", null));
+        gamesList.add(new GameData(1, "game_1", null));
         expected = new ListGamesResponse(gamesList);
         GameService.createGame(new CreateGameRequest("game_1"), authToken);
         Assertions.assertEquals(expected, GameService.getAllGames(authToken));
 
-        gamesList.add(new GameData(2, null, null, "game_2", null));
-        gamesList.add(new GameData(3, null, null, "game_3", null));
+        gamesList.add(new GameData(2, "game_2", null));
+        gamesList.add(new GameData(3, "game_3", null));
         expected = new ListGamesResponse(gamesList);
         GameService.createGame(new CreateGameRequest("game_2"), authToken);
         GameService.createGame(new CreateGameRequest("game_3"), authToken);

@@ -42,8 +42,8 @@ class SQLGameDAOTest {
         gameDAO.createGame(gameName);
         gameDAO.createGame(gameName);
 
-        Assertions.assertEquals(new GameData(1, null, null, gameName, new ChessGame()), gameDAO.getGame(1));
-        Assertions.assertEquals(new GameData(2, null, null, gameName, new ChessGame()), gameDAO.getGame(2));
+        Assertions.assertEquals(new GameData(1, gameName, new ChessGame()), gameDAO.getGame(1));
+        Assertions.assertEquals(new GameData(2, gameName, new ChessGame()), gameDAO.getGame(2));
     }
 
     @Test
@@ -55,8 +55,8 @@ class SQLGameDAOTest {
 
     @Test
     void createGameTest() throws DataAccessException {
-        Assertions.assertEquals(new GameData(1, null, null, gameName, new ChessGame()), gameDAO.createGame(gameName));
-        Assertions.assertEquals(new GameData(2, null, null, gameName, new ChessGame()), gameDAO.createGame(gameName));
+        Assertions.assertEquals(new GameData(1, gameName, new ChessGame()), gameDAO.createGame(gameName));
+        Assertions.assertEquals(new GameData(2, gameName, new ChessGame()), gameDAO.createGame(gameName));
     }
 
     @Test

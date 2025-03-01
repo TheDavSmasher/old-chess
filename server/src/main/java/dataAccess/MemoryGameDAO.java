@@ -1,6 +1,5 @@
 package dataAccess;
 
-import chess.ChessGame;
 import model.dataAccess.GameData;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,7 +16,7 @@ public class MemoryGameDAO implements GameDAO {
     public ArrayList<GameData> listGames() {
         ArrayList<GameData> gameList = new ArrayList<>();
         for (GameData game : data) {
-            gameList.add(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), null));
+            gameList.add(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()));
         }
         gameList.sort(Comparator.comparingInt(GameData::gameID));
         return gameList;
@@ -36,7 +35,7 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public GameData createGame(String gameName) {
         int newID = data.size() + 1;
-        GameData newGame = new GameData(newID, null, null, gameName, new ChessGame());
+        GameData newGame = new GameData(newID, gameName);
         data.add(newGame);
         return newGame;
     }

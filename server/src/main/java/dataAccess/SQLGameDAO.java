@@ -26,7 +26,7 @@ public class SQLGameDAO implements GameDAO {
                         String black = rs.getString("blackUsername");
                         String name = rs.getString("gameName");
 
-                        gameList.add(new GameData(id, white, black, name, null));
+                        gameList.add(new GameData(id, white, black, name));
                     }
                 }
             }
@@ -79,7 +79,7 @@ public class SQLGameDAO implements GameDAO {
                     id = rs.getInt(1);
                 }
 
-                return new GameData(id, null, null, gameName, game);
+                return new GameData(id, gameName, game);
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
