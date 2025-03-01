@@ -1,15 +1,14 @@
 package server;
 
 import service.GameService;
+import model.response.EmptyResponse;
+import server.handler.ResponseDeserializer;
 import model.request.JoinGameRequest;
 import model.response.result.ServiceException;
-import spark.Request;
 
-public class JoinGameHandler extends ObjectSerializer {
+public class JoinGameHandler extends ResponseDeserializer<JoinGameRequest, EmptyResponse> {
     @Override
-    public String serviceHandle(Request request) throws ServiceException {
-        JoinGameRequest joinRequest = deserialize(request, JoinGameRequest.class);
-        GameService.joinGame(joinRequest, getAuthToken(request));
-        return "{}";
+    protected EmptyResponse serviceDeserialize(JoinGameRequest serviceRequest, String authToken) throws ServiceException {
+        return GameService.joinGame(serviceRequest, authToken);
     }
 }

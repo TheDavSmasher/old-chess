@@ -3,10 +3,8 @@ package server.handler;
 import model.request.UserEnterRequest;
 import model.response.UserEnterResponse;
 import model.response.result.ServiceException;
-import server.ObjectSerializer;
-import spark.Request;
 
-public class UserEnterHandler extends ObjectSerializer {
+public class UserEnterHandler extends ResponseDeserializer<UserEnterRequest, UserEnterResponse> {
     private final UserEnter userEnter;
 
     public UserEnterHandler(UserEnter userEnter) {
@@ -14,9 +12,7 @@ public class UserEnterHandler extends ObjectSerializer {
     }
 
     @Override
-    protected String serviceHandle(Request request) throws ServiceException {
-        UserEnterRequest userEnterRequest = deserialize(request, UserEnterRequest.class);
-        UserEnterResponse userEnterResponse = userEnter.handleEnter(userEnterRequest);
-        return serialize(userEnterResponse);
+    protected UserEnterResponse serviceDeserialize(UserEnterRequest serviceRequest, String authToken) throws ServiceException {
+        return userEnter.handleEnter(serviceRequest);
     }
 }
