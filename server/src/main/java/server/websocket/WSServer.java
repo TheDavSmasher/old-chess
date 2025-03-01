@@ -58,10 +58,7 @@ public class WSServer {
     }
 
     private String enter(String authToken, int gameID, ChessGame.TeamColor color, Session session) throws ServiceException {
-        AuthData auth = UserService.getUser(authToken);
-        if (auth == null) {
-            throw new ServiceException(UNAUTHORIZED);
-        }
+        AuthData auth = UserService.validateAuth(authToken);
         GameData data = GameService.getGame(authToken, gameID);
         if (data == null) throw new ServiceException("Game does not exist.");
         if (color != null) {

@@ -13,9 +13,7 @@ import model.response.result.*;
 public class GameService extends Service {
     public static ListGamesResponse getAllGames(String authToken) throws ServiceException {
         return tryCatch(() -> {
-            if (UserService.getUser(authToken) == null) {
-                throw new UnauthorizedException();
-            }
+            UserService.validateAuth(authToken);
             GameDAO gameDAO = GameDAO.getInstance();
             return new ListGamesResponse(gameDAO.listGames());
         });
@@ -23,9 +21,7 @@ public class GameService extends Service {
 
     public static CreateGameResponse createGame(CreateGameRequest request, String authToken) throws ServiceException {
         return tryCatch(() -> {
-            if (UserService.getUser(authToken) == null) {
-                throw new UnauthorizedException();
-            }
+            UserService.validateAuth(authToken);
             GameDAO gameDAO = GameDAO.getInstance();
 
             if (request.gameName() == null || request.gameName().isEmpty()) {
@@ -38,16 +34,10 @@ public class GameService extends Service {
 
     public static EmptyResponse joinGame(JoinGameRequest request, String authToken) throws ServiceException {
         return tryCatch(() -> {
-            AuthData auth = UserService.getUser(authToken);
-            if (auth == null) {
-                throw new UnauthorizedException();
-            }
+            AuthData auth = UserService.validateAuth(authToken);
             GameDAO gameDAO = GameDAO.getInstance();
             GameData oldGame = gameDAO.getGame(request.gameID());
-            if (request.gameID() <= 0 || oldGame == null) {
-                throw new BadRequestException();
-            }
-            if (request.playerColor() == null) {
+            if (request.playerColor() == null || request.gameID() <= 0 || oldGame == null) {
                 throw new BadRequestException();
             }
             String color = getColor(request.playerColor(), oldGame, auth.username());
@@ -58,10 +48,7 @@ public class GameService extends Service {
 
     public static GameData getGame(String authToken, int gameID) throws ServiceException {
         return tryCatch(() -> {
-            AuthData auth = UserService.getUser(authToken);
-            if (auth == null) {
-                throw new UnauthorizedException();
-            }
+            AuthData auth = UserService.validateAuth(authToken);
             GameDAO gameDAO = GameDAO.getInstance();
             return gameDAO.getGame(gameID);
         });
@@ -70,10 +57,7 @@ public class GameService extends Service {
     //WebSocket
     public static void leaveGame(String authToken, int gameID) throws ServiceException {
         tryCatch(() -> {
-            AuthData auth = UserService.getUser(authToken);
-            if (auth == null) {
-                throw new UnauthorizedException();
-            }
+            AuthData auth = UserService.validateAuth(authToken);
             GameDAO gameDAO = GameDAO.getInstance();
             GameData oldGame = gameDAO.getGame(gameID);
             if (gameID <= 0 || oldGame == null) {
@@ -89,10 +73,7 @@ public class GameService extends Service {
 
     public static void updateGameState(String authToken, int gameID, String gameJson) throws ServiceException {
         tryCatch(() -> {
-            AuthData auth = UserService.getUser(authToken);
-            if (auth == null) {
-                throw new UnauthorizedException();
-            }
+            UserService.validateAuth(authToken);
             GameDAO gameDAO = GameDAO.getInstance();
             gameDAO.updateGameBoard(gameID, gameJson);
         });

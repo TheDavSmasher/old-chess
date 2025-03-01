@@ -20,7 +20,7 @@ public class UserService extends Service {
                 throw new PreexistingException();
             }
             userDAO.createUser(request.username(), request.password(), request.email());
-            return UserService.login(request);
+            return login(request);
         });
     }
 
@@ -39,9 +39,7 @@ public class UserService extends Service {
 
     public static EmptyResponse logout(String authToken) throws ServiceException {
         return tryCatch(() -> {
-            if (UserService.getUser(authToken) == null) {
-                throw new UnauthorizedException();
-            }
+            validateAuth(authToken);
             AuthDAO authDAO = AuthDAO.getInstance();
             authDAO.deleteAuth(authToken);
             return new EmptyResponse();
@@ -53,5 +51,13 @@ public class UserService extends Service {
             AuthDAO authDAO = AuthDAO.getInstance();
             return authDAO.getAuth(authToken);
         });
+    }
+
+    public static AuthData validateAuth(String authToken) throws ServiceException {
+        AuthData userAuth = getUser(authToken);
+        if (userAuth == null) {
+            throw new UnauthorizedException();
+        }
+        return userAuth;
     }
 }
