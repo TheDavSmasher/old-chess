@@ -1,6 +1,8 @@
 package server;
 
+import server.handler.UserEnterHandler;
 import server.websocket.WSServer;
+import service.UserService;
 import spark.*;
 
 public class Server {
@@ -13,8 +15,8 @@ public class Server {
         Spark.webSocket("/connect", WSServer.class);
 
         Spark.delete("/db", new ClearHandler());
-        Spark.post("/user", new RegisterHandler());
-        Spark.post("/session", new LoginHandler());
+        Spark.post("/user", new UserEnterHandler(UserService::register));
+        Spark.post("/session", new UserEnterHandler(UserService::login));
         Spark.delete("/session", new LogoutHandler());
         Spark.get("/game", new ListGameHandler());
         Spark.post("/game", new CreateGameHandler());

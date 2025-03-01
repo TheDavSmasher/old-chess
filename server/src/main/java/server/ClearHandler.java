@@ -8,7 +8,7 @@ import spark.Spark;
 
 public class ClearHandler extends ObjectSerializer {
     @Override
-    public String serviceHandle(Request request) throws ServiceException {
+    public String serviceHandle(Request ignored) throws ServiceException {
         AppService.clearData();
         return "{}";
     }
