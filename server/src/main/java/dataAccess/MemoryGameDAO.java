@@ -52,7 +52,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGameBoard(int gameID, String gameJson) throws DataAccessException {
+    public void updateGameBoard(int gameID, String gameJson) {
 
     }
 
