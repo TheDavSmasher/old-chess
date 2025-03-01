@@ -5,10 +5,9 @@ import model.response.ListGamesResponse;
 import model.response.result.ServiceException;
 import spark.Request;
 
-public class ListGameHandler extends ObjectSerializer {
+public class ListGameHandler extends ObjectSerializer<ListGamesResponse> {
     @Override
-    public String serviceHandle(Request request) throws ServiceException {
-        ListGamesResponse listResponse = GameService.getAllGames(getAuthToken(request));
-        return serialize(listResponse);
+    public ListGamesResponse serviceHandle(Request request) throws ServiceException {
+        return GameService.getAllGames(getAuthToken(request));
     }
 }

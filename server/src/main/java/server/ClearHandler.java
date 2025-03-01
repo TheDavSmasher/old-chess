@@ -1,13 +1,13 @@
 package server;
 
+import model.response.EmptyResponse;
 import service.AppService;
 import model.response.result.ServiceException;
 import spark.Request;
 
-public class ClearHandler extends ObjectSerializer {
+public class ClearHandler extends ObjectSerializer<EmptyResponse> {
     @Override
-    public String serviceHandle(Request ignored) throws ServiceException {
-        AppService.clearData();
-        return "{}";
+    public EmptyResponse serviceHandle(Request ignored) throws ServiceException {
+        return AppService.clearData();
     }
 }
