@@ -12,7 +12,7 @@ public abstract class ObjectSerializer<T> implements Route {
         String result = null;
         try {
             T serviceResponse = serviceHandle(request);
-            result = serialize(serviceResponse);
+            result = gson.toJson(serviceResponse);
         } catch (ServiceException e) {
             Spark.halt(e.getStatusCode(), e.handlerJson());
         }
@@ -21,10 +21,6 @@ public abstract class ObjectSerializer<T> implements Route {
     }
 
     protected abstract T serviceHandle(Request request) throws ServiceException;
-
-    protected String serialize(Object object) {
-        return gson.toJson(object);
-    }
 
     protected String getAuthToken(Request request) {
         return request.headers("authorization");
