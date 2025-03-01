@@ -4,7 +4,7 @@ import model.request.UserEnterRequest;
 import model.response.UserEnterResponse;
 import model.response.result.ServiceException;
 
-public class UserEnterHandler extends ResponseDeserializer<UserEnterRequest, UserEnterResponse> {
+public class UserEnterHandler extends RequestDeserializer<UserEnterRequest, UserEnterResponse> {
     private final UserEnter userEnter;
 
     public UserEnterHandler(UserEnter userEnter) {

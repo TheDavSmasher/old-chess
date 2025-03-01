@@ -6,7 +6,7 @@ import spark.Request;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-public abstract class ResponseDeserializer<T, U>  extends ObjectSerializer<U> {
+public abstract class RequestDeserializer<T, U>  extends ObjectSerializer<U> {
     @Override
     protected U serviceHandle(Request request) throws ServiceException {
         Type requestType = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
