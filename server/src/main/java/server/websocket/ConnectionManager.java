@@ -24,21 +24,17 @@ public class ConnectionManager {
 
     public void addToGame(int gameID, String authToken, String username, Session session) {
         Connection newConnection = new Connection(username, session);
-        ArrayList<Connection> oldConnections = connectionsToGames.get(gameID);
-        if (oldConnections == null) {
+        if (!connectionsToGames.containsKey(gameID)) {
             connectionsToGames.put(gameID, new ArrayList<>());
-            oldConnections = connectionsToGames.get(gameID);
-            oldConnections.add(newConnection);
-        } else {
-            oldConnections.add(newConnection);
         }
+        connectionsToGames.get(gameID).add(newConnection);
         addToUsers(authToken, newConnection);
     }
 
     public void removeFromGame(int gameID, String authToken) {
-        ArrayList<Connection> oldConnections = connectionsToGames.get(gameID);
-        oldConnections.remove(getFromUsers(authToken));
-        connectionsToGames.put(gameID, oldConnections);
+        ArrayList<Connection> gameConnections = connectionsToGames.get(gameID);
+        gameConnections.remove(getFromUsers(authToken));
+        connectionsToGames.put(gameID, gameConnections);
         removeFromUser(authToken);
     }
 
@@ -47,32 +43,35 @@ public class ConnectionManager {
     }
 
     public void loadNewGame(ChessGame game, int gameID) {
-        Gson gson = new Gson();
-        String gameJson = gson.toJson(game);
-        String message = gson.toJson(new LoadGameMessage(gameJson));
+        String message = getGameString(game);
         for (Connection current : connectionsToGames.get(gameID)) {
             sendToConnection(current, message);
         }
     }
 
     public void loadNewGame(ChessGame game, String authToken) {
+        String message = getGameString(game);
+        sendToConnection(userConnections.get(authToken), message);
+    }
+
+    private String getGameString(ChessGame game) {
         Gson gson = new Gson();
         String gameJson = gson.toJson(game);
-        String message = gson.toJson(new LoadGameMessage(gameJson));
-        sendToConnection(userConnections.get(authToken), message);
+        return gson.toJson(new LoadGameMessage(gameJson));
     }
 
     public void notifyOthers(int gameID, String authToken, Notification notification) {
         ArrayList<Connection> closed = new ArrayList<>();
         ArrayList<Connection> gameConnections = connectionsToGames.get(gameID);
+
         String message = new Gson().toJson(notification);
         for (Connection current : gameConnections) {
-            if (current.session.isOpen()) {
-                if (current == userConnections.get(authToken)) continue;
-                sendToConnection(current, message);
-            } else {
+            if (!current.session.isOpen()) {
                 closed.add(current);
+                continue;
             }
+            if (current == userConnections.get(authToken)) continue;
+            sendToConnection(current, message);
         }
         for (Connection close : closed) {
             gameConnections.remove(close);
