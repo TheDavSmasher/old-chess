@@ -22,6 +22,12 @@ import java.io.IOException;
 public class WSServer {
     private static final Gson gson = new Gson();
 
+    private static <T> T deserialize(String json, Class<T> type) {
+        return gson.fromJson(json, type);
+    }
+
+    private static final String UNAUTHORIZED = "You are unauthorized.";
+
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
         UserGameCommand gameCommand = deserialize(message, UserGameCommand.class);
@@ -33,12 +39,6 @@ public class WSServer {
             case RESIGN -> resign(deserialize(message, ResignCommand.class), session);
         }
     }
-
-    private static <T> T deserialize(String json, Class<T> type) {
-        return gson.fromJson(json, type);
-    }
-
-    private static final String UNAUTHORIZED = "You are unauthorized.";
 
     private final ConnectionManager connectionManager = new ConnectionManager();
 
