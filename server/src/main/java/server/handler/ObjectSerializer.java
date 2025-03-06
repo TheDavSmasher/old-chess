@@ -1,7 +1,10 @@
 package server.handler;
 
 import com.google.gson.Gson;
+import model.response.result.BadRequestException;
+import model.response.result.PreexistingException;
 import model.response.result.ServiceException;
+import model.response.result.UnauthorizedException;
 import spark.*;
 
 public abstract class ObjectSerializer<T> implements Route {
@@ -14,7 +17,7 @@ public abstract class ObjectSerializer<T> implements Route {
             T serviceResponse = serviceHandle(request);
             result = gson.toJson(serviceResponse);
         } catch (ServiceException e) {
-            Spark.halt(e.getStatusCode(), "{ \"message\": \"Error: " + e.getMessage() + "\" }");
+            Spark.halt(getStatusCode(e), "{ \"message\": \"Error: " + e.getMessage() + "\" }");
         }
         response.status(200);
         return result;
@@ -24,5 +27,14 @@ public abstract class ObjectSerializer<T> implements Route {
 
     protected String getAuthToken(Request request) {
         return request.headers("authorization");
+    }
+
+    private int getStatusCode(ServiceException e) {
+        return switch (e) {
+            case BadRequestException ignore -> 400;
+            case UnauthorizedException ignore -> 401;
+            case PreexistingException ignore -> 403;
+            default -> 500;
+        };
     }
 }
