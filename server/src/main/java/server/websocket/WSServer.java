@@ -20,17 +20,22 @@ import java.io.IOException;
 
 @WebSocket
 public class WSServer {
+    private static final Gson gson = new Gson();
+
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
-        Gson gson = new Gson();
-        UserGameCommand gameCommand = gson.fromJson(message, UserGameCommand.class);
+        UserGameCommand gameCommand = deserialize(message, UserGameCommand.class);
         switch (gameCommand.getCommandType()){
-            case JOIN_PLAYER -> join(gson.fromJson(message, JoinPlayerCommand.class), session);
-            case JOIN_OBSERVER -> observe(gson.fromJson(message, JoinObserverCommand.class), session);
-            case MAKE_MOVE -> move(gson.fromJson(message, MakeMoveCommand.class), session);
-            case LEAVE -> leave(gson.fromJson(message, LeaveCommand.class), session);
-            case RESIGN -> resign(gson.fromJson(message, ResignCommand.class), session);
+            case JOIN_PLAYER -> join(deserialize(message, JoinPlayerCommand.class), session);
+            case JOIN_OBSERVER -> observe(deserialize(message, JoinObserverCommand.class), session);
+            case MAKE_MOVE -> move(deserialize(message, MakeMoveCommand.class), session);
+            case LEAVE -> leave(deserialize(message, LeaveCommand.class), session);
+            case RESIGN -> resign(deserialize(message, ResignCommand.class), session);
         }
+    }
+
+    private static <T> T deserialize(String json, Class<T> type) {
+        return gson.fromJson(json, type);
     }
 
     private static final String UNAUTHORIZED = "You are unauthorized.";
@@ -61,7 +66,7 @@ public class WSServer {
         AuthData auth = UserService.validateAuth(authToken);
         GameData data = GameService.getGame(authToken, gameID);
         if (data == null) throw new ServiceException("Game does not exist.");
-        String user = color == ChessGame.TeamColor.WHITE ? data.whiteUsername() : data.blackUsername();;
+        String user = color == ChessGame.TeamColor.WHITE ? data.whiteUsername() : data.blackUsername();
         if (color != null) {
             if (user == null) throw new ServiceException("RSVP the spot before calling this!");
             if (!user.equals(auth.username())) throw new ServiceException("Color is already taken.");
