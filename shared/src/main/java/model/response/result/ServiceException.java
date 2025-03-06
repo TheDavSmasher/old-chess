@@ -5,10 +5,6 @@ public class ServiceException extends Exception {
         super(message);
     }
 
-    public String handlerJson() {
-        return "{ \"message\": \"Error: " + getMessage() + "\" }";
-    }
-
     public int getStatusCode() {
         return 500;
     }

@@ -14,7 +14,7 @@ public abstract class ObjectSerializer<T> implements Route {
             T serviceResponse = serviceHandle(request);
             result = gson.toJson(serviceResponse);
         } catch (ServiceException e) {
-            Spark.halt(e.getStatusCode(), e.handlerJson());
+            Spark.halt(e.getStatusCode(), "{ \"message\": \"Error: " + e.getMessage() + "\" }");
         }
         response.status(200);
         return result;
