@@ -6,14 +6,6 @@ import dataAccess.DatabaseManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-interface SqlQuery<T> {
-    T execute(Connection c) throws SQLException, DataAccessException;
-}
-
-interface SqlUpdate {
-    void execute(Connection c) throws SQLException, DataAccessException;
-}
-
 public abstract class SQLDAO {
     private static boolean databaseConfigured = false;
 
