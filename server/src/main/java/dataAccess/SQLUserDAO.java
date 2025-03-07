@@ -1,22 +1,23 @@
 package dataAccess;
 
 import model.dataAccess.UserData;
-import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SQLUserDAO implements UserDAO {
-    static SQLUserDAO instance;
+public class SQLUserDAO extends SQLDAO implements UserDAO {
+    private static SQLUserDAO instance;
 
     public SQLUserDAO () throws DataAccessException {
-        DatabaseManager.configureDatabase();
+        configureDatabase();
     }
+
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        try (Connection connection = DatabaseManager.getConnection()) {
+        return tryStatement(connection -> {
             String sql = "SELECT * FROM users WHERE username =?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, username);
@@ -28,9 +29,7 @@ public class SQLUserDAO implements UserDAO {
                     return new UserData(name, password, email);
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        });
     }
 
     @Override
@@ -46,8 +45,7 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public void createUser(String username, String password, String email) throws DataAccessException {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
-        try (Connection connection = DatabaseManager.getConnection()) {
+        tryStatement(connection -> {
             String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, username);
@@ -58,21 +56,17 @@ public class SQLUserDAO implements UserDAO {
                     throw new DataAccessException("Did not create any user");
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        });
     }
 
     @Override
     public void clear() throws DataAccessException {
-        try (Connection connection = DatabaseManager.getConnection()) {
+        tryStatement(connection -> {
             String sql = "TRUNCATE users";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        });
     }
 
     public static UserDAO getInstance() throws DataAccessException {

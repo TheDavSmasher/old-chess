@@ -7,16 +7,17 @@ import model.dataAccess.GameData;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class SQLGameDAO implements GameDAO {
-    static SQLGameDAO instance;
+public class SQLGameDAO extends SQLDAO implements GameDAO {
+    private static SQLGameDAO instance;
 
     public SQLGameDAO () throws DataAccessException {
-        DatabaseManager.configureDatabase();
+        configureDatabase();
     }
+
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
         ArrayList<GameData> gameList = new ArrayList<>();
-        try (Connection connection = DatabaseManager.getConnection()) {
+        tryStatement(connection -> {
             String sql = "SELECT gameID, whiteUsername, blackUsername, gameName FROM games";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 try (ResultSet rs = preparedStatement.executeQuery()) {
@@ -30,15 +31,13 @@ public class SQLGameDAO implements GameDAO {
                     }
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        });
         return gameList;
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        try (Connection connection = DatabaseManager.getConnection()) {
+        return tryStatement(connection -> {
             String sql = "SELECT * FROM games WHERE gameID =?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, gameID);
@@ -54,14 +53,12 @@ public class SQLGameDAO implements GameDAO {
                     return new GameData(id, white, black, name, game);
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        });
     }
 
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
-        try (Connection connection = DatabaseManager.getConnection()) {
+        return tryStatement(connection -> {
             String sql = "INSERT INTO games (gameName, game) VALUES (?, ?)";
             ChessGame game = new ChessGame();
             String gameJson = new Gson().toJson(game);
@@ -81,14 +78,12 @@ public class SQLGameDAO implements GameDAO {
 
                 return new GameData(id, gameName, game);
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        });
     }
 
     @Override
     public void updateGamePlayer(int gameID, String color, String username) throws DataAccessException {
-        try (Connection connection = DatabaseManager.getConnection()) {
+        tryStatement(connection -> {
             String sql = "UPDATE games SET "+ (color.equals("WHITE") ? "whiteUsername" : "blackUsername") +"=? WHERE gameID=?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, username);
@@ -98,14 +93,12 @@ public class SQLGameDAO implements GameDAO {
                     throw new DataAccessException("Did not update any game");
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        });
     }
 
     @Override
     public void updateGameBoard(int gameID, String gameJson) throws DataAccessException {
-        try (Connection connection = DatabaseManager.getConnection()) {
+        tryStatement(connection -> {
             String sql = "UPDATE games SET game=? WHERE gameID=?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, gameJson);
@@ -115,21 +108,17 @@ public class SQLGameDAO implements GameDAO {
                     throw new DataAccessException("Did not update any game");
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        });
     }
 
     @Override
     public void clear() throws DataAccessException {
-        try (Connection connection = DatabaseManager.getConnection()) {
+        tryStatement(connection -> {
             String sql = "TRUNCATE games";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+        });
     }
 
     public static GameDAO getInstance() throws DataAccessException {
