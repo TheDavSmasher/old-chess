@@ -2,9 +2,9 @@ package dataAccess.sql;
 
 import dataAccess.DataAccessException;
 
-import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public interface SqlQuery<T> {
-    T execute(Connection c) throws SQLException, DataAccessException;
+    T execute(PreparedStatement statement) throws SQLException, DataAccessException;
 }
