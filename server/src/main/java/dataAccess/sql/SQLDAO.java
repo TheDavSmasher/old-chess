@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public abstract class SQLDAO {
     private static boolean databaseConfigured = false;
 
-    protected <T> T tryStatement(SqlQuery<T> query) throws DataAccessException {
+    protected static <T> T tryStatement(SqlQuery<T> query) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection()) {
             return query.execute(connection);
         } catch (SQLException e) {
@@ -17,7 +17,7 @@ public abstract class SQLDAO {
         }
     }
 
-    protected void tryStatement(SqlUpdate update) throws DataAccessException {
+    protected static void tryStatement(SqlUpdate update) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection()) {
             update.execute(connection);
         } catch (SQLException e) {
