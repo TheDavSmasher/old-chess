@@ -3,10 +3,8 @@ package dataAccess;
 import model.dataAccess.UserData;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class SQLUserDAO extends SQLDAO implements UserDAO {
     private static SQLUserDAO instance;
