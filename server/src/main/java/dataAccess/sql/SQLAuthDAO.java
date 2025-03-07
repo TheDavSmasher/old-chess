@@ -1,5 +1,7 @@
-package dataAccess;
+package dataAccess.sql;
 
+import dataAccess.AuthDAO;
+import dataAccess.DataAccessException;
 import model.dataAccess.AuthData;
 
 import java.sql.PreparedStatement;

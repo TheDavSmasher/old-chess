@@ -1,5 +1,7 @@
 package dataAccess;
 
+import dataAccess.memory.MemoryAuthDAO;
+import dataAccess.sql.SQLAuthDAO;
 import model.dataAccess.AuthData;
 import service.Service;
 

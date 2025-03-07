@@ -1,5 +1,7 @@
-package dataAccess;
+package dataAccess.sql;
 
+import dataAccess.DataAccessException;
+import dataAccess.UserDAO;
 import model.dataAccess.UserData;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 

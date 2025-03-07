@@ -1,5 +1,7 @@
 package dataAccess;
 
+import dataAccess.memory.MemoryUserDAO;
+import dataAccess.sql.SQLUserDAO;
 import model.dataAccess.UserData;
 import service.Service;
 

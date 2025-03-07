@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
-import dataAccess.SQLGameDAO;
+import dataAccess.sql.SQLGameDAO;
 import model.dataAccess.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

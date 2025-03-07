@@ -1,5 +1,6 @@
-package dataAccess;
+package dataAccess.memory;
 
+import dataAccess.AuthDAO;
 import model.dataAccess.AuthData;
 import java.util.HashSet;
 import java.util.Objects;

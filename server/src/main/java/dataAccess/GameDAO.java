@@ -1,5 +1,7 @@
 package dataAccess;
 
+import dataAccess.memory.MemoryGameDAO;
+import dataAccess.sql.SQLGameDAO;
 import model.dataAccess.GameData;
 import service.Service;
 import java.util.ArrayList;

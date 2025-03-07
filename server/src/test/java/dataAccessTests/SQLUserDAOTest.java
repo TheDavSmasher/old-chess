@@ -1,7 +1,7 @@
 package dataAccessTests;
 
 import dataAccess.DataAccessException;
-import dataAccess.SQLUserDAO;
+import dataAccess.sql.SQLUserDAO;
 import dataAccess.UserDAO;
 import model.dataAccess.UserData;
 import org.junit.jupiter.api.Assertions;

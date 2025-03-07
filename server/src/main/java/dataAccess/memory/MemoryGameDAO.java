@@ -1,5 +1,6 @@
-package dataAccess;
+package dataAccess.memory;
 
+import dataAccess.GameDAO;
 import model.dataAccess.GameData;
 import java.util.ArrayList;
 import java.util.Comparator;
